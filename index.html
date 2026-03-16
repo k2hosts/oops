@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Groq Chat</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }
+        #output { border: 1px solid #333; height: 300px; overflow-y: auto; padding: 10px; margin-bottom: 10px; }
+        input { width: 70%; background: #111; color: #0f0; border: 1px solid #0f0; padding: 10px; }
+        button { padding: 10px; background: #0f0; color: #000; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="output"></div>
+    <input type="text" id="userInput" placeholder="Type to Groq...">
+    <button onclick="send()">Send</button>
+
+    <script>
+        async function send() {
+            const input = document.getElementById('userInput');
+            const out = document.getElementById('output');
+            const prompt = input.value;
+            
+            out.innerHTML += `<div>> ${prompt}</div>`;
+            input.value = '';
+
+            // REPLACE with your Pterodactyl IP and Port
+            const response = await fetch('http://YOUR_PTERODACTYL_IP:PORT/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt })
+            });
+
+            const data = await response.json();
+            out.innerHTML += `<div style="color: white">AI: ${data.reply}</div>`;
+            out.scrollTop = out.scrollHeight;
+        }
+    </script>
+</body>
+</html>
