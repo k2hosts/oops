@@ -459,21 +459,16 @@
   </a>
   </div>
 
-  <div class="code-window" onclick="copyCode()">
+  <div class="code-window">
     <div class="window-header">
       <div class="win-dot" style="background:#ff5f56"></div>
       <div class="win-dot" style="background:#ffbd2e"></div>
       <div class="win-dot" style="background:#27c93f"></div>
     </div>
-    <div class="code-content"><span class="hl-k">curl</span> -X POST <span class="hl-s">https://api.oops.wtf</span> \
-  -H <span class="hl-s">"Content-Type: application/json"</span> \
-  -d <span class="hl-s">'{
-    "key": "oops_v1_...",
-    "messages": [
-      { "role": "user", "content": "Hello" }
-    ]
-  }'</span></div>
-    <div class="click-hint">Click to copy</div>
+    <div class="code-content"><span class="hl-k">{</span>
+  <span class="hl-s">"status"</span>: <span class="hl-s">"private_beta"</span>,
+  <span class="hl-s">"message"</span>: <span class="hl-s">"Keys are currently invite-only."</span>
+<span class="hl-k">}</span></div>
   </div>
 </div>
 
@@ -568,17 +563,6 @@
     }
   });
 
-  // Copy Code Function
-  function copyCode() {
-    const code = `curl -X POST https://api.oops.wtf \\
-  -H "Content-Type: application/json" \\
-  -d '{ "key": "oops_v1_...", "messages": [{ "role": "user", "content": "Hello" }] }'`;
-    navigator.clipboard.writeText(code);
-    
-    const toast = document.getElementById('copy-toast');
-    toast.classList.add('visible');
-    setTimeout(() => toast.classList.remove('visible'), 2000);
-  }
 </script>
 </body>
 </html>
