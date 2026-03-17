@@ -789,7 +789,9 @@
           if (remaining <= 0) showLimitBanner();
         }
       } else {
-        appendError(data.error?.message || 'Unexpected response.');
+        // Handle both object-based errors (OpenAI style) and string errors
+        const errMsg = data.error?.message || (typeof data.error === 'string' ? data.error : 'Unexpected response.');
+        appendError(errMsg);
       }
     } catch (err) {
       typingRow.remove();
