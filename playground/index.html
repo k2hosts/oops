@@ -488,14 +488,40 @@
   });
 
   // ── INIT ──────────────────────────────────────────────
-  const saved = sessionStorage.getItem(STORAGE_PREFIX + "key");
-  if (saved) {
-    activeKey = saved;
-    remaining = parseInt(sessionStorage.getItem(STORAGE_PREFIX + "remaining") ?? "-1", 10);
-    limit     = parseInt(sessionStorage.getItem(STORAGE_PREFIX + "limit")     ?? "-1", 10);
-    showChat();
-  }
+  (async () => {
+    const savedKey = sessionStorage.getItem(STORAGE_PREFIX + "key");
+    if (savedKey) {
+      // A key is saved, let's validate it with the server to get fresh data.
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: savedKey, messages: [{ role: 'user', content: '__ping__' }] })
+        });
+        const data = await res.json();
 
+        if (res.status === 401 || res.status === 403) {
+          // Key is no longer valid, clear session and stay on login screen.
+          signOut();
+          document.getElementById('key-error').textContent = data.message || 'Your saved key is no longer valid.';
+          return;
+        }
+
+        activeKey = savedKey;
+        remaining = data._meta?.remaining ?? null;
+        limit     = data._meta?.limit     ?? null;
+        
+        if (res.status === 429) { remaining = 0; }
+
+        saveSession();
+        showChat();
+      } catch (err) {
+        signOut();
+        document.getElementById('key-error').textContent = 'Could not connect to server to validate session.';
+      }
+    }
+  })();
   // ── KEY SUBMISSION ────────────────────────────────────
   async function submitKey() {
     const input = document.getElementById('key-input');
