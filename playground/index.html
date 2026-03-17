@@ -607,7 +607,7 @@
       track.appendChild(pip);
     }
 
-    text.textContent = remaining > 0 ? `${remaining} left` : 'limit reached';
+    text.textContent = remaining > 0 ? `${remaining.toLocaleString()} tokens left` : 'limit reached';
     text.className   = 'counter-text';
     if (remaining <= 5)       text.classList.add('critical');
     else if (remaining <= 10) text.classList.add('low');
@@ -796,7 +796,7 @@
     empty.className = 'empty-state';
     empty.id = 'empty-state';
     empty.innerHTML = `<div class="empty-title">// cleared</div>
-      <div class="empty-hint">${remaining !== null ? remaining + ' messages remaining.' : 'Session active.'}</div>`;
+      <div class="empty-hint">${remaining !== null ? remaining.toLocaleString() + ' tokens remaining.' : 'Session active.'}</div>`;
     messagesEl.appendChild(empty);
     document.getElementById('msg-input').focus();
   }
