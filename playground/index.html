@@ -25,7 +25,7 @@
         const WORKER_URL = "https://oops-proxy.deandre6156.workers.dev"; // e.g. https://groq-proxy.yourname.workers.dev
         let history = [];
 
-        async function send() {
+async function send() {
             const el = document.getElementById('input');
             const chat = document.getElementById('chat');
             if(!el.value) return;
@@ -37,17 +37,29 @@
             history.push({ role: "user", content: userMsg });
             chat.scrollTop = chat.scrollHeight;
 
-            const res = await fetch(WORKER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: history })
-            });
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST', // This MUST be uppercase
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ messages: history })
+                });
 
-            const data = await res.json();
-            const botMsg = data.choices[0].message.content;
-
-            chat.innerHTML += `<div class="msg bot">${botMsg}</div>`;
-            history.push({ role: "assistant", content: botMsg });
+                const data = await res.json();
+                
+                if (data.choices && data.choices[0]) {
+                    const botMsg = data.choices[0].message.content;
+                    chat.innerHTML += `<div class="msg bot">${botMsg}</div>`;
+                    history.push({ role: "assistant", content: botMsg });
+                } else {
+                    // This will tell us if Groq is sending an error back
+                    chat.innerHTML += `<div class="msg bot" style="color:red">Error: ${data.error?.message || JSON.stringify(data)}</div>`;
+                }
+            } catch (err) {
+                chat.innerHTML += `<div class="msg bot" style="color:red">Fetch Error: ${err.message}</div>`;
+            }
             chat.scrollTop = chat.scrollHeight;
         }
     </script>
