@@ -6,6 +6,9 @@
   <title>Playground — api.oops.wtf</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <style>
     :root {
       --bg:      #0c0c0c;
@@ -220,8 +223,53 @@
       color: var(--text);
       padding-left: 0;
     }
-    .msg-row.assistant .bubble::before { content: '> '; color: var(--muted2); font-family: var(--mono); font-size: 12px; }
-    .bubble code { font-family: var(--mono); font-size: 12px; background: var(--surface2); border: 1px solid var(--border); padding: 1px 5px; }
+    
+    /* Markdown & Code Styles */
+    .bubble p { margin-bottom: 0.8em; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble ul, .bubble ol { margin: 0.5em 0 0.5em 1.5em; }
+    .bubble li { margin-bottom: 0.3em; }
+
+    .bubble pre {
+      position: relative;
+      background: #161616 !important; /* Force dark background to match theme */
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .bubble pre code {
+      font-family: var(--mono);
+      font-size: 12px;
+      display: block;
+      padding: 12px 14px;
+      overflow-x: auto;
+      background: transparent !important;
+    }
+    .bubble :not(pre) > code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-family: var(--sans);
+      font-size: 10px;
+      color: var(--muted2);
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      opacity: 0.8;
+    }
+    .copy-btn:hover { opacity: 1; border-color: var(--muted); color: var(--text); }
 
     .empty-state {
       flex: 1;
@@ -313,6 +361,23 @@
     #send-btn:hover:not(:disabled) { opacity: 0.75; }
     #send-btn:disabled { opacity: 0.3; cursor: default; }
 
+    #stop-btn {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--surface);
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 0 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: none;
+      transition: all 0.15s;
+    }
+    #stop-btn:hover { background: var(--red); color: var(--text); }
+
     .input-hint { font-size: 10px; color: var(--muted); letter-spacing: 0.05em; display: flex; gap: 16px; }
 
     .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2.5s infinite; display: inline-block; margin-right: 6px; }
@@ -378,6 +443,7 @@
   <div class="input-area">
     <div class="input-row" id="input-row">
       <textarea id="msg-input" placeholder="Send a message…" rows="1"></textarea>
+      <button id="stop-btn">Stop</button>
       <button id="send-btn">Send</button>
     </div>
     <div class="input-hint">
@@ -396,6 +462,17 @@
   let limit     = null;
   let history   = [];
   let isLoading = false;
+  let abortCtrl = null;
+  let isTyping  = false;
+
+  // ── MARKDOWN SETUP ────────────────────────────────────
+  marked.setOptions({
+    highlight: function(code, lang) {
+      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+      return hljs.highlight(code, { language }).value;
+    },
+    langPrefix: 'hljs language-'
+  });
 
   // ── INIT ──────────────────────────────────────────────
   const saved = sessionStorage.getItem(STORAGE_PREFIX + "key");
@@ -547,17 +624,54 @@
     bubble.innerHTML = escHtml(text).replace(/\n/g, '<br>');
     row.appendChild(bubble);
     messagesEl.appendChild(row);
-    scrollBottom();
+    scrollBottom(true);
   }
 
-  function appendAssistantMsg(text) {
+  // Helper to add copy buttons to code blocks
+  function addCopyButtons(element) {
+    element.querySelectorAll('pre').forEach(pre => {
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.textContent = 'Copy';
+      btn.addEventListener('click', () => {
+        const code = pre.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          btn.textContent = 'Copied!';
+          setTimeout(() => btn.textContent = 'Copy', 2000);
+        });
+      });
+      pre.appendChild(btn);
+    });
+  }
+
+  async function appendAssistantMsg(text, animate = false) {
     const row    = document.createElement('div');
     row.className = 'msg-row assistant';
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
-    bubble.innerHTML = formatResponse(text);
     row.appendChild(bubble);
     messagesEl.appendChild(row);
+    
+    if (animate) {
+      let i = 0;
+      // Dynamic speed: faster for longer messages (1 extra char per frame per ~80 chars of total length)
+      const stepBase = Math.max(1, Math.floor(text.length / 80));
+
+      while (i < text.length) {
+        if (!isTyping) break;
+        i += stepBase + Math.floor(Math.random() * 3);
+        if (i > text.length) i = text.length;
+        
+        // Render text + a cursor character
+        bubble.innerHTML = marked.parse(text.slice(0, i) + ' ▍');
+        scrollBottom();
+        await new Promise(r => setTimeout(r, 15)); // Typing delay (ms)
+      }
+    }
+
+    // Final render (removes cursor, fixes any Markdown artifacts)
+    bubble.innerHTML = marked.parse(text);
+    addCopyButtons(bubble);
     scrollBottom();
   }
 
@@ -569,7 +683,7 @@
     el.textContent = msg;
     row.appendChild(el);
     messagesEl.appendChild(row);
-    scrollBottom();
+    scrollBottom(true);
   }
 
   function appendTyping() {
@@ -584,7 +698,12 @@
     return row;
   }
 
-  function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
+  function scrollBottom(force = false) {
+    const dist = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight;
+    if (force || dist < 100) {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+  }
 
   async function sendMessage() {
     const input = document.getElementById('msg-input');
@@ -598,13 +717,20 @@
 
     const typingRow = appendTyping();
     setLoading(true);
+    
+    abortCtrl = new AbortController();
+    isTyping  = true;
+    
+    document.getElementById('send-btn').style.display = 'none';
+    document.getElementById('stop-btn').style.display = 'block';
 
     try {
       const res  = await fetch(WORKER_URL, {
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: activeKey, messages: history })
+        body: JSON.stringify({ key: activeKey, messages: history }),
+        signal: abortCtrl.signal
       });
       typingRow.remove();
       const data = await res.json();
@@ -614,7 +740,7 @@
 
       if (data.choices && data.choices[0]) {
         const content = data.choices[0].message.content;
-        appendAssistantMsg(content);
+        await appendAssistantMsg(content, true);
         history.push({ role: 'assistant', content });
         if (data._meta) {
           remaining = data._meta.remaining;
@@ -628,11 +754,20 @@
       }
     } catch (err) {
       typingRow.remove();
-      appendError(err.message);
+      if (err.name !== 'AbortError') appendError(err.message);
     } finally {
       setLoading(false);
+      abortCtrl = null;
+      isTyping = false;
+      document.getElementById('send-btn').style.display = 'block';
+      document.getElementById('stop-btn').style.display = 'none';
       if (remaining > 0) input.focus();
     }
+  }
+
+  function stopGeneration() {
+    if (abortCtrl) abortCtrl.abort();
+    isTyping = false;
   }
 
   function setLoading(val) {
@@ -657,18 +792,12 @@
   function escHtml(t) {
     return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
-  function formatResponse(text) {
-    let t = escHtml(text);
-    t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
-    t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    t = t.replace(/\n/g, '<br>');
-    return t;
-  }
 
   // ── EVENT LISTENERS (no inline onclicks) ──────────────
   document.getElementById('key-submit').addEventListener('click', submitKey);
   document.getElementById('key-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitKey(); });
   document.getElementById('send-btn').addEventListener('click', sendMessage);
+  document.getElementById('stop-btn').addEventListener('click', stopGeneration);
   document.getElementById('btn-clear').addEventListener('click', clearChat);
   document.getElementById('btn-signout').addEventListener('click', signOut);
 
