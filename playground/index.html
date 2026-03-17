@@ -462,7 +462,7 @@
     <button class="key-submit" onclick="submitKey()">Enter playground</button>
 
     <p class="key-footer-note">
-      Don't have a key? <a href="mailto:hello@oops.wtf">Request early access</a> or <a href="/">join the waitlist</a>.
+      Don't have a key? <a href="https://discord.gg/JCbZVAJehE" target="_blank">Request access on Discord</a>.
     </p>
   </div>
 </div>
@@ -494,7 +494,7 @@
 
   <div class="limit-banner" id="limit-banner">
     <span>// Message limit reached for this key.</span>
-    <a href="mailto:hello@oops.wtf">Request more access →</a>
+    <a href="https://discord.gg/YOUR_INVITE" target="_blank">Request more access on Discord →</a>
   </div>
 
   <div class="input-area">
@@ -823,11 +823,4 @@
   const msgInput = document.getElementById('msg-input');
   msgInput.addEventListener('input', () => {
     msgInput.style.height = 'auto';
-    msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px';
-  });
-  msgInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  });
-</script>
-</body>
-</html>
+    msgInput.style.height = Math.min(msgInput.scrollHeig
