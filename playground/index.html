@@ -34,13 +34,10 @@
       overflow: hidden;
     }
 
-    /* ─── SCREENS ─── */
     .screen { display: none; flex-direction: column; height: 100%; }
     .screen.active { display: flex; }
 
-    /* ════════════════════════════════
-       KEY GATE SCREEN
-    ════════════════════════════════ */
+    /* ── KEY SCREEN ── */
     #screen-key {
       align-items: center;
       justify-content: center;
@@ -59,7 +56,6 @@
       opacity: 0.3;
       pointer-events: none;
     }
-
     .key-box {
       width: 100%;
       max-width: 400px;
@@ -70,17 +66,9 @@
       font-size: 12px;
       color: var(--muted2);
       margin-bottom: 48px;
-      letter-spacing: -0.01em;
     }
     .key-logo strong { color: var(--text); font-weight: 500; }
-
-    .key-title {
-      font-size: 20px;
-      font-weight: 400;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
-      line-height: 1.2;
-    }
+    .key-title { font-size: 20px; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 8px; }
     .key-sub {
       font-family: var(--sans);
       font-size: 13px;
@@ -89,12 +77,7 @@
       line-height: 1.6;
       margin-bottom: 36px;
     }
-
-    .key-field-wrap {
-      display: flex;
-      gap: 0;
-      margin-bottom: 10px;
-    }
+    .key-field-wrap { display: flex; margin-bottom: 10px; }
     .key-prefix {
       font-size: 11px;
       color: var(--muted2);
@@ -122,7 +105,6 @@
     #key-input::placeholder { color: var(--muted); letter-spacing: 0.06em; }
     #key-input:focus { border-color: var(--muted2); }
     #key-input.error { border-color: var(--red); }
-
     .key-error {
       font-size: 11px;
       color: var(--red);
@@ -134,8 +116,7 @@
       gap: 6px;
     }
     .key-error::before { content: '//'; color: var(--muted); }
-
-    .key-submit {
+    #key-submit {
       width: 100%;
       font-family: var(--mono);
       font-size: 12px;
@@ -149,8 +130,8 @@
       cursor: pointer;
       transition: opacity 0.15s;
     }
-    .key-submit:hover { opacity: 0.8; }
-
+    #key-submit:hover { opacity: 0.8; }
+    #key-submit:disabled { opacity: 0.5; cursor: default; }
     .key-footer-note {
       font-family: var(--sans);
       font-size: 11px;
@@ -158,19 +139,12 @@
       margin-top: 24px;
       line-height: 1.6;
     }
-    .key-footer-note a {
-      color: var(--muted2);
-      text-decoration: none;
-      border-bottom: 1px solid var(--border2);
-    }
+    .key-footer-note a { color: var(--muted2); text-decoration: none; border-bottom: 1px solid var(--border2); }
     .key-footer-note a:hover { color: var(--text); }
 
-    /* ════════════════════════════════
-       CHAT SCREEN
-    ════════════════════════════════ */
+    /* ── CHAT SCREEN ── */
     #screen-chat { overflow: hidden; }
 
-    /* Header */
     .chat-header {
       height: 52px;
       border-bottom: 1px solid var(--border);
@@ -181,53 +155,20 @@
       flex-shrink: 0;
       background: var(--bg);
     }
-    .chat-header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .chat-logo {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text);
-      text-decoration: none;
-    }
+    .chat-header-left { display: flex; align-items: center; gap: 16px; }
+    .chat-logo { font-size: 12px; font-weight: 500; color: var(--text); text-decoration: none; }
     .chat-logo span { color: var(--muted2); }
     .header-sep { width: 1px; height: 14px; background: var(--border2); }
     .chat-label { font-size: 11px; color: var(--muted2); letter-spacing: 0.04em; }
+    .chat-header-right { display: flex; align-items: center; gap: 14px; }
 
-    .chat-header-right {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    /* Message counter */
-    .msg-counter {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      letter-spacing: 0.04em;
-    }
-    .counter-track {
-      display: flex;
-      gap: 2px;
-    }
-    .counter-pip {
-      width: 6px;
-      height: 6px;
-      background: var(--border2);
-      transition: background 0.2s;
-    }
+    .msg-counter { display: flex; align-items: center; gap: 8px; }
+    .counter-track { display: flex; gap: 2px; }
+    .counter-pip { width: 6px; height: 6px; background: var(--border2); transition: background 0.2s; }
     .counter-pip.used { background: var(--muted2); }
     .counter-pip.used.low { background: var(--amber); }
     .counter-pip.used.critical { background: var(--red); }
-    .counter-text {
-      font-size: 10px;
-      color: var(--muted2);
-      letter-spacing: 0.06em;
-    }
+    .counter-text { font-size: 10px; color: var(--muted2); letter-spacing: 0.06em; }
     .counter-text.low { color: var(--amber); }
     .counter-text.critical { color: var(--red); }
 
@@ -245,26 +186,19 @@
     }
     .header-btn:hover { color: var(--text); border-color: var(--muted); }
 
-    /* Messages */
     #messages {
       flex: 1;
       overflow-y: auto;
       padding: 28px 0;
       display: flex;
       flex-direction: column;
-      gap: 0;
       scrollbar-width: thin;
       scrollbar-color: var(--border2) transparent;
     }
     #messages::-webkit-scrollbar { width: 4px; }
-    #messages::-webkit-scrollbar-track { background: transparent; }
     #messages::-webkit-scrollbar-thumb { background: var(--border2); }
 
-    .msg-row {
-      display: flex;
-      padding: 0 max(20px, calc(50% - 400px));
-      margin-bottom: 2px;
-    }
+    .msg-row { display: flex; padding: 0 max(20px, calc(50% - 400px)); margin-bottom: 2px; }
     .msg-row.user { justify-content: flex-end; }
     .msg-row.assistant { justify-content: flex-start; }
 
@@ -280,27 +214,14 @@
       background: var(--surface2);
       border: 1px solid var(--border2);
       color: var(--text);
-      border-radius: 0;
     }
     .msg-row.assistant .bubble {
       background: transparent;
       color: var(--text);
       padding-left: 0;
     }
-    .msg-row.assistant .bubble::before {
-      content: '> ';
-      color: var(--muted2);
-      font-family: var(--mono);
-      font-size: 12px;
-    }
-
-    .bubble code {
-      font-family: var(--mono);
-      font-size: 12px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      padding: 1px 5px;
-    }
+    .msg-row.assistant .bubble::before { content: '> '; color: var(--muted2); font-family: var(--mono); font-size: 12px; }
+    .bubble code { font-family: var(--mono); font-size: 12px; background: var(--surface2); border: 1px solid var(--border); padding: 1px 5px; }
 
     .empty-state {
       flex: 1;
@@ -312,44 +233,19 @@
       padding: 40px;
       pointer-events: none;
     }
-    .empty-title {
-      font-size: 12px;
-      color: var(--muted2);
-      letter-spacing: 0.06em;
-    }
-    .empty-hint {
-      font-family: var(--sans);
-      font-size: 12px;
-      font-weight: 300;
-      color: var(--muted);
-      text-align: center;
-      max-width: 240px;
-      line-height: 1.6;
-    }
+    .empty-title { font-size: 12px; color: var(--muted2); letter-spacing: 0.06em; }
+    .empty-hint { font-family: var(--sans); font-size: 12px; font-weight: 300; color: var(--muted); text-align: center; max-width: 240px; line-height: 1.6; }
 
-    /* Typing */
-    .typing-bubble {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 14px 0;
-    }
-    .typing-bubble::before {
-      content: '> ';
-      color: var(--muted2);
-      font-size: 12px;
-    }
-    .t-dot {
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: var(--muted2);
-      animation: td 1.2s infinite ease-in-out;
-    }
+    .typing-bubble { display: flex; align-items: center; gap: 5px; padding: 14px 0; }
+    .typing-bubble::before { content: '> '; color: var(--muted2); font-size: 12px; }
+    .t-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--muted2); animation: td 1.2s infinite ease-in-out; }
     .t-dot:nth-child(2) { animation-delay: 0.2s; }
     .t-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes td { 0%,80%,100%{opacity:0.3} 40%{opacity:1} }
 
-    /* Limit reached */
+    .err-bubble { font-family: var(--mono); font-size: 11px; color: var(--red); padding: 8px 0; }
+    .err-bubble::before { content: '! '; }
+
     .limit-banner {
       display: none;
       align-items: center;
@@ -363,18 +259,7 @@
     }
     .limit-banner.visible { display: flex; }
     .limit-banner a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border2); }
-    .limit-banner a:hover { color: var(--text); }
 
-    /* Error */
-    .err-bubble {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--red);
-      padding: 8px 0;
-    }
-    .err-bubble::before { content: '! '; }
-
-    /* Input */
     .input-area {
       border-top: 1px solid var(--border);
       padding: 14px max(20px, calc(50% - 400px));
@@ -386,7 +271,6 @@
     }
     .input-row {
       display: flex;
-      gap: 0;
       border: 1px solid var(--border2);
       background: var(--surface);
       transition: border-color 0.15s;
@@ -429,16 +313,12 @@
     #send-btn:hover:not(:disabled) { opacity: 0.75; }
     #send-btn:disabled { opacity: 0.3; cursor: default; }
 
-    .input-hint {
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-      display: flex;
-      gap: 16px;
-    }
+    .input-hint { font-size: 10px; color: var(--muted); letter-spacing: 0.05em; display: flex; gap: 16px; }
+
+    .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2.5s infinite; display: inline-block; margin-right: 6px; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
     @media (max-width: 600px) {
-      .counter-track { display: none; }
       .msg-row { padding: 0 16px; }
       .bubble { max-width: 90%; }
       .input-area { padding: 12px 16px; }
@@ -447,27 +327,25 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════ KEY SCREEN ═══════════════════════════ -->
+<!-- KEY SCREEN -->
 <div class="screen active" id="screen-key">
   <div class="key-box">
     <div class="key-logo"><strong>api.oops.wtf</strong> / playground</div>
     <div class="key-title">Enter your access key</div>
-    <p class="key-sub">The playground is invite-only while we're in early access. Paste your key below to get started.</p>
-
+    <p class="key-sub">The playground is invite-only during early access. Paste your key below to continue.</p>
     <div class="key-field-wrap">
       <div class="key-prefix">oops_</div>
-      <input id="key-input" type="text" placeholder="xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false" />
+      <input id="key-input" type="text" placeholder="xxxx-xxxx-xxxx-xxxx-xxxx-xxxx" autocomplete="off" spellcheck="false" />
     </div>
     <div class="key-error" id="key-error">&nbsp;</div>
-    <button class="key-submit" onclick="submitKey()">Enter playground</button>
-
+    <button id="key-submit">Enter playground</button>
     <p class="key-footer-note">
       Don't have a key? <a href="https://discord.gg/JCbZVAJehE" target="_blank">Request access on Discord</a>.
     </p>
   </div>
 </div>
 
-<!-- ═══════════════════════════ CHAT SCREEN ═══════════════════════════ -->
+<!-- CHAT SCREEN -->
 <div class="screen" id="screen-chat">
   <div class="chat-header">
     <div class="chat-header-left">
@@ -478,17 +356,17 @@
     <div class="chat-header-right">
       <div class="msg-counter">
         <div class="counter-track" id="counter-track"></div>
-        <span class="counter-text" id="counter-text">25 left</span>
+        <span class="counter-text" id="counter-text"></span>
       </div>
-      <button class="header-btn" onclick="clearChat()">Clear</button>
-      <button class="header-btn" onclick="signOut()">Sign out</button>
+      <button class="header-btn" id="btn-clear">Clear</button>
+      <button class="header-btn" id="btn-signout">Sign out</button>
     </div>
   </div>
 
   <div id="messages">
     <div class="empty-state" id="empty-state">
       <div class="empty-title">// ready</div>
-      <div class="empty-hint">Send a message to start. Your session has 25 messages.</div>
+      <div class="empty-hint">Send a message to start.</div>
     </div>
   </div>
 
@@ -500,7 +378,7 @@
   <div class="input-area">
     <div class="input-row" id="input-row">
       <textarea id="msg-input" placeholder="Send a message…" rows="1"></textarea>
-      <button id="send-btn" onclick="sendMessage()">Send</button>
+      <button id="send-btn">Send</button>
     </div>
     <div class="input-hint">
       <span>↵ send</span>
@@ -510,35 +388,30 @@
 </div>
 
 <script>
-  // ─── CONFIG ───────────────────────────────────────────
   const WORKER_URL     = "https://oops-proxy.deandre6156.workers.dev";
   const STORAGE_PREFIX = "oops_pg_";
 
-  // ─── STATE ────────────────────────────────────────────
-  // No keys or limits stored here — all validation happens in the Worker.
-  let activeKey  = null;
-  let remaining  = null; // comes back from Worker in _meta.remaining
-  let limit      = null;
-  let history    = [];
-  let isLoading  = false;
+  let activeKey = null;
+  let remaining = null;
+  let limit     = null;
+  let history   = [];
+  let isLoading = false;
 
-  // ─── INIT ─────────────────────────────────────────────
-  (function init() {
-    const saved = sessionStorage.getItem(STORAGE_PREFIX + "key");
-    if (saved) {
-      activeKey = saved;
-      remaining = parseInt(sessionStorage.getItem(STORAGE_PREFIX + "remaining") ?? "-1", 10);
-      limit     = parseInt(sessionStorage.getItem(STORAGE_PREFIX + "limit")     ?? "-1", 10);
-      showChat();
-    }
-  })();
+  // ── INIT ──────────────────────────────────────────────
+  const saved = sessionStorage.getItem(STORAGE_PREFIX + "key");
+  if (saved) {
+    activeKey = saved;
+    remaining = parseInt(sessionStorage.getItem(STORAGE_PREFIX + "remaining") ?? "-1", 10);
+    limit     = parseInt(sessionStorage.getItem(STORAGE_PREFIX + "limit")     ?? "-1", 10);
+    showChat();
+  }
 
-  // ─── KEY SUBMISSION — validated by the Worker ─────────
+  // ── KEY SUBMISSION ────────────────────────────────────
   async function submitKey() {
-    const input  = document.getElementById('key-input');
-    const errEl  = document.getElementById('key-error');
-    const btn    = document.querySelector('.key-submit');
-    const raw    = input.value.trim();
+    const input = document.getElementById('key-input');
+    const errEl = document.getElementById('key-error');
+    const btn   = document.getElementById('key-submit');
+    const raw   = input.value.trim();
 
     input.classList.remove('error');
     errEl.innerHTML = '&nbsp;';
@@ -549,7 +422,6 @@
       return;
     }
 
-    // Validate by sending a dry-run to the Worker
     btn.textContent = 'Checking…';
     btn.disabled = true;
 
@@ -574,28 +446,19 @@
         return;
       }
       if (res.status === 429) {
-        // Key is valid but already exhausted — let them in, show limit state
         activeKey = raw;
         remaining = 0;
-        limit     = 25;
-        sessionStorage.setItem(STORAGE_PREFIX + "key",       activeKey);
-        sessionStorage.setItem(STORAGE_PREFIX + "remaining", remaining);
-        sessionStorage.setItem(STORAGE_PREFIX + "limit",     limit);
+        limit     = data._meta?.limit ?? 25;
+        saveSession();
         showChat();
         showLimitBanner();
         return;
       }
 
-      // Success — extract meta from response
       activeKey = raw;
       remaining = data._meta?.remaining ?? null;
       limit     = data._meta?.limit     ?? null;
-      sessionStorage.setItem(STORAGE_PREFIX + "key",       activeKey);
-      sessionStorage.setItem(STORAGE_PREFIX + "remaining", remaining ?? "");
-      sessionStorage.setItem(STORAGE_PREFIX + "limit",     limit     ?? "");
-
-      // Pre-populate history with the ping exchange so we don't waste a message
-      // (we discard the __ping__ — it was just to verify the key)
+      saveSession();
       showChat();
 
     } catch (err) {
@@ -606,11 +469,13 @@
     }
   }
 
-  document.getElementById('key-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') submitKey();
-  });
+  function saveSession() {
+    sessionStorage.setItem(STORAGE_PREFIX + "key",       activeKey);
+    sessionStorage.setItem(STORAGE_PREFIX + "remaining", remaining ?? "");
+    sessionStorage.setItem(STORAGE_PREFIX + "limit",     limit     ?? "");
+  }
 
-  // ─── SCREEN SWITCH ────────────────────────────────────
+  // ── SCREEN SWITCH ─────────────────────────────────────
   function showChat() {
     document.getElementById('screen-key').classList.remove('active');
     document.getElementById('screen-chat').classList.add('active');
@@ -630,21 +495,16 @@
     document.getElementById('key-error').innerHTML = '&nbsp;';
   }
 
-  // ─── COUNTER — driven by server _meta ─────────────────
+  // ── COUNTER ───────────────────────────────────────────
   function updateCounter() {
     const track = document.getElementById('counter-track');
     const text  = document.getElementById('counter-text');
+    if (remaining === null || limit === null || limit <= 0) { text.textContent = ''; track.innerHTML = ''; return; }
 
-    if (remaining === null || limit === null || limit <= 0) {
-      text.textContent = '';
-      track.innerHTML  = '';
-      return;
-    }
-
-    const used   = limit - remaining;
-    const PIPS   = 10;
+    const used     = limit - remaining;
+    const PIPS     = 10;
+    const usedPips = Math.round((used / limit) * PIPS);
     track.innerHTML = '';
-    const usedPips  = Math.round((used / limit) * PIPS);
 
     for (let i = 0; i < PIPS; i++) {
       const pip = document.createElement('div');
@@ -670,7 +530,7 @@
     document.getElementById('msg-input').disabled = true;
   }
 
-  // ─── MESSAGING ────────────────────────────────────────
+  // ── MESSAGING ─────────────────────────────────────────
   const messagesEl = document.getElementById('messages');
 
   function removeEmpty() {
@@ -680,7 +540,7 @@
 
   function appendUserMsg(text) {
     removeEmpty();
-    const row = document.createElement('div');
+    const row    = document.createElement('div');
     row.className = 'msg-row user';
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
@@ -691,7 +551,7 @@
   }
 
   function appendAssistantMsg(text) {
-    const row = document.createElement('div');
+    const row    = document.createElement('div');
     row.className = 'msg-row assistant';
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
@@ -704,7 +564,7 @@
   function appendError(msg) {
     const row = document.createElement('div');
     row.className = 'msg-row assistant';
-    const el = document.createElement('div');
+    const el  = document.createElement('div');
     el.className = 'err-bubble';
     el.textContent = msg;
     row.appendChild(el);
@@ -713,7 +573,7 @@
   }
 
   function appendTyping() {
-    const row = document.createElement('div');
+    const row  = document.createElement('div');
     row.className = 'msg-row assistant';
     const wrap = document.createElement('div');
     wrap.className = 'typing-bubble';
@@ -733,7 +593,6 @@
 
     input.value = '';
     input.style.height = 'auto';
-
     appendUserMsg(text);
     history.push({ role: 'user', content: text });
 
@@ -741,40 +600,26 @@
     setLoading(true);
 
     try {
-      const res = await fetch(WORKER_URL, {
+      const res  = await fetch(WORKER_URL, {
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
-        // Key travels with every request — never stored in JS variables the page exposes
         body: JSON.stringify({ key: activeKey, messages: history })
       });
-
       typingRow.remove();
       const data = await res.json();
 
-      if (res.status === 429) {
-        remaining = 0;
-        updateCounter();
-        showLimitBanner();
-        return;
-      }
-
-      if (res.status === 401 || res.status === 403) {
-        appendError(data.message || 'Access denied.');
-        return;
-      }
+      if (res.status === 429) { remaining = 0; updateCounter(); showLimitBanner(); return; }
+      if (res.status === 401 || res.status === 403) { appendError(data.message || 'Access denied.'); return; }
 
       if (data.choices && data.choices[0]) {
         const content = data.choices[0].message.content;
         appendAssistantMsg(content);
         history.push({ role: 'assistant', content });
-
-        // Update counter from authoritative server value
         if (data._meta) {
           remaining = data._meta.remaining;
           limit     = data._meta.limit;
-          sessionStorage.setItem(STORAGE_PREFIX + "remaining", remaining);
-          sessionStorage.setItem(STORAGE_PREFIX + "limit",     limit);
+          saveSession();
           updateCounter();
           if (remaining <= 0) showLimitBanner();
         }
@@ -808,7 +653,7 @@
     document.getElementById('msg-input').focus();
   }
 
-  // ─── HELPERS ──────────────────────────────────────────
+  // ── HELPERS ───────────────────────────────────────────
   function escHtml(t) {
     return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
@@ -820,7 +665,21 @@
     return t;
   }
 
+  // ── EVENT LISTENERS (no inline onclicks) ──────────────
+  document.getElementById('key-submit').addEventListener('click', submitKey);
+  document.getElementById('key-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitKey(); });
+  document.getElementById('send-btn').addEventListener('click', sendMessage);
+  document.getElementById('btn-clear').addEventListener('click', clearChat);
+  document.getElementById('btn-signout').addEventListener('click', signOut);
+
   const msgInput = document.getElementById('msg-input');
   msgInput.addEventListener('input', () => {
     msgInput.style.height = 'auto';
-    msgInput.style.height = Math.min(msgInput.scrollHeig
+    msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px';
+  });
+  msgInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+</script>
+</body>
+</html>
