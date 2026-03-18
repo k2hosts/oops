@@ -66,6 +66,14 @@
     <li><strong>Errors:</strong> If the API crashes, we may log the error code and stack trace to fix the bug, but we scrub user content from these logs where possible.</li>
   </ul>
 
+  <h2>3.1 Identity & Key Management</h2>
+  <p>To prevent service abuse and ensure fair usage, we utilize a tiered identity model:</p>
+  <ul>
+    <li><strong>Identity Provider:</strong> We use Discord as our primary identity gate. When you request a key, our system logs your Discord Username and User ID to issue and manage your unique API Key.</li>
+    <li><strong>Separation of Concerns:</strong> Your Discord identity is stored separately from our inference engine. While our "Keylog" tracks usage metrics (tokens used, timestamps, and rate limits) linked to your Discord username, it does not record the content of your prompts or AI responses.</li>
+    <li><strong>Non-Linkability:</strong> Once a request enters our "Pipe" via the Playground or API, the inference process only recognizes your API Key. Your specific conversation data is never attached to your Discord profile in our permanent records.</li>
+  </ul>
+
   <h2>4. Third-Party Processors</h2>
   <p>Our infrastructure runs on Cloudflare Workers. Inference may be routed through upstream providers for execution. We ensure these providers are configured to not retain data for training purposes where applicable.</p>
 
