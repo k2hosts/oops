@@ -56,7 +56,7 @@
         linear-gradient(var(--border) 1px, transparent 1px),
         linear-gradient(90deg, var(--border) 1px, transparent 1px);
       background-size: 48px 48px;
-      opacity: 0.3;
+      opacity: 0.25;
       pointer-events: none;
     }
     .back-link {
@@ -67,29 +67,50 @@
       text-decoration: none;
       z-index: 10;
       transition: color 0.15s;
+      letter-spacing: 0.04em;
     }
     .back-link:hover { color: var(--text); }
+
     .key-box {
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       position: relative;
       z-index: 1;
     }
+
     .key-logo {
       font-size: 12px;
       color: var(--muted2);
       margin-bottom: 48px;
+      letter-spacing: -0.01em;
     }
     .key-logo strong { color: var(--text); font-weight: 500; }
-    .key-title { font-size: 20px; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .key-logo .sep { color: var(--muted); margin: 0 4px; }
+
+    .key-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .key-title {
+      font-size: 22px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
     .key-sub {
       font-family: var(--sans);
       font-size: 13px;
       font-weight: 300;
       color: var(--muted2);
-      line-height: 1.6;
+      line-height: 1.65;
       margin-bottom: 36px;
     }
+
     .key-field-wrap { display: flex; margin-bottom: 10px; }
     .key-prefix {
       font-size: 11px;
@@ -118,6 +139,7 @@
     #key-input::placeholder { color: var(--muted); letter-spacing: 0.06em; }
     #key-input:focus { border-color: var(--muted2); }
     #key-input.error { border-color: var(--red); }
+
     .key-error {
       font-size: 11px;
       color: var(--red);
@@ -129,6 +151,7 @@
       gap: 6px;
     }
     .key-error::before { content: '//'; color: var(--muted); }
+
     #key-submit {
       width: 100%;
       font-family: var(--mono);
@@ -143,17 +166,40 @@
       cursor: pointer;
       transition: opacity 0.15s;
     }
-    #key-submit:hover { opacity: 0.8; }
-    #key-submit:disabled { opacity: 0.5; cursor: default; }
+    #key-submit:hover { opacity: 0.82; }
+    #key-submit:disabled { opacity: 0.45; cursor: default; }
+
     .key-footer-note {
       font-family: var(--sans);
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       margin-top: 24px;
-      line-height: 1.6;
+      line-height: 1.65;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
     }
-    .key-footer-note a { color: var(--muted2); text-decoration: none; border-bottom: 1px solid var(--border2); }
+    .key-footer-note a {
+      color: var(--muted2);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border2);
+      transition: color 0.15s;
+    }
     .key-footer-note a:hover { color: var(--text); }
+
+    .key-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .key-badge {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      border: 1px solid var(--border2);
+      padding: 4px 10px;
+    }
 
     /* ── CHAT SCREEN ── */
     #screen-chat { overflow: hidden; }
@@ -166,14 +212,20 @@
       justify-content: space-between;
       padding: 0 20px;
       flex-shrink: 0;
-      background: var(--bg);
+      background: rgba(12,12,12,0.92);
+      backdrop-filter: blur(8px);
     }
-    .chat-header-left { display: flex; align-items: center; gap: 16px; }
+    .chat-header-left { display: flex; align-items: center; gap: 14px; }
     .chat-logo { font-size: 12px; font-weight: 500; color: var(--text); text-decoration: none; }
     .chat-logo span { color: var(--muted2); }
     .header-sep { width: 1px; height: 14px; background: var(--border2); }
-    .chat-label { font-size: 11px; color: var(--muted2); letter-spacing: 0.04em; }
-    .chat-header-right { display: flex; align-items: center; gap: 14px; }
+    .chat-label {
+      font-size: 10px;
+      color: var(--muted2);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .chat-header-right { display: flex; align-items: center; gap: 12px; }
 
     .msg-counter { display: flex; align-items: center; gap: 8px; }
     .counter-track { display: flex; gap: 2px; }
@@ -234,18 +286,17 @@
       color: var(--text);
       padding-left: 0;
     }
-    
+
     /* Markdown & Code Styles */
     .bubble p { margin-bottom: 0.8em; }
     .bubble p:last-child { margin-bottom: 0; }
     .bubble ul, .bubble ol { margin: 0.5em 0 0.5em 1.5em; }
     .bubble li { margin-bottom: 0.3em; }
-
     .bubble pre {
       position: relative;
-      background: #161616 !important; /* Force dark background to match theme */
+      background: #161616 !important;
       border: 1px solid var(--border2);
-      border-radius: 6px;
+      border-radius: 0;
       margin: 10px 0;
       overflow: hidden;
     }
@@ -263,19 +314,16 @@
       background: var(--surface2);
       border: 1px solid var(--border2);
       padding: 2px 5px;
-      border-radius: 4px;
     }
     .copy-btn {
       position: absolute;
-      top: 6px;
-      right: 6px;
+      top: 6px; right: 6px;
       font-family: var(--sans);
       font-size: 10px;
       color: var(--muted2);
       background: var(--bg);
       border: 1px solid var(--border2);
       padding: 4px 8px;
-      border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s;
       opacity: 0.8;
@@ -288,12 +336,39 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       padding: 40px;
       pointer-events: none;
     }
-    .empty-title { font-size: 12px; color: var(--muted2); letter-spacing: 0.06em; }
-    .empty-hint { font-family: var(--sans); font-size: 12px; font-weight: 300; color: var(--muted); text-align: center; max-width: 240px; line-height: 1.6; }
+    .empty-title {
+      font-size: 12px;
+      color: var(--muted2);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .empty-hint {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--muted);
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.65;
+    }
+    .empty-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .empty-tag {
+      font-size: 10px;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      padding: 4px 10px;
+      letter-spacing: 0.06em;
+    }
 
     .typing-bubble { display: flex; align-items: center; gap: 5px; padding: 14px 0; }
     .typing-bubble::before { content: '> '; color: var(--muted2); font-size: 12px; }
@@ -308,7 +383,7 @@
     .limit-banner {
       display: none;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       padding: 12px 20px;
       background: var(--surface);
       border-top: 1px solid var(--border);
@@ -335,7 +410,7 @@
       transition: border-color 0.15s;
     }
     .input-row:focus-within { border-color: var(--muted); }
-    .input-row.disabled { opacity: 0.4; pointer-events: none; }
+    .input-row.disabled { opacity: 0.35; pointer-events: none; }
 
     #attach-btn {
       background: transparent;
@@ -347,13 +422,14 @@
       display: flex; align-items: center; justify-content: center;
       transition: color 0.15s;
       border-right: 1px solid var(--border2);
+      font-family: var(--mono);
     }
     #attach-btn:hover { color: var(--text); }
-    
+
     #file-preview { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 max(20px, calc(50% - 400px)) 8px; }
     .file-tag {
       font-family: var(--sans); font-size: 11px; background: var(--surface2); border: 1px solid var(--border2);
-      color: var(--text); padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px;
+      color: var(--text); padding: 4px 10px; display: flex; align-items: center; gap: 6px;
     }
     .file-tag-remove { cursor: pointer; color: var(--muted); font-weight: bold; }
     .file-tag-remove:hover { color: var(--red); }
@@ -412,7 +488,15 @@
 
     .input-hint { font-size: 10px; color: var(--muted); letter-spacing: 0.05em; display: flex; gap: 16px; }
 
-    .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2.5s infinite; display: inline-block; margin-right: 6px; }
+    .live-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse 2.5s infinite;
+      display: inline-block;
+      margin-right: 6px;
+    }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
     @media (max-width: 600px) {
@@ -426,19 +510,25 @@
 
 <!-- KEY SCREEN -->
 <div class="screen active" id="screen-key">
-  <a href="/" class="back-link">← Back to Home</a>
+  <a href="/" class="back-link">← Home</a>
   <div class="key-box">
-    <div class="key-logo"><strong>api.oops.wtf</strong> / playground</div>
+    <div class="key-logo"><strong>api.oops.wtf</strong><span class="sep">/</span>playground</div>
+    <div class="key-eyebrow">// Access required</div>
     <div class="key-title">Enter your access key</div>
-    <p class="key-sub">The playground is invite-only during early access. Paste your key below to continue.</p>
+    <p class="key-sub">The playground is invite-only. Paste your access key to connect directly to the model — no system prompts, no filtering.</p>
     <div class="key-field-wrap">
       <div class="key-prefix">oops_</div>
       <input id="key-input" type="text" placeholder="xxxx-xxxx-xxxx-xxxx-xxxx-xxxx" autocomplete="off" spellcheck="false" />
     </div>
     <div class="key-error" id="key-error">&nbsp;</div>
-    <button id="key-submit">Enter playground</button>
+    <button id="key-submit">Enter playground →</button>
+    <div class="key-badges">
+      <span class="key-badge">Zero retention</span>
+      <span class="key-badge">Pass-through routing</span>
+      <span class="key-badge">Sub-second TTFT</span>
+    </div>
     <p class="key-footer-note">
-      Don't have a key? <a href="https://discord.gg/JCbZVAJehE" target="_blank">Request access on Discord</a>.
+      No key yet? <a href="https://discord.gg/JCbZVAJehE" target="_blank">Request access on Discord →</a>
     </p>
   </div>
 </div>
@@ -464,14 +554,18 @@
 
   <div id="messages">
     <div class="empty-state" id="empty-state">
-      <div class="empty-title">// ready</div>
-      <div class="empty-hint">Send a message to start.</div>
+      <div class="empty-title">// Ready</div>
+      <div class="empty-hint">Connected. No system prompt. No output filter. The model answers you directly.</div>
+      <div class="empty-tags">
+        <span class="empty-tag">Attach docs with +</span>
+        <span class="empty-tag">⇧↵ for newline</span>
+      </div>
     </div>
   </div>
 
   <div class="limit-banner" id="limit-banner">
-    <span>// Message limit reached for this key.</span>
-    <a href="https://discord.gg/YOUR_INVITE" target="_blank">Request more access on Discord →</a>
+    <span>// Token limit reached for this key.</span>
+    <a href="https://discord.gg/JCbZVAJehE" target="_blank">Request a top-up on Discord →</a>
   </div>
 
   <div class="input-area">
@@ -516,7 +610,6 @@
   (async () => {
     const savedKey = sessionStorage.getItem(STORAGE_PREFIX + "key");
     if (savedKey) {
-      // A key is saved, let's validate it with the server to get fresh data.
       try {
         const res = await fetch(WORKER_URL, {
           method: 'POST',
@@ -527,7 +620,6 @@
         const data = await res.json();
 
         if (res.status === 401 || res.status === 403) {
-          // Key is no longer valid, clear session and stay on login screen.
           signOut();
           document.getElementById('key-error').textContent = data.message || 'Your saved key is no longer valid.';
           return;
@@ -536,7 +628,7 @@
         activeKey = savedKey;
         remaining = data._meta?.remaining ?? null;
         limit     = data._meta?.limit     ?? null;
-        
+
         if (res.status === 429) { remaining = 0; }
 
         saveSession();
@@ -547,6 +639,7 @@
       }
     }
   })();
+
   // ── KEY SUBMISSION ────────────────────────────────────
   async function submitKey() {
     const input = document.getElementById('key-input');
@@ -605,7 +698,7 @@
     } catch (err) {
       errEl.textContent = 'Could not reach server. Try again.';
     } finally {
-      btn.textContent = 'Enter playground';
+      btn.textContent = 'Enter playground →';
       btn.disabled = false;
     }
   }
@@ -691,7 +784,6 @@
     scrollBottom(true);
   }
 
-  // Helper to add copy buttons to code blocks
   function addCopyButtons(element) {
     element.querySelectorAll('pre').forEach(pre => {
       const btn = document.createElement('button');
@@ -715,25 +807,22 @@
     bubble.className = 'bubble';
     row.appendChild(bubble);
     messagesEl.appendChild(row);
-    
+
     if (animate) {
       let i = 0;
-      // Dynamic speed: faster for longer messages (1 extra char per frame per ~80 chars of total length)
       const stepBase = Math.max(1, Math.floor(text.length / 80));
 
       while (i < text.length) {
         if (!isTyping) break;
         i += stepBase + Math.floor(Math.random() * 3);
         if (i > text.length) i = text.length;
-        
-        // Render text + a cursor character
+
         bubble.innerHTML = marked.parse(text.slice(0, i) + ' ▍');
         scrollBottom();
-        await new Promise(r => setTimeout(r, 15)); // Typing delay (ms)
+        await new Promise(r => setTimeout(r, 15));
       }
     }
 
-    // Final render (removes cursor, fixes any Markdown artifacts)
     bubble.innerHTML = marked.parse(text);
     addCopyButtons(bubble);
     scrollBottom();
@@ -781,10 +870,10 @@
 
     const typingRow = appendTyping();
     setLoading(true);
-    
+
     abortCtrl = new AbortController();
     isTyping  = true;
-    
+
     document.getElementById('send-btn').style.display = 'none';
     document.getElementById('stop-btn').style.display = 'block';
 
@@ -817,7 +906,6 @@
           if (remaining <= 0) showLimitBanner();
         }
       } else {
-        // Handle both object-based errors (OpenAI style) and string errors
         const errMsg = data.error?.message || (typeof data.error === 'string' ? data.error : 'Unexpected response.');
         appendError(errMsg);
       }
@@ -851,7 +939,7 @@
     const empty = document.createElement('div');
     empty.className = 'empty-state';
     empty.id = 'empty-state';
-    empty.innerHTML = `<div class="empty-title">// cleared</div>
+    empty.innerHTML = `<div class="empty-title">// Cleared</div>
       <div class="empty-hint">${remaining !== null ? remaining.toLocaleString() + ' tokens remaining.' : 'Session active.'}</div>`;
     messagesEl.appendChild(empty);
     document.getElementById('msg-input').focus();
@@ -859,7 +947,7 @@
 
   // ── ATTACHMENTS ───────────────────────────────────────
   const fileInput = document.getElementById('file-input');
-  
+
   document.getElementById('attach-btn').addEventListener('click', () => fileInput.click());
 
   fileInput.addEventListener('change', async (e) => {
@@ -877,7 +965,7 @@
       }
     }
     renderAttachments();
-    fileInput.value = ''; // Reset so same file can be selected again if needed
+    fileInput.value = '';
   });
 
   function renderAttachments() {
@@ -900,7 +988,7 @@
     return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  // ── EVENT LISTENERS (no inline onclicks) ──────────────
+  // ── EVENT LISTENERS ───────────────────────────────────
   document.getElementById('key-submit').addEventListener('click', submitKey);
   document.getElementById('key-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitKey(); });
   document.getElementById('send-btn').addEventListener('click', sendMessage);
@@ -919,16 +1007,15 @@
 </script>
 
 <!-- Maintenance Overlay -->
-<div id="maintenance-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px);">
-  <div style="background: #1a1916; padding: 40px; border-radius: 12px; border: 1px solid #333; text-align: center; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-    <div style="font-size: 48px; margin-bottom: 20px;">🚧</div>
-    <h2 style="color: #fff; margin: 0 0 10px; font-family: sans-serif;">Under Maintenance</h2>
-    <p style="color: #aaa; line-height: 1.5; font-family: sans-serif;">
-      The API is currently being updated.<br>
-      Please check back in a few minutes.
+<div id="maintenance-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(6px);">
+  <div style="background: #111; padding: 40px 48px; border: 1px solid #2a2a2a; text-align: center; max-width: 380px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #d4a84b; margin-bottom: 20px;">// Maintenance</div>
+    <p style="color: #e8e4dc; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 300; margin-bottom: 12px;">Service update in progress</p>
+    <p style="color: #666660; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 300; line-height: 1.6; margin-bottom: 28px;">
+      The API is being updated. Check back in a few minutes.
     </p>
-    <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #3ddc84; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: #000;">
-      Refresh Page
+    <button onclick="location.reload()" style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 11px 20px; background: #e8e4dc; border: none; cursor: pointer; font-weight: 500; color: #0c0c0c;">
+      Retry →
     </button>
   </div>
 </div>
