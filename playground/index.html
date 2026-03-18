@@ -851,5 +851,36 @@
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
 </script>
+
+<!-- Maintenance Overlay -->
+<div id="maintenance-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px);">
+  <div style="background: #1a1916; padding: 40px; border-radius: 12px; border: 1px solid #333; text-align: center; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+    <div style="font-size: 48px; margin-bottom: 20px;">🚧</div>
+    <h2 style="color: #fff; margin: 0 0 10px; font-family: sans-serif;">Under Maintenance</h2>
+    <p style="color: #aaa; line-height: 1.5; font-family: sans-serif;">
+      The API is currently being updated.<br>
+      Please check back in a few minutes.
+    </p>
+    <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #3ddc84; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: #000;">
+      Refresh Page
+    </button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const originalFetch = window.fetch;
+    window.fetch = async function(...args) {
+      try {
+        const response = await originalFetch(...args);
+        if (response.status === 503) {
+          const overlay = document.getElementById('maintenance-overlay');
+          if (overlay) { overlay.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+        }
+        return response;
+      } catch (error) { throw error; }
+    };
+  })();
+</script>
 </body>
 </html>
