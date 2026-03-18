@@ -9,88 +9,348 @@
   <style>
     :root {
       --bg:      #0c0c0c;
+      --surface: #111111;
+      --surface2:#161616;
+      --border:  #1f1f1f;
+      --border2: #2a2a2a;
       --text:    #e8e4dc;
       --muted:   #4a4a48;
       --muted2:  #666660;
-      --border:  #1f1f1f;
+      --green:   #3ddc84;
       --mono: 'IBM Plex Mono', monospace;
       --sans: 'IBM Plex Sans', sans-serif;
     }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--bg); color: var(--text); font-family: var(--mono);
-      -webkit-font-smoothing: antialiased; padding-bottom: 80px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 96px;
     }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.2;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    * { position: relative; z-index: 1; }
+
     nav {
-      padding: 0 40px; height: 52px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(12,12,12,0.92);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--muted2); }
+
+    .nav-back {
+      font-size: 11px;
+      color: var(--muted2);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: color 0.15s;
+    }
+    .nav-back:hover { color: var(--text); }
+
+    .container {
+      max-width: 700px;
+      margin: 80px auto 0;
+      padding: 0 24px;
+    }
+
+    .page-header {
+      margin-bottom: 64px;
+      padding-bottom: 40px;
       border-bottom: 1px solid var(--border);
     }
-    .logo { font-size: 13px; font-weight: 500; color: var(--text); text-decoration: none; }
-    .logo span { color: var(--muted2); }
-    
-    .container { max-width: 680px; margin: 80px auto 0; padding: 0 20px; }
-    h1 { font-size: 32px; font-weight: 300; margin-bottom: 40px; }
-    h2 { font-size: 16px; font-weight: 500; margin-top: 40px; margin-bottom: 12px; color: var(--text); }
-    p { font-family: var(--sans); font-size: 15px; line-height: 1.7; color: var(--muted2); margin-bottom: 16px; }
-    ul { font-family: var(--sans); font-size: 15px; color: var(--muted2); line-height: 1.7; margin-left: 20px; margin-bottom: 16px; }
-    li { margin-bottom: 8px; }
-    
-    .highlight { color: #3ddc84; }
+
+    .page-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+
+    .page-tagline {
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--muted2);
+      line-height: 1.7;
+    }
+
+    .page-tagline strong {
+      color: var(--green);
+      font-weight: 400;
+    }
+
+    /* SECTIONS */
+    .policy-section {
+      margin-bottom: 48px;
+    }
+
+    .section-num {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--muted2);
+      margin-bottom: 14px;
+    }
+
+    /* ITEM LIST */
+    .policy-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .policy-list li {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--muted2);
+      line-height: 1.7;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .policy-list li:first-child { border-top: 1px solid var(--border); }
+
+    .li-key {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted2);
+      flex-shrink: 0;
+      padding-top: 2px;
+      min-width: 120px;
+    }
+
+    .li-val { font-family: var(--sans); font-size: 13px; line-height: 1.65; }
+
+    /* TECH CARD */
+    .tech-card {
+      border: 1px solid var(--border);
+      margin-bottom: 2px;
+    }
+
+    .tech-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tech-num {
+      font-size: 10px;
+      color: var(--green);
+      letter-spacing: 0.08em;
+    }
+
+    .tech-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .tech-body {
+      padding: 16px 20px;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--muted2);
+      line-height: 1.65;
+    }
+
+    code {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #d4a84b;
+      background: var(--surface2);
+      padding: 1px 5px;
+    }
+
+    a { color: inherit; }
+    a:hover { color: var(--text); }
+
+    /* FOOTER */
+    .page-footer {
+      margin-top: 64px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .page-footer-note {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--text);
+      text-decoration: none;
+      padding: 9px 16px;
+      transition: opacity 0.15s;
+    }
+    .back-btn:hover { opacity: 0.8; color: var(--bg); }
   </style>
 </head>
 <body>
 
 <nav>
   <a href="/" class="logo">api<span>.oops.wtf</span></a>
+  <a href="/" class="nav-back">← Back to home</a>
 </nav>
 
 <div class="container">
-  <h1>Privacy Policy</h1>
-  
-  <p>We believe AI infrastructure should be a pipe, not a bucket. We transfer your data, process it, and then forget it.</p>
 
-  <h2>1. Data Retention</h2>
-  <p>We practice <span class="highlight">Zero Retention</span> for inference data.</p>
-  <ul>
-    <li><strong>Prompts & Completions:</strong> Your message history and the AI's responses are processed in-memory. They are not saved to a database, logs, or persistent storage on our servers after the request is completed.</li>
-    <li><strong>Uploaded Documents:</strong> Documents sent to the API are parsed immediately and injected into the temporary context window. They are discarded instantly after the inference is finished.</li>
-  </ul>
-
-  <h2>2. Model Training</h2>
-  <p>We do not use your data to train, fine-tune, or improve our models. Your inputs remain yours.</p>
-
-  <h2>3. Logs & Analytics</h2>
-  <p>We keep minimal technical logs to maintain service health:</p>
-  <ul>
-    <li><strong>Metadata:</strong> We store timestamps, token usage counts, and IP addresses for rate-limiting purposes.</li>
-    <li><strong>Errors:</strong> If the API crashes, we may log the error code and stack trace to fix the bug, but we scrub user content from these logs where possible.</li>
-  </ul>
-
-  <h2>3.1 Identity & Key Management</h2>
-  <p>To prevent service abuse and ensure fair usage, we utilize a tiered identity model:</p>
-  <ul>
-    <li><strong>Identity Provider:</strong> We use Discord as our primary identity gate. When you request a key, our system logs your Discord Username and User ID to issue and manage your unique API Key.</li>
-    <li><strong>Separation of Concerns:</strong> Your Discord identity is stored separately from our inference engine. While our "Keylog" tracks usage metrics (tokens used, timestamps, and rate limits) linked to your Discord username, it does not record the content of your prompts or AI responses.</li>
-    <li><strong>Non-Linkability:</strong> Once a request enters our "Pipe" via the Playground or API, the inference process only recognizes your API Key. Your specific conversation data is never attached to your Discord profile in our permanent records.</li>
-  </ul>
-
-  <h2>4. Third-Party Processors</h2>
-  <p>Our infrastructure runs on Cloudflare Workers. Inference may be routed through upstream providers for execution. We ensure these providers are configured to not retain data for training purposes where applicable.</p>
-
-  <h2>5. Contact</h2>
-  <p>If you have questions about this policy, please contact <a href="mailto:oopsapi@tuta.io" style="color:inherit">oopsapi@tuta.io</a>.</p>
-  
-  <div style="margin-top: 40px;">
-    <a href="/" style="text-decoration: none;">
-      <button style="padding: 10px 20px; background: #3ddc84; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; color: var(--bg); font-family: var(--sans); font-size: 13px; transition: opacity 0.2s;">
-        &larr; Back to Home
-      </button>
-    </a>
+  <div class="page-header">
+    <div class="page-eyebrow">// Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="page-tagline">
+      We treat AI infrastructure as a pipe, not a bucket. <strong>We transfer your data, process it, and then forget it ever existed.</strong> This document explains exactly what that means in practice.
+    </p>
   </div>
 
-  <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted2);">
-    Last updated: March 2026
+
+  <!-- 1. Data Retention -->
+  <div class="policy-section">
+    <div class="section-num">01</div>
+    <h2>Data Retention</h2>
+    <p>We practice <strong style="color: var(--green)">Zero Retention</strong> for all inference data. Prompts, responses, and uploaded documents are processed in-memory and discarded when the request closes. No conversation content is ever written to a database or log file on our infrastructure.</p>
   </div>
+
+
+  <!-- 2. Privacy Scrubber -->
+  <div class="policy-section">
+    <div class="section-num">02</div>
+    <h2>Privacy Scrubber</h2>
+    <p>A redaction engine runs inside the Cloudflare Worker. If the API crashes, sensitive fields — message content and access keys — are replaced with <code>[REDACTED_PRIVACY]</code> before any error log is written. Your conversation never appears in our error reporting infrastructure.</p>
+  </div>
+
+
+  <!-- 3. Identity Architecture -->
+  <div class="policy-section">
+    <div class="section-num">03</div>
+    <h2>Zero-Retention Identity Layer</h2>
+    <p>Identity and inference are architecturally separated. Cloudflare KV tracks your Discord username, user ID, and token balance for rate-limiting. That store has zero connection to the inference path — who you are is never joined to what you said.</p>
+  </div>
+
+
+  <!-- 4. Logs & Analytics -->
+  <div class="policy-section">
+    <div class="section-num">04</div>
+    <h2>Logs & Analytics</h2>
+    <p>We maintain minimal technical metadata to keep the service healthy and to enforce fair-use limits. This is what we store:</p>
+    <ul class="policy-list">
+      <li>
+        <span class="li-key">Metadata</span>
+        <span class="li-val">Timestamps, token usage counts, and IP addresses, retained for rate-limiting purposes only.</span>
+      </li>
+      <li>
+        <span class="li-key">Error logs</span>
+        <span class="li-val">Error codes and stack traces may be logged to diagnose bugs. All user content is scrubbed from these logs by the Privacy Scrubber before they're written.</span>
+      </li>
+      <li>
+        <span class="li-key">Discord identity</span>
+        <span class="li-val">Your Discord Username and User ID are logged when you request an access key, solely to issue and manage that key.</span>
+      </li>
+    </ul>
+  </div>
+
+
+  <!-- 5. Model Training -->
+  <div class="policy-section">
+    <div class="section-num">05</div>
+    <h2>Model Training</h2>
+    <p>We do not use your data to train, fine-tune, or evaluate any model — ours or anyone else's. Your inputs are yours.</p>
+  </div>
+
+
+  <!-- 6. Infrastructure -->
+  <div class="policy-section">
+    <div class="section-num">06</div>
+    <h2>Infrastructure & Third Parties</h2>
+    <p>The API runs on Cloudflare Workers. Inference requests may be routed through upstream model providers for execution. Where configurable, we ensure upstream providers are set to non-retention mode for training purposes.</p>
+    <p>We do not sell, share, or monetise user data in any form.</p>
+  </div>
+
+
+  <!-- 7. Contact -->
+  <div class="policy-section">
+    <div class="section-num">07</div>
+    <h2>Contact</h2>
+    <p>Questions about this policy: <a href="mailto:oopsapi@tuta.io">oopsapi@tuta.io</a></p>
+  </div>
+
+
+  <div class="page-footer">
+    <div class="page-footer-note">Last updated: March 2026</div>
+    <a href="/" class="back-btn">← Home</a>
+  </div>
+
 </div>
 
 </body>
