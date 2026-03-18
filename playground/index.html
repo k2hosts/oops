@@ -469,6 +469,25 @@
       .input-area { padding: 12px 16px; }
       .pane-artifact.open { position: absolute; inset: 0; width: 100%; z-index: 10; }
     }
+
+    /* TOAST */
+    .toast-container {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+      z-index: 9999; pointer-events: none;
+    }
+    .toast {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      padding: 10px 18px;
+      border-radius: 99px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      opacity: 0; transform: translateY(16px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      font-size: 12px; color: var(--text);
+    }
+    .toast.visible { opacity: 1; transform: translateY(0); }
+    .toast svg { color: var(--green); }
   </style>
 </head>
 <body>
@@ -557,13 +576,24 @@
           <button class="art-tab active" id="tab-code" onclick="switchArtTab('code')">Code</button>
           <button class="art-tab" id="tab-preview" onclick="switchArtTab('preview')">Preview</button>
         </div>
-        <button class="header-btn" onclick="closeArtifact()">Close</button>
+        <div style="display:flex; gap:10px;">
+          <button class="header-btn" onclick="downloadArtifact()">Download</button>
+          <button class="header-btn" onclick="closeArtifact()">Close</button>
+        </div>
       </div>
       <div class="art-body">
         <div class="art-content active" id="view-code"><div id="art-code"></div></div>
         <div class="art-content" id="view-preview"><iframe id="art-preview"></iframe></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast-container">
+  <div class="toast">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    <span>Copied to clipboard</span>
   </div>
 </div>
 
@@ -579,6 +609,8 @@
   let abortCtrl = null;
   let isTyping  = false;
   let attachedDocs = [];
+  let currentArtifact = { code: '', lang: '' };
+  let pastedDocsCache = {};
 
   // ── MARKDOWN SETUP ────────────────────────────────────
   const renderer = {
@@ -866,9 +898,17 @@
     if (rawText.includes('```') || rawText.length > 1500) {
       const type = rawText.includes('```') ? "code_block" : "long_text";
       const name = `pasted_${type}_${Date.now().toString().slice(-4)}`;
+      
+      let lang = 'text';
+      if (type === 'code_block') {
+        const match = rawText.match(/```(\w*)\n/);
+        if (match && match[1]) lang = match[1];
+      }
+      pastedDocsCache[name] = { content: rawText, lang };
+
       attachedDocs.push({ name, content: rawText });
       
-      display = `<div class="file-tag" style="background:rgba(0,0,0,0.2);margin:0;"><span>📄 ${name}</span></div>`;
+      display = `<div class="file-tag" style="background:rgba(0,0,0,0.2);margin:0;cursor:pointer;" onclick="openPastedDocument('${name}')"><span>📄 ${name}</span></div>`;
       payload = `[Attached ${type} as document: ${name}]`;
       isRaw   = true;
     }
@@ -922,6 +962,18 @@
           updateCounter();
           if (remaining <= 0) showLimitBanner();
         }
+        
+        // Auto-refresh artifact if open and new code is present
+        if (document.getElementById('artifact-pane').classList.contains('open')) {
+          const lastRow = messagesEl.lastElementChild;
+          const wrappers = lastRow.querySelectorAll('.code-wrapper');
+          if (wrappers.length > 0) {
+            const lastWrapper = wrappers[wrappers.length - 1];
+            const code = lastWrapper.querySelector('.raw-code').value;
+            const lang = lastWrapper.querySelector('.code-header span').textContent;
+            loadArtifact(code, lang);
+          }
+        }
       } else {
         // Handle both object-based errors (OpenAI style) and string errors
         const errMsg = data.error?.message || (typeof data.error === 'string' ? data.error : 'Unexpected response.');
@@ -953,6 +1005,7 @@
 
   function clearChat() {
     history = [];
+    pastedDocsCache = {};
     messagesEl.innerHTML = '';
     const empty = document.createElement('div');
     empty.className = 'empty-state';
@@ -1005,14 +1058,27 @@
     renderAttachments();
   };
 
+  window.openPastedDocument = (name) => {
+    const doc = pastedDocsCache[name];
+    if (doc) {
+      loadArtifact(doc.content, doc.lang);
+    }
+  };
+
   // ── ARTIFACT / SPLIT VIEW ─────────────────────────────
   window.openArtifact = (btn, lang) => {
     const wrapper = btn.closest('.code-wrapper');
     const code = wrapper.querySelector('.raw-code').value; // value descodes entities
-    
+    loadArtifact(code, lang);
+  };
+
+  window.loadArtifact = (code, lang) => {
+    currentArtifact = { code, lang };
     const pane = document.getElementById('artifact-pane');
-    pane.classList.add('open');
-    document.getElementById('resizer').style.display = 'block';
+    if (!pane.classList.contains('open')) {
+      pane.classList.add('open');
+      document.getElementById('resizer').style.display = 'block';
+    }
     
     // Populate Code View
     const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
@@ -1033,6 +1099,21 @@
       iframe.srcdoc = '';
       switchArtTab('code');
     }
+  };
+
+  window.downloadArtifact = () => {
+    if (!currentArtifact.code) return;
+    const blob = new Blob([currentArtifact.code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const extMap = { javascript: 'js', python: 'py', markdown: 'md', html: 'html', css: 'css', json: 'json', rust: 'rs', typescript: 'ts' };
+    const ext = extMap[currentArtifact.lang] || currentArtifact.lang || 'txt';
+    a.download = `artifact_${Date.now()}.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   window.closeArtifact = () => {
@@ -1082,19 +1163,35 @@
     const wrapper = btn.closest('.code-wrapper');
     const code = wrapper.querySelector('.raw-code').value;
     navigator.clipboard.writeText(code);
-    const original = btn.textContent;
+    showToast('Copied to clipboard');
+    const originalText = btn.textContent;
     btn.textContent = 'Copied';
-    setTimeout(() => btn.textContent = original, 2000);
+    setTimeout(() => btn.textContent = originalText, 2000);
   };
 
   // ── HELPERS ───────────────────────────────────────────
+  function showToast(message) {
+    const toast = document.querySelector('.toast-container .toast');
+    if (!toast) return;
+    
+    toast.querySelector('span').textContent = message;
+    toast.classList.add('visible');
+    
+    setTimeout(() => {
+      toast.classList.remove('visible');
+    }, 2500);
+  }
+
   function escHtml(t) {
     return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   window.useExample = (text) => {
-    document.getElementById('msg-input').value = text;
-    sendMessage();
+    const msgInput = document.getElementById('msg-input');
+    msgInput.value = text;
+    msgInput.focus();
+    // Manually trigger input event to resize textarea
+    msgInput.dispatchEvent(new Event('input', { bubbles: true }));
   };
 
   // ── EVENT LISTENERS (no inline onclicks) ──────────────
