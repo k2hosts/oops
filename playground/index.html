@@ -337,6 +337,27 @@
     .input-row:focus-within { border-color: var(--muted); }
     .input-row.disabled { opacity: 0.4; pointer-events: none; }
 
+    #attach-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted2);
+      font-size: 18px;
+      padding: 0 14px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.15s;
+      border-right: 1px solid var(--border2);
+    }
+    #attach-btn:hover { color: var(--text); }
+    
+    #file-preview { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 max(20px, calc(50% - 400px)) 8px; }
+    .file-tag {
+      font-family: var(--sans); font-size: 11px; background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; gap: 6px;
+    }
+    .file-tag-remove { cursor: pointer; color: var(--muted); font-weight: bold; }
+    .file-tag-remove:hover { color: var(--red); }
+
     #msg-input {
       flex: 1;
       background: transparent;
@@ -454,7 +475,10 @@
   </div>
 
   <div class="input-area">
+    <div id="file-preview"></div>
     <div class="input-row" id="input-row">
+      <button id="attach-btn" title="Attach document">+</button>
+      <input type="file" id="file-input" multiple style="display: none;" accept=".txt,.md,.csv,.json,.js,.py,.html,.css,.xml,.yaml,.yml" />
       <textarea id="msg-input" placeholder="Send a message…" rows="1"></textarea>
       <button id="stop-btn">Stop</button>
       <button id="send-btn">Send</button>
@@ -477,6 +501,7 @@
   let isLoading = false;
   let abortCtrl = null;
   let isTyping  = false;
+  let attachedDocs = [];
 
   // ── MARKDOWN SETUP ────────────────────────────────────
   marked.setOptions({
@@ -768,7 +793,7 @@
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: activeKey, messages: history }),
+        body: JSON.stringify({ key: activeKey, messages: history, documents: attachedDocs }),
         signal: abortCtrl.signal
       });
       typingRow.remove();
@@ -776,6 +801,9 @@
 
       if (res.status === 429) { remaining = 0; updateCounter(); showLimitBanner(); return; }
       if (res.status === 401 || res.status === 403) { appendError(data.message || 'Access denied.'); return; }
+
+      attachedDocs = [];
+      renderAttachments();
 
       if (data.choices && data.choices[0]) {
         const content = data.choices[0].message.content;
@@ -828,6 +856,44 @@
     messagesEl.appendChild(empty);
     document.getElementById('msg-input').focus();
   }
+
+  // ── ATTACHMENTS ───────────────────────────────────────
+  const fileInput = document.getElementById('file-input');
+  
+  document.getElementById('attach-btn').addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files);
+    for (const file of files) {
+      if (file.type.startsWith('image/')) {
+        appendError(`File ignored: ${file.name} (images not supported)`);
+        continue;
+      }
+      try {
+        const text = await file.text();
+        attachedDocs.push({ name: file.name, content: text });
+      } catch (err) {
+        console.error('Failed to read file:', file.name);
+      }
+    }
+    renderAttachments();
+    fileInput.value = ''; // Reset so same file can be selected again if needed
+  });
+
+  function renderAttachments() {
+    const container = document.getElementById('file-preview');
+    container.innerHTML = attachedDocs.map((doc, i) => `
+      <div class="file-tag">
+        <span>📄 ${doc.name}</span>
+        <span class="file-tag-remove" onclick="removeAttachment(${i})">×</span>
+      </div>
+    `).join('');
+  }
+
+  window.removeAttachment = (index) => {
+    attachedDocs.splice(index, 1);
+    renderAttachments();
+  };
 
   // ── HELPERS ───────────────────────────────────────────
   function escHtml(t) {
