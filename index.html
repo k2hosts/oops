@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>api.oops.wtf</title>
+  <title>oopsAPI | Raw Intelligence</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
   <style>
@@ -14,7 +14,7 @@
       --border:  #1f1f1f;
       --border2: #2a2a2a;
       --text:    #e8e4dc;
-      --muted:   #4a4a48;
+      --muted:    #4a4a48;
       --muted2:  #666660;
       --green:   #3ddc84;
       --red:     #e05c5c;
@@ -32,12 +32,12 @@
       min-height: 100vh;
     }
 
-    /* subtle grid bg */
+    /* THE GRID IS BACK */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image:
+      background-image: 
         linear-gradient(var(--border) 1px, transparent 1px),
         linear-gradient(90deg, var(--border) 1px, transparent 1px);
       background-size: 48px 48px;
@@ -48,7 +48,6 @@
 
     * { position: relative; z-index: 1; }
 
-    /* NAV */
     nav {
       padding: 0 40px;
       height: 52px;
@@ -85,7 +84,6 @@
       border-radius: 50%;
       background: var(--green);
       box-shadow: 0 0 6px var(--green);
-      flex-shrink: 0;
       animation: blink 2.5s ease infinite;
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
@@ -99,14 +97,13 @@
       background: var(--text);
       text-decoration: none;
       padding: 7px 16px;
-      transition: opacity 0.15s;
+      transition: background 0.15s;
     }
-    .nav-cta:hover { opacity: 0.75; }
+    .nav-cta:hover { background: var(--green); }
 
-    /* HERO */
     .hero {
       padding: 100px 40px 88px;
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -124,9 +121,7 @@
       align-items: center;
       gap: 12px;
     }
-    .hero-label::before {
-      display: none;
-    }
+    .hero-label span { color: var(--green); }
 
     h1 {
       font-family: var(--mono);
@@ -136,11 +131,8 @@
       letter-spacing: -0.03em;
       color: var(--text);
       margin-bottom: 32px;
-      max-width: 800px;
     }
-    h1 strong {
-      font-weight: 500;
-    }
+    h1 strong { font-weight: 500; color: var(--text); }
 
     .hero-sub {
       font-family: var(--sans);
@@ -148,7 +140,7 @@
       font-weight: 300;
       line-height: 1.7;
       color: var(--muted2);
-      max-width: 420px;
+      max-width: 480px;
       margin-bottom: 56px;
     }
 
@@ -166,91 +158,15 @@
       border: none;
       padding: 14px 24px;
       cursor: pointer;
-      white-space: nowrap;
       text-decoration: none;
-      transition: opacity 0.15s, transform 0.2s;
+      transition: transform 0.2s;
     }
-    .discord-btn:hover { opacity: 0.8; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-    .discord-btn:active { transform: translateY(0); }
-    .discord-btn svg { flex-shrink: 0; }
+    .discord-btn:hover { transform: translateY(-2px); background: var(--green); }
 
-    /* CODE WINDOW */
-    .code-window {
-      flex: 1;
-      max-width: 520px;
-      background: #0f0f0f;
-      border: 1px solid var(--border2);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 24px 48px -12px rgba(0,0,0,0.6);
-      font-size: 12px;
-      position: relative;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-    }
-    .code-window:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 32px 64px -12px rgba(0,0,0,0.7);
-      border-color: var(--muted);
-    }
-    .window-header {
-      background: #161616;
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      gap: 6px;
-    }
-    .win-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border2); }
-    .code-content {
-      padding: 20px 24px;
-      color: var(--muted2);
-      line-height: 1.6;
-      font-family: var(--mono);
-      white-space: pre;
-      overflow-x: auto;
-    }
-    .code-content .hl-k { color: #c678dd; } /* keyword */
-    .code-content .hl-s { color: #98c379; } /* string */
-    .code-content .hl-f { color: #61afef; } /* function */
-    .click-hint {
-      position: absolute;
-      top: 10px; right: 14px;
-      font-size: 10px;
-      color: var(--muted2);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .code-window:hover .click-hint { opacity: 1; }
-
-    /* TOAST */
-    .toast-container {
-      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
-      z-index: 999; pointer-events: none;
-    }
-    .toast {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--surface2);
-      border: 1px solid var(--border2);
-      padding: 10px 18px;
-      border-radius: 99px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      opacity: 0; transform: translateY(16px);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      font-size: 12px; color: var(--text);
-    }
-    .toast.visible { opacity: 1; transform: translateY(0); }
-    .toast svg { color: var(--green); }
-
-    /* DIVIDER */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-    }
-
-    /* WHAT IT IS */
+    /* SECTIONS */
     .section {
       padding: 72px 40px;
-      border-bottom: 1px solid var(--border);
+      border-top: 1px solid var(--border);
     }
     .section-head {
       font-size: 10px;
@@ -263,11 +179,7 @@
       gap: 10px;
     }
     .section-head::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-      max-width: 60px;
+      content: ''; flex: 1; height: 1px; background: var(--border); max-width: 60px;
     }
 
     .grid-3 {
@@ -280,119 +192,24 @@
     .grid-item {
       background: var(--bg);
       padding: 32px 28px;
+      transition: background 0.3s;
     }
-    .grid-item-num {
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      margin-bottom: 18px;
-    }
-    .grid-item-title {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 10px;
-      letter-spacing: -0.01em;
-    }
-    .grid-item-desc {
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 300;
-      line-height: 1.7;
-      color: var(--muted2);
-    }
+    .grid-item:hover { background: var(--surface); }
+    .grid-item-num { font-size: 10px; color: var(--muted); margin-bottom: 18px; }
+    .grid-item-title { font-size: 14px; font-weight: 500; margin-bottom: 10px; }
+    .grid-item-desc { font-family: var(--sans); font-size: 13px; color: var(--muted2); line-height: 1.7; }
 
-    /* COMING SOON STRIP */
-    .coming-strip {
-      padding: 40px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-    .coming-text {
-      font-size: 12px;
-      color: var(--muted2);
-      letter-spacing: 0.04em;
-    }
-    .coming-text strong { color: var(--text); font-weight: 500; }
-    .progress-bar-wrap {
-      flex: 1;
-      max-width: 220px;
-      height: 2px;
-      background: var(--border2);
-    }
-    .progress-bar-fill {
-      height: 100%;
-      width: 79%;
-      background: var(--text);
-      position: relative;
-    }
-    .progress-bar-fill::after {
-      content: '79%';
-      position: absolute;
-      right: 0;
-      top: 6px;
-      font-size: 10px;
-      color: var(--muted2);
-      letter-spacing: 0.06em;
-      white-space: nowrap;
-      transform: translateX(50%);
-    }
-
-    /* FOOTER */
-    footer {
-      padding: 28px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .footer-logo { font-size: 12px; color: var(--muted2); }
-    .footer-links { display: flex; gap: 24px; }
-    .footer-link {
-      font-size: 11px;
-      color: var(--muted);
-      text-decoration: none;
-      letter-spacing: 0.04em;
-      transition: color 0.15s;
-    }
-    .footer-link:hover { color: var(--text); }
-
-    @media (max-width: 720px) {
-      nav { padding: 0 20px; }
-      .hero { padding: 64px 20px 60px; }
-      .hero { grid-template-columns: 1fr; gap: 40px; }
-      h1 { font-size: 36px; }
-      .section { padding: 56px 20px; }
-      .grid-3 { grid-template-columns: 1fr; }
-      .coming-strip { padding: 28px 20px; }
-      footer { padding: 24px 20px; }
-    }
-
-    /* SCROLL ANIMATIONS */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
+    /* MISSION SECTION */
     .mission-section {
       padding: 100px 40px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 60px;
+      border-top: 1px solid var(--border);
     }
     .mission-statement {
       font-size: clamp(24px, 4vw, 40px);
       font-weight: 300;
       line-height: 1.2;
       max-width: 900px;
+      margin-bottom: 60px;
     }
     .mission-statement strong { font-weight: 500; color: var(--text); }
     .mission-statement span { color: var(--muted2); }
@@ -401,120 +218,135 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 40px;
-      margin-top: 20px;
     }
-    .value-card h3 {
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 12px;
+    .value-card h3 { font-size: 16px; font-weight: 500; margin-bottom: 12px; color: var(--muted2); }
+    .value-card p { font-family: var(--sans); font-size: 14px; color: var(--muted2); line-height: 1.6; }
+
+    /* PROGRESS STRIP */
+    .coming-strip {
+      padding: 40px;
+      border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
+      gap: 24px;
+      background: var(--bg);
     }
-    .value-card p {
-      font-family: var(--sans);
-      font-size: 14px;
+    .progress-bar-wrap { flex: 1; max-width: 220px; height: 2px; background: var(--border2); }
+    .progress-bar-fill { height: 100%; width: 88%; background: var(--green); position: relative; }
+
+    footer {
+      padding: 28px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
       color: var(--muted2);
-      line-height: 1.6;
-      max-width: 380px;
     }
-    @media (max-width: 768px) { .values-grid { grid-template-columns: 1fr; } }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { color: var(--muted); text-decoration: none; }
+    .footer-links a:hover { color: var(--text); }
+
+    .reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .grid-3, .values-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 20px; }
+      footer { flex-direction: column; gap: 20px; }
+    }
   </style>
 </head>
 <body>
 
 <nav>
-  <a href="/" class="logo">api<span>.oops.wtf</span></a>
+  <a href="/" class="logo">oops<span>API</span></a>
   <div class="nav-right">
-      <span class="dot-green"></span>
-      Building
-    </div>
-    <a href="/playground" class="nav-cta">Playground</a>
+      <div class="nav-pill"><span class="dot-green"></span> SYSTEM_LIVE</div>
+      <a href="/playground" class="nav-cta">Playground</a>
   </div>
 </nav>
 
 <div class="hero">
-  <div class="hero-label">Early access</div>
-  <h1>An AI API.<br><strong>Simple by design.</strong></h1>
+  <div class="hero-label"><span>[v2.1.0]</span> High-speed Inference Gateway</div>
+  <h1>Intelligence,<br><strong>Stripped Bare.</strong></h1>
   <p class="hero-sub">
-    One endpoint. Fast inference. No boilerplate. We're putting the finishing touches on it — get early access when it's ready.
+    An unopinionated AI gateway built for speed and privacy. No filters, no hidden prompts, no post-processing. Just raw weights via a single endpoint.
   </p>
-
   <a href="https://discord.gg/JCbZVAJehE" class="discord-btn" target="_blank">
-    <svg width="22" height="17" viewBox="0 0 24 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 1.492a19.84 19.84 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.093-.32 10.555.099 14.961a.08.08 0 0 0 .031.055 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.026 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.442a.061.061 0 0 0-.031-.03zM8.02 12.278c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-    Request access on Discord
+    Access the Network
   </a>
 </div>
 
 <div class="section">
-  <div class="section-head">What it is</div>
+  <div class="section-head">Capabilities</div>
   <div class="grid-3">
     <div class="grid-item reveal">
-      <div class="grid-item-num">01</div>
-      <div class="grid-item-title">One endpoint</div>
-      <div class="grid-item-desc">POST your messages, get a response. That's the whole API. No setup, no SDK required, no reading a 40-page doc.</div>
+      <div class="grid-item-num">01 // CONTEXT</div>
+      <div class="grid-item-title">Native Document Injection</div>
+      <div class="grid-item-desc">Seamlessly inject .txt, .pdf, or .md into your prompts. Our gateway handles context windowing and smart-truncation automatically.</div>
     </div>
     <div class="grid-item reveal" style="transition-delay: 0.1s">
-      <div class="grid-item-num">02</div>
-      <div class="grid-item-title">Conversation context</div>
-      <div class="grid-item-desc">Pass the message history with each request. The model keeps track of the thread for as long as you need.</div>
+      <div class="grid-item-num">02 // PRIVACY</div>
+      <div class="grid-item-title">Scrubbed Log-Streams</div>
+      <div class="grid-item-desc">Automated PII and prompt content redaction at the edge. We monitor system health without ever seeing your user's sensitive data.</div>
     </div>
     <div class="grid-item reveal" style="transition-delay: 0.2s">
-      <div class="grid-item-num">03</div>
-      <div class="grid-item-title">Fast</div>
-      <div class="grid-item-desc">Sub-second time to first token. Built to feel instant in a UI — no spinners, no waiting around.</div>
+      <div class="grid-item-num">03 // INFERENCE</div>
+      <div class="grid-item-title">Zero Post-Processing</div>
+      <div class="grid-item-desc">Raw model output only. No moralizing, no disclaimers, and no hidden refusal-guardrails. The intelligence is unopinionated by design.</div>
     </div>
   </div>
 </div>
 
 <div class="mission-section">
   <div class="mission-statement reveal">
-    <span>We believe AI should be invisible.</span> <strong>Just a pipe between your code and the intelligence.</strong> <span>No prompt injection guards that break your logic, no "I cannot do that", no heavy SDKs. Just raw inference.</span>
+    <span>AI shouldn't have a personality.</span><br>
+    <strong>It should be a utility.</strong><br>
+    <span>Fast, silent, and entirely under your control.</span>
   </div>
 
   <div class="values-grid">
     <div class="value-card reveal" style="transition-delay: 0.1s">
-      <h3>// Unopinionated</h3>
-      <p>We don't inject system prompts behind your back. You control the context, the tone, and the constraints. Your prompt is the only truth.</p>
+      <h3>// EPHEMERAL</h3>
+      <p>Zero data retention. Request logs are wiped. We do not train on your inputs. Ever.</p>
     </div>
     <div class="value-card reveal" style="transition-delay: 0.2s">
-      <h3>// Latency first</h3>
-      <p>Every millisecond counts in a UI. We optimize for Time-to-First-Token (TTFT) above all else, running on bare metal GPUs close to the backbone.</p>
+      <h3>// UNRESTRICTED</h3>
+      <p>Your prompt is the single source of truth. We never inject hidden system instructions or tone filters.</p>
     </div>
     <div class="value-card reveal" style="transition-delay: 0.3s">
-      <h3>// Zero retention</h3>
-      <p>We do not train on your data. Request logs are ephemeral and wiped automatically. Privacy is the default, not an option.</p>
+      <h3>// LATENCY_DRIVEN</h3>
+      <p>Optimized for sub-second Time-to-First-Token (TTFT). Intelligence delivered at the speed of your UI.</p>
     </div>
   </div>
 </div>
 
 <div class="coming-strip">
-  <div class="coming-text"><strong>In progress:</strong> API keys,docs.</div>
+  <div style="font-size: 12px; color: var(--muted2)"><strong>Next:</strong> Public Keys, Usage Dashboard.</div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill"></div>
   </div>
-  <div class="coming-text">~Q3 2026</div>
+  <div style="font-size: 12px; color: var(--muted2)">~Q3 2026</div>
 </div>
 
 <footer>
-  <div class="footer-logo">api.oops.wtf</div>
+  <div>api.oops.wtf // v2.1.0</div>
   <div class="footer-links">
-    <a href="/playground" class="footer-link">Playground</a>
-    <a href="/privacy" class="footer-link">Privacy</a>
-    <a href="mailto:oopsapi@tuta.io" class="footer-link">Contact</a>
+    <a href="/playground">Playground</a>
+    <a href="/privacy">Privacy</a>
+    <a href="mailto:oopsapi@tuta.io">Contact</a>
   </div>
 </footer>
-
 
 <script>
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
 </script>
+
 </body>
 </html>
