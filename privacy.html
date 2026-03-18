@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy — api.oops.wtf</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:      #0c0c0c;
+      --text:    #e8e4dc;
+      --muted:   #4a4a48;
+      --muted2:  #666660;
+      --border:  #1f1f1f;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text); font-family: var(--mono);
+      -webkit-font-smoothing: antialiased; padding-bottom: 80px;
+    }
+    nav {
+      padding: 0 40px; height: 52px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-size: 13px; font-weight: 500; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--muted2); }
+    
+    .container { max-width: 680px; margin: 80px auto 0; padding: 0 20px; }
+    h1 { font-size: 32px; font-weight: 300; margin-bottom: 40px; }
+    h2 { font-size: 16px; font-weight: 500; margin-top: 40px; margin-bottom: 12px; color: var(--text); }
+    p { font-family: var(--sans); font-size: 15px; line-height: 1.7; color: var(--muted2); margin-bottom: 16px; }
+    ul { font-family: var(--sans); font-size: 15px; color: var(--muted2); line-height: 1.7; margin-left: 20px; margin-bottom: 16px; }
+    li { margin-bottom: 8px; }
+    
+    .highlight { color: #3ddc84; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">api<span>.oops.wtf</span></a>
+</nav>
+
+<div class="container">
+  <h1>Privacy Policy</h1>
+  
+  <p>We believe AI infrastructure should be a pipe, not a bucket. We transfer your data, process it, and then forget it.</p>
+
+  <h2>1. Data Retention</h2>
+  <p>We practice <span class="highlight">Zero Retention</span> for inference data.</p>
+  <ul>
+    <li><strong>Prompts & Completions:</strong> Your message history and the AI's responses are processed in-memory. They are not saved to a database, logs, or persistent storage on our servers after the request is completed.</li>
+    <li><strong>Uploaded Documents:</strong> Documents sent to the API are parsed immediately and injected into the temporary context window. They are discarded instantly after the inference is finished.</li>
+  </ul>
+
+  <h2>2. Model Training</h2>
+  <p>We do not use your data to train, fine-tune, or improve our models. Your inputs remain yours.</p>
+
+  <h2>3. Logs & Analytics</h2>
+  <p>We keep minimal technical logs to maintain service health:</p>
+  <ul>
+    <li><strong>Metadata:</strong> We store timestamps, token usage counts, and IP addresses for rate-limiting purposes.</li>
+    <li><strong>Errors:</strong> If the API crashes, we may log the error code and stack trace to fix the bug, but we scrub user content from these logs where possible.</li>
+  </ul>
+
+  <h2>4. Third-Party Processors</h2>
+  <p>Our infrastructure runs on Cloudflare Workers. Inference may be routed through upstream providers for execution. We ensure these providers are configured to not retain data for training purposes where applicable.</p>
+
+  <h2>5. Contact</h2>
+  <p>If you have questions about this policy, please contact <a href="mailto:oopsapi@tuta.io" style="color:inherit">oopsapi@tuta.io</a>.</p>
+  
+  <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted2);">
+    Last updated: March 2026
+  </div>
+</div>
+
+</body>
+</html>
