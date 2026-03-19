@@ -160,9 +160,9 @@
     #messages::-webkit-scrollbar { width: 4px; }
     #messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-    .msg-row { display: flex; padding: 0 max(20px, calc(50% - 420px)); margin-bottom: 2px; }
-    .msg-row.user { justify-content: flex-end; }
-    .msg-row.assistant { justify-content: flex-start; }
+    .msg-row { display: flex; flex-direction: column; padding: 0 max(20px, calc(50% - 420px)); margin-bottom: 2px; }
+    .msg-row.user { align-items: flex-end; }
+    .msg-row.assistant { align-items: flex-start; }
 
     .bubble { max-width: 72%; padding: 11px 15px; font-size: 14px; line-height: 1.65; }
     .msg-row.user .bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 12px 12px 4px 12px; }
@@ -567,6 +567,7 @@
     document.getElementById('empty-state')?.remove();
     isLoading = true; setSendState(false); const typingEl = appendTyping();
     const _t0 = Date.now();
+    const _remainingBefore = remaining;
     abortCtrl = new AbortController();
     try {
       const res = await fetch(WORKER_URL, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: activeKey, messages: history }), signal: abortCtrl.signal });
@@ -589,15 +590,18 @@
       // Typewriter animation
       const assistantRow = appendAssistantMsg(''), bubble = assistantRow.querySelector('.bubble');
       await typewriterRender(text, bubble);
-      // Performance telemetry footer
+      // Performance telemetry — tokens used this message = drop in remaining
       const genMs = Date.now() - _t0;
       const genSec = (genMs / 1000).toFixed(1);
-      const tokensUsed = meta ? (meta.limit - meta.remaining) - (limit - remaining + (meta.remaining - remaining)) : null;
+      const tokensThisMsg = (_remainingBefore !== null && meta?.remaining !== null)
+        ? _remainingBefore - meta.remaining
+        : null;
       const metaEl = document.createElement('div');
       metaEl.className = 'msg-meta';
-      const tokenStr = (meta && meta.remaining !== null) ? `${meta.limit - meta.remaining} tokens used` : '';
-      metaEl.textContent = [genSec + 's', tokenStr].filter(Boolean).join('  ·  ');
-      assistantRow.querySelector('.bubble').after(metaEl);
+      const parts = [genSec + 's'];
+      if (tokensThisMsg !== null && tokensThisMsg > 0) parts.push(tokensThisMsg.toLocaleString() + ' tokens');
+      metaEl.textContent = parts.join('  ·  ');
+      assistantRow.appendChild(metaEl);
       history.push({ role: 'assistant', content: text });
     } catch (err) {
       typingEl?.remove();
@@ -626,7 +630,16 @@
     const charDelay   = isCodeHeavy ? 4 : isLong ? 8 : 14; // ms per character
 
     let displayed = '';
-    const cursor  = '<span class="tw-cursor">▍</span>';
+    const CURSOR = '<span class="tw-cursor">▍</span>';
+
+    // Injects cursor inside the last block element so it sits inline with text
+    function renderWithCursor(text) {
+      const html = marked.parse(text);
+      // Find last closing block tag and inject cursor before it
+      const match = html.match(/(.*?)(<\/(p|li|h[1-6]|td|pre)>\s*)$/s);
+      if (match) return match[1] + CURSOR + match[2];
+      return html + CURSOR; // fallback
+    }
 
     for (let i = 0; i < fullText.length; i++) {
       if (typewriterStop) break;
@@ -636,7 +649,7 @@
       // Only re-render every N chars to avoid thrashing the DOM
       const stride = isCodeHeavy ? 6 : isLong ? 3 : 1;
       if (i % stride === 0 || i === fullText.length - 1) {
-        bubble.innerHTML = marked.parse(displayed) + cursor;
+        bubble.innerHTML = renderWithCursor(displayed);
         scrollToBottom();
         await new Promise(r => setTimeout(r, charDelay * stride));
       }
