@@ -3,68 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>404 — api.oops.wtf</title>
+  <title>404 — BareAI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
+  <script>
+    (function() {
+      var saved = localStorage.getItem('bareai-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) document.documentElement.classList.add('dark');
+    })();
+  </script>
   <style>
     :root {
-      --bg:       #0c0c0c;
-      --surface:  #111111;
-      --border:   #1f1f1f;
-      --border2:  #2a2a2a;
-      --text:     #e8e4dc;
-      --muted:    #4a4a48;
-      --muted2:   #666660;
-      --green:    #3ddc84;
-      --mono: 'IBM Plex Mono', monospace;
-      --sans: 'IBM Plex Sans', sans-serif;
+      --bg:        #ffffff;
+      --surface:   #f8f8f9;
+      --border:    #e4e4e9;
+      --border2:   #d0d0d8;
+      --text:      #0f0f14;
+      --text2:     #3a3a46;
+      --muted:     #7a7a8c;
+      --muted2:    #9a9aac;
+      --accent:    #5A0F85;
+      --accent-lt: #7a1fb5;
+      --accent-bg: #f5eefb;
+      --nav-bg:    rgba(255,255,255,0.92);
+      --sans: 'Figtree', sans-serif;
+      --mono: 'DM Mono', monospace;
     }
+    html.dark {
+      --bg:        #0d0d10;
+      --surface:   #141418;
+      --border:    #26262e;
+      --border2:   #32323c;
+      --text:      #f0eff4;
+      --text2:     #b8b6c4;
+      --muted:     #6e6d7a;
+      --muted2:    #55545f;
+      --accent:    #9b4dca;
+      --accent-lt: #b468e0;
+      --accent-bg: #1e1028;
+      --nav-bg:    rgba(13,13,16,0.92);
+    }
+    html { color-scheme: light; }
+    html.dark { color-scheme: dark; }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: var(--mono);
+      font-family: var(--sans);
       -webkit-font-smoothing: antialiased;
       height: 100vh;
       display: flex;
       flex-direction: column;
+      transition: background 0.25s, color 0.25s;
     }
-
-    /* subtle grid bg */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 48px 48px;
-      opacity: 0.35;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    * { position: relative; z-index: 1; }
 
     /* NAV */
     nav {
-      padding: 0 40px;
-      height: 52px;
+      padding: 0 48px;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      background: rgba(12,12,12,0.9);
-      backdrop-filter: blur(8px);
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      flex-shrink: 0;
     }
+
     .logo {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
+      display: flex;
+      align-items: center;
       text-decoration: none;
-      letter-spacing: -0.01em;
     }
-    .logo span { color: var(--muted2); }
+    .logo-img {
+      height: 28px;
+      width: auto;
+      display: block;
+    }
+
+    /* DARK MODE TOGGLE */
+    .theme-toggle {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; cursor: pointer; color: var(--muted);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--border2); }
+    .theme-toggle .icon-sun  { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    html.dark .theme-toggle .icon-sun  { display: block; }
+    html.dark .theme-toggle .icon-moon { display: none; }
 
     /* CENTER CONTENT */
     .error-container {
@@ -74,55 +105,93 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 20px;
+      padding: 40px 20px;
+      gap: 0;
+    }
+
+    .error-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
     }
 
     h1 {
-      font-size: clamp(60px, 10vw, 120px);
-      font-weight: 300;
+      font-size: clamp(80px, 14vw, 160px);
+      font-weight: 600;
       color: var(--border2);
       line-height: 1;
       margin-bottom: 24px;
-      letter-spacing: -0.05em;
+      letter-spacing: -0.06em;
       user-select: none;
+      font-family: var(--sans);
     }
+    html.dark h1 { color: var(--border2); }
 
     p {
-      font-family: var(--sans);
       font-size: 16px;
-      color: var(--muted2);
+      font-weight: 400;
+      color: var(--muted);
       margin-bottom: 40px;
+      line-height: 1.6;
     }
 
     .home-btn {
-      padding: 12px 24px; 
-      background: #3ddc84; 
-      border: none; 
-      border-radius: 6px; 
-      cursor: pointer; 
-      font-weight: 500; 
-      color: var(--bg); 
-      font-family: var(--sans); 
-      font-size: 14px; 
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 14px;
       text-decoration: none;
-      transition: opacity 0.2s;
+      transition: background 0.15s, transform 0.15s;
+      letter-spacing: -0.01em;
     }
-    .home-btn:hover { opacity: 0.9; }
+    .home-btn:hover { background: var(--accent-lt); transform: translateY(-1px); }
+
+    @media (max-width: 480px) {
+      nav { padding: 0 20px; }
+    }
   </style>
 </head>
 <body>
 
 <nav>
-  <a href="/" class="logo">api<span>.oops.wtf</span></a>
+  <a href="/" class="logo">
+    <img src="/logo.png" alt="BareAI" class="logo-img" />
+  </a>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+    <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </button>
 </nav>
 
 <div class="error-container">
+  <div class="error-eyebrow">Page not found</div>
   <h1>404</h1>
-  <p>The page you are looking for does not exist.</p>
+  <p>The page you're looking for doesn't exist or has been moved.</p>
   <a href="/" class="home-btn">
-    &larr; Back to Home
+    ← Back to Home
   </a>
 </div>
 
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('bareai-theme', isDark ? 'dark' : 'light');
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!localStorage.getItem('bareai-theme')) document.documentElement.classList.toggle('dark', e.matches);
+  });
+</script>
 </body>
 </html>
