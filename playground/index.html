@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="/logo.png" type="image/png" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Playground — BareAI</title>
@@ -567,6 +566,7 @@
     msgInput.value = ''; msgInput.style.height = 'auto';
     document.getElementById('empty-state')?.remove();
     isLoading = true; setSendState(false); const typingEl = appendTyping();
+    const _t0 = Date.now();
     abortCtrl = new AbortController();
     try {
       const res = await fetch(WORKER_URL, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: activeKey, messages: history }), signal: abortCtrl.signal });
@@ -589,6 +589,15 @@
       // Typewriter animation
       const assistantRow = appendAssistantMsg(''), bubble = assistantRow.querySelector('.bubble');
       await typewriterRender(text, bubble);
+      // Performance telemetry footer
+      const genMs = Date.now() - _t0;
+      const genSec = (genMs / 1000).toFixed(1);
+      const tokensUsed = meta ? (meta.limit - meta.remaining) - (limit - remaining + (meta.remaining - remaining)) : null;
+      const metaEl = document.createElement('div');
+      metaEl.className = 'msg-meta';
+      const tokenStr = (meta && meta.remaining !== null) ? `${meta.limit - meta.remaining} tokens used` : '';
+      metaEl.textContent = [genSec + 's', tokenStr].filter(Boolean).join('  ·  ');
+      assistantRow.querySelector('.bubble').after(metaEl);
       history.push({ role: 'assistant', content: text });
     } catch (err) {
       typingEl?.remove();
@@ -646,8 +655,9 @@
   }
 
   const messagesEl = document.getElementById('messages');
-  function scrollToBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
-  function appendUserMsg(text) { const row = document.createElement('div'); row.className = 'msg-row user'; row.innerHTML = `<div class="bubble">${escHtml(text)}</div>`; messagesEl.appendChild(row); scrollToBottom(); return row; }
+  function isAtBottom() { return messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 80; }
+  function scrollToBottom(force = false) { if (force || isAtBottom()) messagesEl.scrollTop = messagesEl.scrollHeight; }
+  function appendUserMsg(text) { const row = document.createElement('div'); row.className = 'msg-row user'; row.innerHTML = `<div class="bubble">${escHtml(text)}</div>`; messagesEl.appendChild(row); scrollToBottom(true); return row; }
   function appendAssistantMsg(text) { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="bubble">${text}</div>`; messagesEl.appendChild(row); scrollToBottom(); return row; }
   function appendTyping() { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="typing-bubble"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>`; messagesEl.appendChild(row); scrollToBottom(); return row; }
   function appendError(msg) { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="err-bubble">${escHtml(msg)}</div>`; messagesEl.appendChild(row); scrollToBottom(); }
@@ -716,7 +726,22 @@
   document.getElementById('chat-theme-toggle').addEventListener('click', toggleTheme);
 
   const msgInput = document.getElementById('msg-input');
-  msgInput.addEventListener('input', () => { msgInput.style.height = 'auto'; msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px'; });
+  msgInput.addEventListener('input', () => {
+    msgInput.style.height = 'auto';
+    msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px';
+  });
+
+  // Ghost doc: large pastes (>1500 chars) become a clickable tag that opens in the artifact pane
+  msgInput.addEventListener('paste', (e) => {
+    const pasted = (e.clipboardData || window.clipboardData).getData('text');
+    if (pasted.length <= 1500) return; // small paste — leave as normal
+    e.preventDefault();
+    const name = 'Pasted-' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    pastedDocsCache[name] = { content: pasted, lang: 'plaintext' };
+    attachedDocs.push({ name, content: pasted });
+    renderAttachments();
+    showToast('Large paste captured as document');
+  });
   msgInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
 
   (function() {
