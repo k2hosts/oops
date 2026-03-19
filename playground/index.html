@@ -192,6 +192,15 @@
 
     .typing-bubble { display: flex; align-items: center; gap: 5px; padding: 14px 0; }
     .t-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--muted2); animation: td 1.2s infinite ease-in-out; }
+
+    /* Typewriter cursor */
+    .tw-cursor {
+      display: inline-block;
+      color: var(--accent);
+      animation: tw-blink 0.55s step-end infinite;
+      margin-left: 1px;
+    }
+    @keyframes tw-blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .t-dot:nth-child(2) { animation-delay: 0.2s; }
     .t-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes td { 0%,80%,100%{opacity:0.3} 40%{opacity:1} }
@@ -564,7 +573,7 @@
       typingEl.remove();
       if (res.status === 429) { remaining = 0; updateCounter(); showLimitBanner(); history.pop(); isLoading = false; setSendState(true); return; }
       if (!res.ok) { const errData = await res.json().catch(() => ({})); appendError(errData.message || `Error ${res.status}`); history.pop(); isLoading = false; setSendState(true); return; }
-      // Worker returns plain JSON (not a stream)
+      // Worker returns plain JSON — simulate typewriter over the response
       const data = await res.json();
       const text = data.choices?.[0]?.message?.content || '';
 
@@ -577,11 +586,9 @@
         if (remaining <= 0) showLimitBanner();
       }
 
-      // Render the response
+      // Typewriter animation
       const assistantRow = appendAssistantMsg(''), bubble = assistantRow.querySelector('.bubble');
-      bubble.innerHTML = marked.parse(text);
-      bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-      scrollToBottom();
+      await typewriterRender(text, bubble);
       history.push({ role: 'assistant', content: text });
     } catch (err) {
       typingEl?.remove();
@@ -590,7 +597,47 @@
     isLoading = false; abortCtrl = null; setSendState(true);
   }
 
-  function stopGeneration() { if (abortCtrl) abortCtrl.abort(); }
+  // ── TYPEWRITER ENGINE ─────────────────────────────────────────────────────
+  // Streams text character-by-character with a blinking cursor (▍).
+  // Velocity scales: code blocks & long responses get faster rendering.
+  let typewriterStop = false;
+
+  function stopGeneration() {
+    if (abortCtrl) abortCtrl.abort();
+    typewriterStop = true;
+  }
+
+  async function typewriterRender(fullText, bubble) {
+    typewriterStop = false;
+
+    // Determine velocity based on content type
+    // Code-heavy or long responses get higher velocity (smaller delay)
+    const isCodeHeavy = (fullText.match(/```/g) || []).length >= 2;
+    const isLong      = fullText.length > 800;
+    const charDelay   = isCodeHeavy ? 4 : isLong ? 8 : 14; // ms per character
+
+    let displayed = '';
+    const cursor  = '<span class="tw-cursor">▍</span>';
+
+    for (let i = 0; i < fullText.length; i++) {
+      if (typewriterStop) break;
+      displayed += fullText[i];
+
+      // Re-render markdown at each step so formatting builds up naturally
+      // Only re-render every N chars to avoid thrashing the DOM
+      const stride = isCodeHeavy ? 6 : isLong ? 3 : 1;
+      if (i % stride === 0 || i === fullText.length - 1) {
+        bubble.innerHTML = marked.parse(displayed) + cursor;
+        scrollToBottom();
+        await new Promise(r => setTimeout(r, charDelay * stride));
+      }
+    }
+
+    // Final render: full markdown, no cursor
+    bubble.innerHTML = marked.parse(fullText);
+    bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+    scrollToBottom();
+  }
 
   function setSendState(enabled) {
     const sendBtn = document.getElementById('send-btn'), stopBtn = document.getElementById('stop-btn');
