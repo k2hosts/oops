@@ -3,599 +3,365 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>api.oops.wtf — Intelligence as a Utility</title>
+  <title>BareAI — Transparent AI Infrastructure</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
+  <script>
+    // Apply saved theme before first paint to avoid flash
+    (function() {
+      var saved = localStorage.getItem('bareai-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) document.documentElement.classList.add('dark');
+    })();
+  </script>
   <style>
+    /* ── LIGHT THEME (default) ── */
     :root {
-      --bg:      #0c0c0c;
-      --surface: #111111;
-      --surface2:#161616;
-      --border:  #1f1f1f;
-      --border2: #2a2a2a;
-      --text:    #e8e4dc;
-      --muted:   #4a4a48;
-      --muted2:  #666660;
-      --green:   #3ddc84;
-      --red:     #e05c5c;
-      --amber:   #d4a84b;
-      --mono: 'IBM Plex Mono', monospace;
-      --sans: 'IBM Plex Sans', sans-serif;
+      --bg:        #ffffff;
+      --surface:   #f8f8f9;
+      --surface2:  #f1f1f4;
+      --border:    #e4e4e9;
+      --border2:   #d0d0d8;
+      --text:      #0f0f14;
+      --text2:     #3a3a46;
+      --muted:     #7a7a8c;
+      --muted2:    #9a9aac;
+      --accent:    #5A0F85;
+      --accent-lt: #7a1fb5;
+      --accent-bg: #f5eefb;
+      --nav-bg:    rgba(255,255,255,0.92);
+      --sans: 'Figtree', sans-serif;
+      --mono: 'DM Mono', monospace;
     }
+
+    /* ── DARK THEME ── */
+    html.dark {
+      --bg:        #0d0d10;
+      --surface:   #141418;
+      --surface2:  #1c1c22;
+      --border:    #26262e;
+      --border2:   #32323c;
+      --text:      #f0eff4;
+      --text2:     #b8b6c4;
+      --muted:     #6e6d7a;
+      --muted2:    #55545f;
+      --accent:    #9b4dca;
+      --accent-lt: #b468e0;
+      --accent-bg: #1e1028;
+      --nav-bg:    rgba(13,13,16,0.92);
+    }
+
+    html { color-scheme: light; }
+    html.dark { color-scheme: dark; }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--mono);
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); -webkit-font-smoothing: antialiased; min-height: 100vh;
+      transition: background 0.25s, color 0.25s;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 48px 48px;
-      opacity: 0.25;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    * { position: relative; z-index: 1; }
-
-    /* NAV */
     nav {
-      padding: 0 40px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      background: rgba(12,12,12,0.92);
-      backdrop-filter: blur(8px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 0 48px; height: 60px; display: flex; align-items: center;
+      justify-content: space-between; border-bottom: 1px solid var(--border);
+      background: var(--nav-bg); backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 100;
     }
 
     .logo {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-      text-decoration: none;
-      letter-spacing: -0.01em;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 16px; font-weight: 600; color: var(--text);
+      text-decoration: none; letter-spacing: -0.02em;
     }
-    .logo span { color: var(--muted2); }
-
-    .nav-right { display: flex; align-items: center; gap: 20px; }
-
-    .nav-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 10px;
-      color: var(--muted2);
-      border: 1px solid var(--border2);
-      padding: 5px 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    .logo-img {
+      height: 28px; width: auto; display: block;
     }
 
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 12px; font-family: var(--mono); color: var(--muted);
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 5px 12px; border-radius: 100px; letter-spacing: 0.02em;
+    }
     .dot-green {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 6px var(--green);
-      flex-shrink: 0;
-      animation: blink 2.5s ease infinite;
+      width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.18); flex-shrink: 0;
+      animation: pulse 2.5s ease infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(34,197,94,0.18); }
+      50%      { box-shadow: 0 0 0 5px rgba(34,197,94,0.06); }
     }
 
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    /* ── DARK MODE TOGGLE ── */
+    .theme-toggle {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; cursor: pointer; color: var(--muted);
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--border2); }
+    .theme-toggle .icon-sun  { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    html.dark .theme-toggle .icon-sun  { display: block; }
+    html.dark .theme-toggle .icon-moon { display: none; }
 
     .nav-cta {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--bg);
-      background: var(--text);
-      text-decoration: none;
-      padding: 7px 16px;
-      transition: opacity 0.15s;
+      font-size: 13px; font-weight: 600; color: #fff;
+      background: var(--accent); text-decoration: none;
+      padding: 8px 18px; border-radius: 8px;
+      transition: background 0.15s, transform 0.15s;
     }
-    .nav-cta:hover { opacity: 0.75; }
+    .nav-cta:hover { background: var(--accent-lt); transform: translateY(-1px); }
 
-    /* HERO */
     .hero {
-      padding: 96px 40px 80px;
-      max-width: 860px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+      padding: 100px 48px 80px; max-width: 1000px; margin: 0 auto;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
     }
-
-    .hero-eyebrow {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 32px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 500; color: var(--accent);
+      background: var(--accent-bg); border: 1px solid rgba(90,15,133,0.15);
+      padding: 5px 14px; border-radius: 100px; margin-bottom: 36px;
     }
-
-    .hero-eyebrow::before,
-    .hero-eyebrow::after {
-      content: '';
-      display: block;
-      width: 32px;
-      height: 1px;
-      background: var(--muted);
-    }
+    html.dark .hero-badge { border-color: rgba(155,77,202,0.25); }
 
     h1 {
-      font-family: var(--mono);
-      font-size: clamp(36px, 6vw, 76px);
-      font-weight: 300;
-      line-height: 1.06;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      margin-bottom: 28px;
-      max-width: 820px;
+      font-size: clamp(38px, 6vw, 72px); font-weight: 600;
+      line-height: 1.08; letter-spacing: -0.04em;
+      color: var(--text); margin-bottom: 24px; max-width: 820px;
     }
-    h1 strong { font-weight: 500; }
-    h1 em { font-style: normal; color: var(--muted2); }
+    h1 .accent { color: var(--accent); }
+    h1 .light  { color: var(--muted); font-weight: 300; }
 
     .hero-sub {
-      font-family: var(--sans);
-      font-size: 16px;
-      font-weight: 300;
-      line-height: 1.75;
-      color: var(--muted2);
-      max-width: 480px;
-      margin-bottom: 52px;
+      font-size: 18px; font-weight: 300; line-height: 1.7;
+      color: var(--text2); max-width: 520px; margin-bottom: 48px;
     }
+    .hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
 
-    .hero-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-size: 14px; font-weight: 600; color: #fff;
+      background: var(--accent); border: none; padding: 13px 24px;
+      border-radius: 10px; cursor: pointer; text-decoration: none;
+      transition: background 0.15s, transform 0.2s, box-shadow 0.2s;
     }
+    .btn-primary:hover { background: var(--accent-lt); transform: translateY(-2px); box-shadow: 0 10px 32px rgba(90,15,133,0.22); }
+    html.dark .btn-primary:hover { box-shadow: 0 10px 32px rgba(155,77,202,0.3); }
 
-    .discord-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      background: var(--text);
-      color: var(--bg);
-      border: none;
-      padding: 13px 22px;
-      cursor: pointer;
-      white-space: nowrap;
-      text-decoration: none;
-      transition: opacity 0.15s, transform 0.2s;
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 500; color: var(--text2);
+      background: var(--bg); border: 1.5px solid var(--border2);
+      padding: 12px 22px; border-radius: 10px; text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
     }
-    .discord-btn:hover { opacity: 0.82; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-    .discord-btn:active { transform: translateY(0); }
-    .discord-btn svg { flex-shrink: 0; }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
-    .secondary-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted2);
-      border: 1px solid var(--border2);
-      padding: 12px 20px;
-      text-decoration: none;
-      transition: color 0.15s, border-color 0.15s;
+    .metrics-bar {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: var(--surface);
     }
-    .secondary-btn:hover { color: var(--text); border-color: var(--muted); }
+    .metric-item {
+      padding: 32px 40px; border-right: 1px solid var(--border);
+      opacity: 0; transform: translateY(16px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .metric-item:last-child { border-right: none; }
+    .metric-item.visible { opacity: 1; transform: translateY(0); }
+    .metric-val { font-size: 32px; font-weight: 600; letter-spacing: -0.04em; color: var(--text); margin-bottom: 4px; }
+    .metric-label { font-size: 13px; color: var(--muted); }
 
-    /* PROOF BAR */
-    .proof-bar {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .proof-item {
-      padding: 28px 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      border-right: 1px solid var(--border);
-    }
-    .proof-item:last-child { border-right: none; }
-
-    .proof-val {
-      font-size: 28px;
-      font-weight: 300;
-      letter-spacing: -0.04em;
-      color: var(--text);
-    }
-    .proof-val strong { font-weight: 500; color: var(--green); }
-
-    .proof-label {
-      font-family: var(--sans);
-      font-size: 12px;
-      font-weight: 300;
-      color: var(--muted2);
-    }
-
-    /* SECTION HEAD */
-    .section-head {
-      font-size: 10px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 40px;
-    }
-
-    /* MANIFESTO */
-    .manifesto-section {
-      padding: 96px 40px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .manifesto-statement {
-      font-size: clamp(22px, 3.5vw, 42px);
-      font-weight: 300;
-      line-height: 1.25;
-      max-width: 860px;
-      margin-bottom: 64px;
-    }
-    .manifesto-statement strong { font-weight: 500; }
-    .manifesto-statement em { color: var(--muted2); font-style: normal; }
+    .value-section { padding: 96px 48px; max-width: 1100px; margin: 0 auto; }
+    .section-eyebrow { font-size: 11px; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-heading { font-size: clamp(24px, 4vw, 40px); font-weight: 600; letter-spacing: -0.03em; color: var(--text); max-width: 560px; line-height: 1.2; margin-bottom: 20px; }
+    .section-intro { font-size: 15px; line-height: 1.75; color: var(--text2); max-width: 560px; margin-bottom: 56px; }
 
     .values-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0;
-      border: 1px solid var(--border);
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
     }
-
     .value-card {
-      padding: 32px 28px;
-      border-right: 1px solid var(--border);
+      background: var(--bg); padding: 32px 28px;
+      opacity: 0; transform: translateY(16px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .value-card:last-child { border-right: none; }
+    .value-card.visible { opacity: 1; transform: translateY(0); }
+    .value-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 16px; }
+    .value-card h3 { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); margin-bottom: 10px; }
+    .value-card p  { font-size: 13.5px; line-height: 1.7; color: var(--muted); }
 
-    .value-card-tag {
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 14px;
+    .arch-section { padding: 80px 48px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .arch-inner { max-width: 1100px; margin: 0 auto; }
+    .arch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 48px; }
+    .arch-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px;
+      opacity: 0; transform: translateY(12px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    .arch-card.visible { opacity: 1; transform: translateY(0); }
+    .arch-card:last-child { grid-column: 1 / -1; }
+    .arch-card-num { font-family: var(--mono); font-size: 11px; color: var(--accent); font-weight: 500; letter-spacing: 0.06em; margin-bottom: 12px; }
+    .arch-card h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.02em; }
+    .arch-card p  { font-size: 13px; line-height: 1.7; color: var(--muted); }
 
-    .value-card h3 {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 10px;
-    }
-    .value-card p {
-      font-family: var(--sans);
-      font-size: 13px;
-      color: var(--muted2);
-      line-height: 1.65;
-    }
+    code { font-family: var(--mono); font-size: 11px; color: var(--accent); background: var(--accent-bg); padding: 1px 6px; border-radius: 4px; }
 
-    /* UNDER THE HOOD */
-    .hood-section {
-      padding: 80px 40px;
-      border-bottom: 1px solid var(--border);
-    }
+    .cta-strip { padding: 80px 48px; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+    .cta-copy h2 { font-size: clamp(22px, 3.5vw, 36px); font-weight: 600; letter-spacing: -0.03em; color: var(--text); margin-bottom: 8px; }
+    .cta-copy p  { font-size: 15px; color: var(--muted); line-height: 1.6; }
 
-    .hood-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-    }
-
-    .hood-item {
-      background: var(--bg);
-      padding: 32px 28px;
-    }
-
-    .hood-item-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .hood-icon {
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      color: var(--green);
-      flex-shrink: 0;
-      padding-top: 2px;
-    }
-
-    .hood-item-title {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-      line-height: 1.3;
-    }
-
-    .hood-item-why {
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 300;
-      line-height: 1.65;
-      color: var(--muted2);
-      padding-left: 26px;
-    }
-
-
-    /* CTA STRIP */
-    .cta-strip {
-      padding: 72px 40px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-    .cta-copy {}
-    .cta-copy h2 {
-      font-size: clamp(20px, 3vw, 32px);
-      font-weight: 300;
-      letter-spacing: -0.03em;
-      margin-bottom: 10px;
-    }
-    .cta-copy p {
-      font-family: var(--sans);
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--muted2);
-      line-height: 1.6;
-    }
-
-    /* FOOTER */
-    footer {
-      padding: 28px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .footer-logo { font-size: 12px; color: var(--muted2); }
-    .footer-links { display: flex; gap: 24px; }
-    .footer-link {
-      font-size: 11px;
-      color: var(--muted);
-      text-decoration: none;
-      letter-spacing: 0.04em;
-      transition: color 0.15s;
-    }
+    footer { border-top: 1px solid var(--border); padding: 28px 48px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); }
+    .footer-left { display: flex; align-items: center; gap: 10px; }
+    .footer-tagline { font-size: 12px; color: var(--muted2); }
+    .footer-links { display: flex; align-items: center; gap: 24px; }
+    .footer-link { font-size: 12px; color: var(--muted); text-decoration: none; transition: color 0.15s; }
     .footer-link:hover { color: var(--text); }
 
-    /* SCROLL ANIMATIONS */
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    .reveal { opacity: 0; transform: translateY(20px); transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    .manifesto-statement.reveal {
-      transition: opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @media (max-width: 720px) {
+    @media (max-width: 768px) {
       nav { padding: 0 20px; }
-      .hero { padding: 64px 20px 60px; }
-      h1 { font-size: 36px; }
-      .manifesto-section, .hood-section, .cta-strip { padding: 56px 20px; }
-      .proof-bar { grid-template-columns: 1fr; }
-      .proof-item { border-right: none; border-bottom: 1px solid var(--border); }
-      .proof-item:last-child { border-bottom: none; }
+      .status-pill { display: none; }
+      .hero { padding: 64px 20px 56px; }
+      .metrics-bar { grid-template-columns: 1fr; }
+      .metric-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .value-section, .arch-section { padding: 64px 20px; }
       .values-grid { grid-template-columns: 1fr; }
-      .value-card { border-right: none; border-bottom: 1px solid var(--border); }
-      .value-card:last-child { border-bottom: none; }
-      .hood-grid { grid-template-columns: 1fr; }
-      .cta-strip { flex-direction: column; align-items: flex-start; }
-      footer { padding: 24px 20px; }
+      .arch-grid { grid-template-columns: 1fr; }
+      .arch-card:last-child { grid-column: auto; }
+      .cta-strip { flex-direction: column; padding: 64px 20px; }
+      footer { flex-direction: column; gap: 20px; padding: 24px 20px; text-align: center; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <a href="/" class="logo">api<span>.oops.wtf</span></a>
+  <a href="/" class="logo">
+    <img src="/logo.png" alt="BareAI" class="logo-img" />
+  </a>
   <div class="nav-right">
-    <div class="nav-pill">
+    <div class="status-pill">
       <span class="dot-green"></span>
-      Operational
+      All systems operational
     </div>
-    <a href="/playground" class="nav-cta">Playground →</a>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+      <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <a href="/playground" class="nav-cta">Open Playground →</a>
   </div>
 </nav>
 
-
-<!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Intelligence as a Utility</div>
-  <h1><strong>Raw AI inference.</strong><br><em>No guardrails. No babysitting.</em></h1>
-  <p class="hero-sub">
-    A high-speed, unopinionated pipe between your code and the model. We don't inject prompts, censor outputs, or touch your data. Just the raw weights — sub-second.
-  </p>
+  <div class="hero-badge">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M4 6l1.5 1.5L8 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Transparent AI Infrastructure
+  </div>
+  <h1>Direct access to<br/><span class="accent">AI inference.</span><br/><span class="light">Nothing in between.</span></h1>
+  <p class="hero-sub">BareAI provides a clean, direct connection between your application and leading AI models. No hidden system prompts, no data retention, no unexpected modifications to your requests.</p>
   <div class="hero-actions">
-    <a href="https://discord.gg/JCbZVAJehE" class="discord-btn" target="_blank">
-      <svg width="20" height="16" viewBox="0 0 24 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 1.492a19.84 19.84 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.093-.32 10.555.099 14.961a.08.08 0 0 0 .031.055 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.026 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.442a.061.061 0 0 0-.031-.03zM8.02 12.278c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-      Get access on Discord
+    <a href="https://discord.gg/JCbZVAJehE" class="btn-primary" target="_blank">
+      <svg width="18" height="14" viewBox="0 0 24 18" fill="currentColor"><path d="M20.317 1.492a19.84 19.84 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.093-.32 10.555.099 14.961a.08.08 0 0 0 .031.055 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.026 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.442a.061.061 0 0 0-.031-.03zM8.02 12.278c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+      Request API Access
     </a>
-    <a href="/playground" class="secondary-btn">Try playground</a>
+    <a href="/playground" class="btn-secondary">Explore Playground</a>
   </div>
 </div>
 
-
-<!-- PROOF BAR -->
-<div class="proof-bar">
-  <div class="proof-item reveal">
-    <div class="proof-val"><strong>&lt;1s</strong></div>
-    <div class="proof-label">Time to first token</div>
-  </div>
-  <div class="proof-item reveal" style="transition-delay:0.1s">
-    <div class="proof-val"><strong>0</strong> system prompts</div>
-    <div class="proof-label">Injected behind your back</div>
-  </div>
-  <div class="proof-item reveal" style="transition-delay:0.2s">
-    <div class="proof-val"><strong>Zero</strong></div>
-    <div class="proof-label">Inference data retained</div>
-  </div>
+<div class="metrics-bar">
+  <div class="metric-item reveal"><div class="metric-val">&lt;1s</div><div class="metric-label">Time to first token</div></div>
+  <div class="metric-item reveal" style="transition-delay:0.1s"><div class="metric-val">Zero</div><div class="metric-label">Hidden system prompts injected</div></div>
+  <div class="metric-item reveal" style="transition-delay:0.2s"><div class="metric-val">Zero</div><div class="metric-label">Inference data retained</div></div>
 </div>
 
-
-
-<!-- MANIFESTO -->
-<div class="manifesto-section">
-  <div class="manifesto-statement reveal">
-    <em>Most AI APIs quietly decide things for you.</em> They inject "helpful" system prompts, moralize the output, and log conversations. <strong>We stripped all of that.</strong> Your prompt hits the model raw. The output comes back unfiltered. The connection closes and we forget it happened.
-  </div>
-
+<div class="value-section">
+  <div class="section-eyebrow reveal">Core principles</div>
+  <h2 class="section-heading reveal" style="transition-delay:0.05s">Built for developers who need control</h2>
+  <p class="section-intro reveal" style="transition-delay:0.1s">Most AI APIs silently modify your requests, inject behavioural instructions, and retain conversation logs. BareAI is architecturally designed to do none of these things.</p>
   <div class="values-grid">
-    <div class="value-card reveal" style="transition-delay: 0.1s">
-      <div class="value-card-tag">// Unopinionated</div>
+    <div class="value-card reveal" style="transition-delay:0.1s">
+      <div class="value-icon">→</div>
       <h3>Pass-through routing</h3>
-      <p>Zero system prompts injected. Zero output filtering. You control the context, the constraints, and the tone. The model answers your question exactly as asked.</p>
+      <p>Your prompt reaches the model exactly as you wrote it. We inject no system prompts, apply no output filters, and make no assumptions about your intent.</p>
     </div>
-    <div class="value-card reveal" style="transition-delay: 0.2s">
-      <div class="value-card-tag">// Private</div>
+    <div class="value-card reveal" style="transition-delay:0.2s">
+      <div class="value-icon">🔒</div>
       <h3>Zero-retention by design</h3>
-      <p>Your messages are processed in memory and discarded on connection close. We never log conversation content, never train on your data, and your identity is isolated from your inference traffic.</p>
+      <p>Messages are processed in memory and discarded when the request closes. Conversation content is never written to a database, and your identity is structurally isolated from your inference traffic.</p>
     </div>
-    <div class="value-card reveal" style="transition-delay: 0.3s">
-      <div class="value-card-tag">// Observable</div>
-      <h3>Instant failure alerts</h3>
-      <p>Real-time Discord webhook alerts fire on every 429 or 500. You know about rate limits and server errors before your users do.</p>
+    <div class="value-card reveal" style="transition-delay:0.3s">
+      <div class="value-icon">📡</div>
+      <h3>Real-time error visibility</h3>
+      <p>Every rate-limit (429) and server error (500) triggers an instant webhook notification. You maintain full operational awareness without polling or manual log review.</p>
     </div>
   </div>
 </div>
 
-
-<!-- UNDER THE HOOD -->
-<div class="hood-section">
-  <div class="section-head">// Under the hood</div>
-  <div class="hood-grid">
-
-    <div class="hood-item reveal">
-      <div class="hood-item-header">
-        <span class="hood-icon">[01]</span>
-        <div class="hood-item-title">Privacy Scrubber</div>
-      </div>
-      <div class="hood-item-why">A custom redaction engine runs inside the Cloudflare Worker. If the API crashes, error logs could expose your message content or API key. We replace them with <code style="font-size:11px;color:var(--amber)">[REDACTED_PRIVACY]</code> before they leave the server.</div>
+<div class="arch-section">
+  <div class="arch-inner">
+    <div class="section-eyebrow reveal">How it works</div>
+    <h2 class="section-heading reveal" style="transition-delay:0.05s">Architecture overview</h2>
+    <p class="section-intro reveal" style="transition-delay:0.1s">Every component is purposefully designed to handle your data responsibly while keeping latency minimal and transparency maximal.</p>
+    <div class="arch-grid">
+      <div class="arch-card reveal" style="transition-delay:0.1s"><div class="arch-card-num">01</div><h4>Privacy Scrubber</h4><p>A dedicated redaction layer runs inside the Cloudflare Worker. Sensitive fields — message content and access credentials — are replaced with <code>[REDACTED]</code> before any diagnostic log is written.</p></div>
+      <div class="arch-card reveal" style="transition-delay:0.15s"><div class="arch-card-num">02</div><h4>Health Monitoring</h4><p>Every 429 rate-limit response and 500 server error fires an immediate notification alert. This lets you diagnose and resolve incidents proactively, before users are affected.</p></div>
+      <div class="arch-card reveal" style="transition-delay:0.2s"><div class="arch-card-num">03</div><h4>Smart Context Truncation</h4><p>Large document uploads are trimmed intelligently to stay within token limits, preserving the beginning and end of your document for maximum contextual relevance.</p></div>
+      <div class="arch-card reveal" style="transition-delay:0.25s"><div class="arch-card-num">04</div><h4>Identity Isolation</h4><p>Rate-limiting identity and inference data are maintained in fully separate, unconnected datastores. There is no technical pathway by which who you are could be joined to what you submitted.</p></div>
+      <div class="arch-card reveal" style="transition-delay:0.3s"><div class="arch-card-num">05</div><h4>Transparent Edge Routing</h4><p>Request headers are forwarded without modification. No default system prompt. No behavioural scaffolding. Your request is delivered to the model cleanly and returned without post-processing.</p></div>
     </div>
-
-    <div class="hood-item reveal" style="transition-delay:0.1s">
-      <div class="hood-item-header">
-        <span class="hood-icon">[02]</span>
-        <div class="hood-item-title">Discord Health Monitor</div>
-      </div>
-      <div class="hood-item-why">Every 429 rate-limit and 500 server error fires an instant Discord webhook alert. Fix incidents before users report them — not after.</div>
-    </div>
-
-    <div class="hood-item reveal" style="transition-delay:0.15s">
-      <div class="hood-item-header">
-        <span class="hood-icon">[03]</span>
-        <div class="hood-item-title">Smart Context Truncation</div>
-      </div>
-      <div class="hood-item-why">Large document uploads are auto-measured and trimmed to stay under the 6,000 TPM limit. The middle is cut, not the edges — so the model gets the beginning and end of your file intact.</div>
-    </div>
-
-    <div class="hood-item reveal" style="transition-delay:0.2s">
-      <div class="hood-item-header">
-        <span class="hood-icon">[04]</span>
-        <div class="hood-item-title">Zero-Retention Identity Layer</div>
-      </div>
-      <div class="hood-item-why">Your Discord UID lives in Cloudflare KV for rate-limiting. Your conversation text lives nowhere. These two datastores have zero connection to each other — who you are is fully isolated from what you said.</div>
-    </div>
-
-    <div class="hood-item reveal" style="transition-delay:0.25s" style="grid-column: 1 / -1;">
-      <div class="hood-item-header">
-        <span class="hood-icon">[05]</span>
-        <div class="hood-item-title">Unopinionated Edge Routing</div>
-      </div>
-      <div class="hood-item-why">Headers are configured pass-through. No hidden system prompt. No "You are a helpful assistant." No AI moralizing pre-processing. If you send a question, the model answers it. Full stop.</div>
-    </div>
-
   </div>
 </div>
 
-
-
-<!-- CTA STRIP -->
 <div class="cta-strip">
   <div class="cta-copy reveal">
-    <h2>Ready to drop the babysitter?</h2>
-    <p>Join the Discord and request an access key. It takes 60 seconds.</p>
+    <h2>Ready to get started?</h2>
+    <p>Request an API key via Discord. Access is typically provisioned within a few minutes.</p>
   </div>
-  <a href="https://discord.gg/JCbZVAJehE" class="discord-btn reveal" target="_blank" style="transition-delay:0.1s">
-    <svg width="20" height="16" viewBox="0 0 24 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 1.492a19.84 19.84 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.093-.32 10.555.099 14.961a.08.08 0 0 0 .031.055 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.026 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.442a.061.061 0 0 0-.031-.03zM8.02 12.278c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-    Join Discord
+  <a href="https://discord.gg/JCbZVAJehE" class="btn-primary reveal" target="_blank" style="transition-delay:0.1s; flex-shrink:0;">
+    <svg width="18" height="14" viewBox="0 0 24 18" fill="currentColor"><path d="M20.317 1.492a19.84 19.84 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.093-.32 10.555.099 14.961a.08.08 0 0 0 .031.055 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.026 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.442a.061.061 0 0 0-.031-.03zM8.02 12.278c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+    Request Access on Discord
   </a>
 </div>
 
-
 <footer>
-  <div class="footer-logo">api.oops.wtf</div>
+  <div class="footer-left">
+    <a href="/" style="display:flex;align-items:center;text-decoration:none;">
+      <img src="/logo.png" alt="BareAI" style="height:22px;width:auto;display:block;" />
+    </a>
+    <span class="footer-tagline" style="margin-left:8px;">Transparent AI Infrastructure</span>
+  </div>
   <div class="footer-links">
     <a href="/playground" class="footer-link">Playground</a>
-    <a href="/privacy" class="footer-link">Privacy</a>
-    <a href="/cdn-cgi/l/email-protection#177878676476677e5763626376397e78" class="footer-link">Contact</a>
+    <a href="/privacy" class="footer-link">Privacy Policy</a>
+    <a href="mailto:hello@bare.ai" class="footer-link">Contact</a>
   </div>
 </footer>
 
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.1 });
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('bareai-theme', isDark ? 'dark' : 'light');
+  });
 
-  const manifestoObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.6 });
-
-  document.querySelectorAll('.reveal').forEach(el => {
-    if (el.classList.contains('manifesto-statement')) {
-      manifestoObserver.observe(el);
-    } else {
-      observer.observe(el);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!localStorage.getItem('bareai-theme')) {
+      document.documentElement.classList.toggle('dark', e.matches);
     }
   });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal, .metric-item, .value-card, .arch-card').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
