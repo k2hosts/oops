@@ -623,42 +623,70 @@
   async function typewriterRender(fullText, bubble) {
     typewriterStop = false;
 
-    // Determine velocity based on content type
-    // Code-heavy or long responses get higher velocity (smaller delay)
+    const len = fullText.length;
     const isCodeHeavy = (fullText.match(/```/g) || []).length >= 2;
-    const isLong      = fullText.length > 800;
-    const charDelay   = isCodeHeavy ? 4 : isLong ? 8 : 14; // ms per character
 
-    let displayed = '';
+    // Target total animation time regardless of length:
+    // Short  (<150 chars)  → feels snappy,  ~1.5s total
+    // Medium (150–600)     → comfortable,   ~2.5s total
+    // Long   (600–1500)    → reads fast,    ~3.5s total
+    // Huge   (>1500)       → races through, ~4.5s total
+    const targetMs = len < 150  ? 1500
+                   : len < 600  ? 2500
+                   : len < 1500 ? 3500
+                   : 4500;
+
+    // Stride: how many chars to advance per DOM update.
+    // Larger stride = fewer repaints = smoother on long output.
+    const stride = isCodeHeavy ? Math.max(6, Math.ceil(len / 120))
+                               : Math.max(1, Math.ceil(len / 200));
+
+    // Base delay per render tick derived from target time
+    const totalTicks = Math.ceil(len / stride);
+    const baseDelay  = Math.max(1, Math.round(targetMs / totalTicks));
+
     const CURSOR = '<span class="tw-cursor">▍</span>';
 
     // Injects cursor inside the last block element so it sits inline with text
     function renderWithCursor(text) {
       const html = marked.parse(text);
-      // Find last closing block tag and inject cursor before it
       const match = html.match(/(.*?)(<\/(p|li|h[1-6]|td|pre)>\s*)$/s);
       if (match) return match[1] + CURSOR + match[2];
-      return html + CURSOR; // fallback
+      return html + CURSOR;
     }
 
-    for (let i = 0; i < fullText.length; i++) {
+    // Dynamic acceleration: starts at baseDelay, ramps down to ~20% of it
+    // by the end so long responses feel like they're picking up speed.
+    function delayAt(progress) {
+      // progress: 0.0 → 1.0
+      // ease from 1.0× down to 0.2× using a simple curve
+      const factor = 1 - (progress * 0.8);
+      return Math.max(1, Math.round(baseDelay * factor));
+    }
+
+    let displayed = '';
+    for (let i = 0; i < len; i++) {
       if (typewriterStop) break;
       displayed += fullText[i];
 
-      // Re-render markdown at each step so formatting builds up naturally
-      // Only re-render every N chars to avoid thrashing the DOM
-      const stride = isCodeHeavy ? 6 : isLong ? 3 : 1;
-      if (i % stride === 0 || i === fullText.length - 1) {
+      if (i % stride === 0 || i === len - 1) {
         bubble.innerHTML = renderWithCursor(displayed);
         scrollToBottom();
-        await new Promise(r => setTimeout(r, charDelay * stride));
+        // Live-update canvas every ~15% of the way through if it's open
+        if (i > 0 && i % Math.max(stride, Math.floor(len * 0.15)) === 0) {
+          autoUpdateCanvas(displayed, true);
+        }
+        await new Promise(r => setTimeout(r, delayAt(i / len)));
       }
     }
 
-    // Final render: full markdown, no cursor
+    // Final render: full markdown, syntax highlighted, no cursor
     bubble.innerHTML = marked.parse(fullText);
     bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
     scrollToBottom();
+
+    // Auto-update canvas if it's open and the response contains a code block
+    autoUpdateCanvas(fullText);
   }
 
   function setSendState(enabled) {
@@ -714,6 +742,50 @@
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   };
   window.closeArtifact = () => { const p = document.getElementById('artifact-pane'); p.classList.remove('open'); p.style.width = ''; document.getElementById('resizer').style.display = 'none'; };
+
+  // Auto-update the canvas when a new response contains a matching code block.
+  // partialUpdate=true means we're mid-typewriter — only refresh preview, skip
+  // re-highlighting to avoid flicker.
+  function autoUpdateCanvas(text, partialUpdate = false) {
+    const pane = document.getElementById('artifact-pane');
+    if (!pane.classList.contains('open')) return; // canvas not open, nothing to do
+
+    // Extract the last fenced code block from the text
+    const fenceRe = /```([\w+-]*)\n([\s\S]*?)```/g;
+    let match, lastMatch = null;
+    while ((match = fenceRe.exec(text)) !== null) lastMatch = match;
+    if (!lastMatch) return; // no code block found
+
+    const lang = (lastMatch[1] || currentArtifact.lang || 'plaintext').trim();
+    const code = lastMatch[2];
+
+    // Only auto-update if the language matches what's already in the canvas
+    // (prevents hijacking the canvas with an unrelated snippet)
+    if (currentArtifact.lang && lang !== currentArtifact.lang && !partialUpdate) return;
+
+    // Update the stored artifact
+    currentArtifact = { code, lang };
+
+    if (!partialUpdate) {
+      // Full update: re-highlight code view and refresh preview
+      const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+      document.getElementById('art-code').innerHTML =
+        `<pre><code class="hljs ${validLang}">${hljs.highlight(code, { language: validLang }).value}</code></pre>`;
+    }
+
+    // Always refresh the preview iframe for HTML
+    if (lang === 'html') {
+      const iframe = document.getElementById('art-preview');
+      const tabPreview = document.getElementById('tab-preview');
+      tabPreview.style.display = 'block';
+      // Use a data URL on partial updates to avoid iframe reload flicker
+      if (partialUpdate) {
+        try { iframe.contentDocument.open(); iframe.contentDocument.write(code); iframe.contentDocument.close(); } catch (_) { iframe.srcdoc = code; }
+      } else {
+        iframe.srcdoc = code;
+      }
+    }
+  }
 
   const resizer = document.getElementById('resizer'), artifactPane = document.getElementById('artifact-pane');
   let isResizing = false;
