@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="logo.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Playground — BareAI</title>
@@ -443,7 +442,7 @@
 
   // ── APP STATE ─────────────────────────────────────────
   const WORKER_URL     = "https://oops-proxy.deandre6156.workers.dev";
-  const STORAGE_PREFIX = "oops_pg_";
+  const STORAGE_PREFIX = "bare_pg_";
 
   let activeKey = null, remaining = null, limit = null;
   let history = [], isLoading = false, abortCtrl = null;
@@ -487,7 +486,7 @@
 
   async function submitKey() {
     const input = document.getElementById('key-input'), errEl = document.getElementById('key-error'), btn = document.getElementById('key-submit');
-    const raw = input.value.trim();
+    const raw = input.value.trim().replace(/^bare_/, '');
     input.classList.remove('error'); errEl.textContent = '';
     if (!raw) { input.classList.add('error'); errEl.textContent = 'Please enter your access key.'; return; }
     btn.textContent = 'Verifying…'; btn.disabled = true;
