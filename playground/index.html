@@ -413,11 +413,9 @@
 <script>
   // ── THEME (runs before paint) ─────────────────────────
   (function() {
+    // Default to dark mode; respect explicit user preference if set
     const saved = localStorage.getItem('bareai-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (saved === 'dark' || (!saved && prefersDark)) {
-      document.documentElement.classList.add('dark');
-    }
+    if (saved !== 'light') document.documentElement.classList.add('dark');
     // Swap hljs stylesheet
     function syncHljs(dark) {
       document.getElementById('hljs-light').disabled = dark;
