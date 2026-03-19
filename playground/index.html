@@ -521,14 +521,24 @@
 
   function updateCounter() {
     if (remaining === null || limit === null) return;
-    const used = limit - remaining, track = document.getElementById('counter-track'), text = document.getElementById('counter-text');
-    const isLow = remaining <= Math.ceil(limit * 0.3), isCritical = remaining <= Math.ceil(limit * 0.1);
-    track.innerHTML = Array.from({ length: limit }, (_, i) => {
-      const cls = i < used ? (isCritical ? 'used critical' : isLow ? 'used low' : 'used') : '';
+    const used       = limit - remaining;
+    const track      = document.getElementById('counter-track');
+    const text       = document.getElementById('counter-text');
+    const isLow      = remaining <= Math.ceil(limit * 0.3);
+    const isCritical = remaining <= Math.ceil(limit * 0.1);
+
+    // Always use 10 pips representing percentage used, regardless of token limit size
+    const PIPS     = 10;
+    const usedPips = Math.round((used / limit) * PIPS);
+    track.innerHTML = Array.from({ length: PIPS }, (_, i) => {
+      const cls = i < usedPips ? (isCritical ? 'used critical' : isLow ? 'used low' : 'used') : '';
       return `<div class="counter-pip ${cls}"></div>`;
     }).join('');
-    text.textContent = `${remaining} / ${limit}`;
-    text.className = 'counter-text' + (isCritical ? ' critical' : isLow ? ' low' : '');
+
+    // Format large numbers: 95000 -> 95k
+    const fmt = (n) => n >= 1000 ? Math.round(n / 1000) + 'k' : String(n);
+    text.textContent = fmt(remaining) + ' / ' + fmt(limit);
+    text.className   = 'counter-text' + (isCritical ? ' critical' : isLow ? ' low' : '');
   }
 
   function showLimitBanner() {
@@ -554,24 +564,25 @@
       typingEl.remove();
       if (res.status === 429) { remaining = 0; updateCounter(); showLimitBanner(); history.pop(); isLoading = false; setSendState(true); return; }
       if (!res.ok) { const errData = await res.json().catch(() => ({})); appendError(errData.message || `Error ${res.status}`); history.pop(); isLoading = false; setSendState(true); return; }
-      const assistantRow = appendAssistantMsg(''), bubble = assistantRow.querySelector('.bubble');
-      let accumulated = '';
-      const reader = res.body.getReader(), decoder = new TextDecoder();
-      while (true) {
-        const { done, value } = await reader.read(); if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        for (const line of chunk.split('\n')) {
-          if (!line.startsWith('data: ')) continue;
-          const data = line.slice(6).trim(); if (data === '[DONE]') continue;
-          try {
-            const parsed = JSON.parse(data), delta = parsed.choices?.[0]?.delta?.content || '';
-            if (delta) { accumulated += delta; bubble.innerHTML = marked.parse(accumulated); bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el)); scrollToBottom(); }
-            const meta = parsed._meta;
-            if (meta) { remaining = meta.remaining ?? remaining; limit = meta.limit ?? limit; updateCounter(); if (remaining <= 0) showLimitBanner(); }
-          } catch (_) {}
-        }
+      // Worker returns plain JSON (not a stream)
+      const data = await res.json();
+      const text = data.choices?.[0]?.message?.content || '';
+
+      // Update token counter from _meta
+      const meta = data._meta;
+      if (meta) {
+        remaining = meta.remaining ?? remaining;
+        limit     = meta.limit     ?? limit;
+        updateCounter();
+        if (remaining <= 0) showLimitBanner();
       }
-      history.push({ role: 'assistant', content: accumulated });
+
+      // Render the response
+      const assistantRow = appendAssistantMsg(''), bubble = assistantRow.querySelector('.bubble');
+      bubble.innerHTML = marked.parse(text);
+      bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+      scrollToBottom();
+      history.push({ role: 'assistant', content: text });
     } catch (err) {
       typingEl?.remove();
       if (err.name !== 'AbortError') { appendError('Connection error. Please try again.'); history.pop(); }
