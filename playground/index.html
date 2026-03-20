@@ -181,6 +181,24 @@
     .copy-btn { position: absolute; top: 8px; right: 8px; font-size: 11px; font-weight: 500; color: var(--muted); background: var(--bg); border: 1px solid var(--border); padding: 4px 9px; border-radius: 5px; cursor: pointer; transition: all 0.15s; font-family: var(--sans); }
     .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
 
+    /* ── IMAGE THUMBNAILS in bubbles ── */
+    .bubble-images { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+    .bubble-img-thumb {
+      width: 120px; height: 90px; object-fit: cover;
+      border-radius: 8px; border: 1px solid var(--border);
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .bubble-img-thumb:hover { opacity: 0.85; }
+
+    /* ── IMAGE LIGHTBOX ── */
+    #img-lightbox {
+      display: none; position: fixed; inset: 0; z-index: 9998;
+      background: rgba(0,0,0,0.85); align-items: center; justify-content: center;
+      cursor: zoom-out;
+    }
+    #img-lightbox.open { display: flex; }
+    #img-lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
+
     .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 40px; pointer-events: none; }
     .empty-logo { width: 40px; height: 40px; background: var(--accent-bg); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
     .empty-title { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
@@ -221,10 +239,30 @@
     #attach-btn:hover { color: var(--accent); }
 
     #file-preview { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 max(20px, calc(50% - 420px)) 6px; }
+
+    /* Doc tag */
     .file-tag { font-size: 11px; font-weight: 500; background: var(--accent-bg); border: 1px solid rgba(90,15,133,0.15); color: var(--accent); padding: 4px 10px; border-radius: 100px; display: flex; align-items: center; gap: 6px; }
     html.dark .file-tag { border-color: rgba(155,77,202,0.25); }
     .file-tag-remove { cursor: pointer; color: var(--muted); font-weight: bold; transition: color 0.15s; }
     .file-tag-remove:hover { color: var(--red); }
+
+    /* Image preview thumbnail in toolbar */
+    .img-preview-wrap {
+      position: relative; display: inline-flex; align-items: flex-start;
+    }
+    .img-preview-thumb {
+      width: 48px; height: 48px; object-fit: cover;
+      border-radius: 8px; border: 1px solid var(--border);
+      display: block;
+    }
+    .img-preview-remove {
+      position: absolute; top: -6px; right: -6px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--red); color: #fff;
+      font-size: 10px; font-weight: bold; line-height: 16px; text-align: center;
+      cursor: pointer; border: none; font-family: var(--sans);
+      display: flex; align-items: center; justify-content: center;
+    }
 
     #msg-input { flex: 1; background: transparent; border: none; outline: none; font-family: var(--sans); font-size: 14px; color: var(--text); padding: 12px 16px; resize: none; line-height: 1.5; max-height: 120px; overflow-y: auto; }
     #msg-input::placeholder { color: var(--muted2); }
@@ -367,10 +405,12 @@
       <div class="input-area">
         <div id="file-preview"></div>
         <div class="input-row" id="input-row">
-          <button id="attach-btn" title="Attach a document">
+          <button id="attach-btn" title="Attach a file or image">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </button>
-          <input type="file" id="file-input" multiple style="display: none;" accept=".txt,.md,.csv,.json,.js,.py,.html,.css,.xml,.yaml,.yml" />
+          <!-- Accept text docs AND images -->
+          <input type="file" id="file-input" multiple style="display: none;"
+            accept=".txt,.md,.csv,.json,.js,.py,.html,.css,.xml,.yaml,.yml,image/png,image/jpeg,image/gif,image/webp" />
           <textarea id="msg-input" placeholder="Send a message…" rows="1"></textarea>
           <button id="stop-btn">Stop</button>
           <button id="send-btn">Send</button>
@@ -378,6 +418,7 @@
         <div class="input-hint">
           <span>↵ send</span>
           <span>⇧↵ newline</span>
+          <span>📎 images &amp; docs</span>
         </div>
       </div>
     </div>
@@ -403,6 +444,11 @@
   </div>
 </div>
 
+<!-- Lightbox for full-size image view -->
+<div id="img-lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="Full size" />
+</div>
+
 <div class="toast-container">
   <div class="toast">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -422,10 +468,8 @@
 <script>
   // ── THEME (runs before paint) ─────────────────────────
   (function() {
-    // Default to dark mode; respect explicit user preference if set
     const saved = localStorage.getItem('bareai-theme');
     if (saved !== 'light') document.documentElement.classList.add('dark');
-    // Swap hljs stylesheet
     function syncHljs(dark) {
       document.getElementById('hljs-light').disabled = dark;
       document.getElementById('hljs-dark').disabled = !dark;
@@ -453,7 +497,9 @@
 
   let activeKey = null, remaining = null, limit = null;
   let history = [], isLoading = false, abortCtrl = null;
-  let attachedDocs = [], currentArtifact = { code: '', lang: '' }, pastedDocsCache = {};
+  let attachedDocs = [];    // { name, content }  — text documents
+  let attachedImages = [];  // { name, dataUrl, mimeType }  — images
+  let currentArtifact = { code: '', lang: '' }, pastedDocsCache = {};
 
   // ── MARKDOWN SETUP ────────────────────────────────────
   const renderer = {
@@ -534,16 +580,12 @@
     const text       = document.getElementById('counter-text');
     const isLow      = remaining <= Math.ceil(limit * 0.3);
     const isCritical = remaining <= Math.ceil(limit * 0.1);
-
-    // Always use 10 pips representing percentage used, regardless of token limit size
     const PIPS     = 10;
     const usedPips = Math.round((used / limit) * PIPS);
     track.innerHTML = Array.from({ length: PIPS }, (_, i) => {
       const cls = i < usedPips ? (isCritical ? 'used critical' : isLow ? 'used low' : 'used') : '';
       return `<div class="counter-pip ${cls}"></div>`;
     }).join('');
-
-    // Format large numbers: 95000 -> 95k
     const fmt = (n) => n >= 1000 ? Math.round(n / 1000) + 'k' : String(n);
     text.textContent = fmt(remaining) + ' / ' + fmt(limit);
     text.className   = 'counter-text' + (isCritical ? ' critical' : isLow ? ' low' : '');
@@ -555,30 +597,148 @@
     document.getElementById('send-btn').disabled = true;
   }
 
+  // ── IMAGE HELPERS ─────────────────────────────────────
+
+  /**
+   * Read a File as a base64 data URL.
+   */
+  function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /**
+   * Build the OpenAI-format content array for a user message that may
+   * contain text and/or images.
+   *
+   * If there are no images, returns a plain string (backwards-compatible).
+   * If there are images, returns an array of content blocks.
+   */
+  function buildUserContent(textContent, images) {
+    if (images.length === 0) return textContent || '';
+
+    const blocks = [];
+
+    // Add all image blocks first
+    for (const img of images) {
+      // dataUrl is "data:<mime>;base64,<data>" — Groq expects the full data URL
+      blocks.push({
+        type: 'image_url',
+        image_url: { url: img.dataUrl }
+      });
+    }
+
+    // Add text block (required even if empty, so the model knows what to do)
+    blocks.push({
+      type: 'text',
+      text: textContent || 'What is in this image?'
+    });
+
+    return blocks;
+  }
+
+  /**
+   * Render the file/image preview bar below the input.
+   */
+  function renderAttachments() {
+    const preview = document.getElementById('file-preview');
+    const docTags = attachedDocs.map((doc, i) =>
+      `<div class="file-tag">
+        <span>📄 ${escHtml(doc.name)}</span>
+        <span class="file-tag-remove" onclick="removeDoc(${i})">×</span>
+      </div>`
+    ).join('');
+
+    const imgTags = attachedImages.map((img, i) =>
+      `<div class="img-preview-wrap">
+        <img class="img-preview-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" />
+        <button class="img-preview-remove" onclick="removeImage(${i})">×</button>
+      </div>`
+    ).join('');
+
+    preview.innerHTML = docTags + imgTags;
+  }
+
+  window.removeDoc   = (i) => { attachedDocs.splice(i, 1);   renderAttachments(); };
+  window.removeImage = (i) => { attachedImages.splice(i, 1); renderAttachments(); };
+
+  // Lightbox
+  window.openLightbox = (src) => {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('img-lightbox').classList.add('open');
+  };
+  window.closeLightbox = () => {
+    document.getElementById('img-lightbox').classList.remove('open');
+  };
+
+  // ── SEND MESSAGE ──────────────────────────────────────
   async function sendMessage() {
     if (isLoading || !activeKey) return;
     if (remaining !== null && remaining <= 0) { showLimitBanner(); return; }
-    const msgInput = document.getElementById('msg-input'), raw = msgInput.value.trim();
-    if (!raw && attachedDocs.length === 0) return;
-    let content = raw;
-    if (attachedDocs.length > 0) { const docBlock = attachedDocs.map(d => `<document name="${d.name}">\n${d.content}\n</document>`).join('\n\n'); content = docBlock + (raw ? '\n\n' + raw : ''); attachedDocs = []; renderAttachments(); }
-    appendUserMsg(raw || `[${attachedDocs.length} document(s) attached]`); history.push({ role: 'user', content });
-    msgInput.value = ''; msgInput.style.height = 'auto';
+
+    const msgInput = document.getElementById('msg-input');
+    const rawText  = msgInput.value.trim();
+
+    if (!rawText && attachedDocs.length === 0 && attachedImages.length === 0) return;
+
+    // Build text content (inject doc blocks as before)
+    let textContent = rawText;
+    if (attachedDocs.length > 0) {
+      const docBlock = attachedDocs.map(d => `<document name="${d.name}">\n${d.content}\n</document>`).join('\n\n');
+      textContent = docBlock + (rawText ? '\n\n' + rawText : '');
+    }
+
+    // Snapshot and clear pending attachments
+    const pendingImages = [...attachedImages];
+    attachedDocs = []; attachedImages = [];
+    renderAttachments();
+
+    // Build the OpenAI content payload
+    const userContent = buildUserContent(textContent, pendingImages);
+
+    // Display label in the chat bubble
+    const displayText = rawText
+      || (pendingImages.length > 0 ? '' : `[${attachedDocs.length} document(s) attached]`);
+
+    appendUserMsg(displayText, pendingImages);
+    history.push({ role: 'user', content: userContent });
+
+    msgInput.value = '';
+    msgInput.style.height = 'auto';
     document.getElementById('empty-state')?.remove();
-    isLoading = true; setSendState(false); const typingEl = appendTyping();
+
+    isLoading = true; setSendState(false);
+    const typingEl = appendTyping();
     const _t0 = Date.now();
     const _remainingBefore = remaining;
     abortCtrl = new AbortController();
+
     try {
-      const res = await fetch(WORKER_URL, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: activeKey, messages: history }), signal: abortCtrl.signal });
+      const res = await fetch(WORKER_URL, {
+        method: 'POST', mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: activeKey, messages: history }),
+        signal: abortCtrl.signal
+      });
       typingEl.remove();
-      if (res.status === 429) { remaining = 0; updateCounter(); showLimitBanner(); history.pop(); isLoading = false; setSendState(true); return; }
-      if (!res.ok) { const errData = await res.json().catch(() => ({})); appendError(errData.message || `Error ${res.status}`); history.pop(); isLoading = false; setSendState(true); return; }
-      // Worker returns plain JSON — simulate typewriter over the response
+
+      if (res.status === 429) {
+        remaining = 0; updateCounter(); showLimitBanner();
+        history.pop(); isLoading = false; setSendState(true); return;
+      }
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        appendError(errData.message || `Error ${res.status}`);
+        history.pop(); isLoading = false; setSendState(true); return;
+      }
+
       const data = await res.json();
       const text = data.choices?.[0]?.message?.content || '';
 
-      // Update token counter from _meta
       const meta = data._meta;
       if (meta) {
         remaining = meta.remaining ?? remaining;
@@ -587,22 +747,21 @@
         if (remaining <= 0) showLimitBanner();
       }
 
-      // Typewriter animation
-      const assistantRow = appendAssistantMsg(''), bubble = assistantRow.querySelector('.bubble');
+      const assistantRow = appendAssistantMsg('');
+      const bubble = assistantRow.querySelector('.bubble');
       await typewriterRender(text, bubble);
-      // Performance telemetry — tokens used this message = drop in remaining
+
       const genMs = Date.now() - _t0;
-      const genSec = (genMs / 1000).toFixed(1);
       const tokensThisMsg = (_remainingBefore !== null && meta?.remaining !== null)
-        ? _remainingBefore - meta.remaining
-        : null;
+        ? _remainingBefore - meta.remaining : null;
       const metaEl = document.createElement('div');
       metaEl.className = 'msg-meta';
-      const parts = [genSec + 's'];
+      const parts = [(genMs / 1000).toFixed(1) + 's'];
       if (tokensThisMsg !== null && tokensThisMsg > 0) parts.push(tokensThisMsg.toLocaleString() + ' tokens');
       metaEl.textContent = parts.join('  ·  ');
       assistantRow.appendChild(metaEl);
       history.push({ role: 'assistant', content: text });
+
     } catch (err) {
       typingEl?.remove();
       if (err.name !== 'AbortError') { appendError('Connection error. Please try again.'); history.pop(); }
@@ -610,9 +769,7 @@
     isLoading = false; abortCtrl = null; setSendState(true);
   }
 
-  // ── TYPEWRITER ENGINE ─────────────────────────────────────────────────────
-  // Streams text character-by-character with a blinking cursor (▍).
-  // Velocity scales: code blocks & long responses get faster rendering.
+  // ── TYPEWRITER ENGINE ─────────────────────────────────
   let typewriterStop = false;
 
   function stopGeneration() {
@@ -622,70 +779,37 @@
 
   async function typewriterRender(fullText, bubble) {
     typewriterStop = false;
-
     const len = fullText.length;
     const isCodeHeavy = (fullText.match(/```/g) || []).length >= 2;
-
-    // Target total animation time regardless of length:
-    // Short  (<150 chars)  → feels snappy,  ~1.5s total
-    // Medium (150–600)     → comfortable,   ~2.5s total
-    // Long   (600–1500)    → reads fast,    ~3.5s total
-    // Huge   (>1500)       → races through, ~4.5s total
-    const targetMs = len < 150  ? 1500
-                   : len < 600  ? 2500
-                   : len < 1500 ? 3500
-                   : 4500;
-
-    // Stride: how many chars to advance per DOM update.
-    // Larger stride = fewer repaints = smoother on long output.
-    const stride = isCodeHeavy ? Math.max(6, Math.ceil(len / 120))
-                               : Math.max(1, Math.ceil(len / 200));
-
-    // Base delay per render tick derived from target time
+    const targetMs = len < 150 ? 1500 : len < 600 ? 2500 : len < 1500 ? 3500 : 4500;
+    const stride   = isCodeHeavy ? Math.max(6, Math.ceil(len / 120)) : Math.max(1, Math.ceil(len / 200));
     const totalTicks = Math.ceil(len / stride);
     const baseDelay  = Math.max(1, Math.round(targetMs / totalTicks));
-
     const CURSOR = '<span class="tw-cursor">▍</span>';
 
-    // Injects cursor inside the last block element so it sits inline with text
     function renderWithCursor(text) {
       const html = marked.parse(text);
       const match = html.match(/(.*?)(<\/(p|li|h[1-6]|td|pre)>\s*)$/s);
       if (match) return match[1] + CURSOR + match[2];
       return html + CURSOR;
     }
-
-    // Dynamic acceleration: starts at baseDelay, ramps down to ~20% of it
-    // by the end so long responses feel like they're picking up speed.
-    function delayAt(progress) {
-      // progress: 0.0 → 1.0
-      // ease from 1.0× down to 0.2× using a simple curve
-      const factor = 1 - (progress * 0.8);
-      return Math.max(1, Math.round(baseDelay * factor));
-    }
+    function delayAt(progress) { return Math.max(1, Math.round(baseDelay * (1 - progress * 0.8))); }
 
     let displayed = '';
     for (let i = 0; i < len; i++) {
       if (typewriterStop) break;
       displayed += fullText[i];
-
       if (i % stride === 0 || i === len - 1) {
         bubble.innerHTML = renderWithCursor(displayed);
         scrollToBottom();
-        // Live-update canvas every ~15% of the way through if it's open
-        if (i > 0 && i % Math.max(stride, Math.floor(len * 0.15)) === 0) {
-          autoUpdateCanvas(displayed, true);
-        }
+        if (i > 0 && i % Math.max(stride, Math.floor(len * 0.15)) === 0) autoUpdateCanvas(displayed, true);
         await new Promise(r => setTimeout(r, delayAt(i / len)));
       }
     }
 
-    // Final render: full markdown, syntax highlighted, no cursor
     bubble.innerHTML = marked.parse(fullText);
     bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
     scrollToBottom();
-
-    // Auto-update canvas if it's open and the response contains a code block
     autoUpdateCanvas(fullText);
   }
 
@@ -698,7 +822,30 @@
   const messagesEl = document.getElementById('messages');
   function isAtBottom() { return messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 80; }
   function scrollToBottom(force = false) { if (force || isAtBottom()) messagesEl.scrollTop = messagesEl.scrollHeight; }
-  function appendUserMsg(text) { const row = document.createElement('div'); row.className = 'msg-row user'; row.innerHTML = `<div class="bubble">${escHtml(text)}</div>`; messagesEl.appendChild(row); scrollToBottom(true); return row; }
+
+  /**
+   * Append a user bubble. If images are attached, render thumbnails above the text.
+   */
+  function appendUserMsg(text, images = []) {
+    const row = document.createElement('div');
+    row.className = 'msg-row user';
+
+    let imgHtml = '';
+    if (images.length > 0) {
+      imgHtml = `<div class="bubble-images">${
+        images.map(img =>
+          `<img class="bubble-img-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" onclick="openLightbox('${img.dataUrl}')" />`
+        ).join('')
+      }</div>`;
+    }
+
+    const textHtml = text ? `<div style="white-space:pre-wrap">${escHtml(text)}</div>` : '';
+    row.innerHTML = `<div class="bubble">${imgHtml}${textHtml}</div>`;
+    messagesEl.appendChild(row);
+    scrollToBottom(true);
+    return row;
+  }
+
   function appendAssistantMsg(text) { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="bubble">${text}</div>`; messagesEl.appendChild(row); scrollToBottom(); return row; }
   function appendTyping() { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="typing-bubble"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>`; messagesEl.appendChild(row); scrollToBottom(); return row; }
   function appendError(msg) { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="err-bubble">${escHtml(msg)}</div>`; messagesEl.appendChild(row); scrollToBottom(); }
@@ -712,17 +859,33 @@
     messagesEl.appendChild(empty); document.getElementById('msg-input').focus();
   }
 
+  // ── FILE INPUT HANDLER ───────────────────────────────
   const fileInput = document.getElementById('file-input');
   document.getElementById('attach-btn').addEventListener('click', () => fileInput.click());
+
   fileInput.addEventListener('change', async (e) => {
     for (const file of Array.from(e.target.files)) {
-      if (file.type.startsWith('image/')) { appendError(`File ignored: ${file.name} (images not supported)`); continue; }
-      try { attachedDocs.push({ name: file.name, content: await file.text() }); } catch {}
+      if (file.type.startsWith('image/')) {
+        // Handle image: read as base64 data URL
+        try {
+          const dataUrl = await readFileAsDataURL(file);
+          attachedImages.push({ name: file.name, dataUrl, mimeType: file.type });
+        } catch (err) {
+          appendError(`Could not read image: ${file.name}`);
+        }
+      } else {
+        // Handle text document (existing behaviour)
+        try {
+          attachedDocs.push({ name: file.name, content: await file.text() });
+        } catch (err) {
+          appendError(`Could not read file: ${file.name}`);
+        }
+      }
     }
-    renderAttachments(); fileInput.value = '';
+    renderAttachments();
+    fileInput.value = '';
   });
-  function renderAttachments() { document.getElementById('file-preview').innerHTML = attachedDocs.map((doc, i) => `<div class="file-tag"><span>📄 ${doc.name}</span><span class="file-tag-remove" onclick="removeAttachment(${i})">×</span></div>`).join(''); }
-  window.removeAttachment = (i) => { attachedDocs.splice(i, 1); renderAttachments(); };
+
   window.openPastedDocument = (name) => { const doc = pastedDocsCache[name]; if (doc) loadArtifact(doc.content, doc.lang); };
 
   window.openArtifact = (btn, lang) => { const wrapper = btn.closest('.code-wrapper'); loadArtifact(wrapper.querySelector('.raw-code').value, lang); };
@@ -743,47 +906,28 @@
   };
   window.closeArtifact = () => { const p = document.getElementById('artifact-pane'); p.classList.remove('open'); p.style.width = ''; document.getElementById('resizer').style.display = 'none'; };
 
-  // Auto-update the canvas when a new response contains a matching code block.
-  // partialUpdate=true means we're mid-typewriter — only refresh preview, skip
-  // re-highlighting to avoid flicker.
   function autoUpdateCanvas(text, partialUpdate = false) {
     const pane = document.getElementById('artifact-pane');
-    if (!pane.classList.contains('open')) return; // canvas not open, nothing to do
-
-    // Extract the last fenced code block from the text
+    if (!pane.classList.contains('open')) return;
     const fenceRe = /```([\w+-]*)\n([\s\S]*?)```/g;
     let match, lastMatch = null;
     while ((match = fenceRe.exec(text)) !== null) lastMatch = match;
-    if (!lastMatch) return; // no code block found
-
+    if (!lastMatch) return;
     const lang = (lastMatch[1] || currentArtifact.lang || 'plaintext').trim();
     const code = lastMatch[2];
-
-    // Only auto-update if the language matches what's already in the canvas
-    // (prevents hijacking the canvas with an unrelated snippet)
     if (currentArtifact.lang && lang !== currentArtifact.lang && !partialUpdate) return;
-
-    // Update the stored artifact
     currentArtifact = { code, lang };
-
     if (!partialUpdate) {
-      // Full update: re-highlight code view and refresh preview
       const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
-      document.getElementById('art-code').innerHTML =
-        `<pre><code class="hljs ${validLang}">${hljs.highlight(code, { language: validLang }).value}</code></pre>`;
+      document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${validLang}">${hljs.highlight(code, { language: validLang }).value}</code></pre>`;
     }
-
-    // Always refresh the preview iframe for HTML
     if (lang === 'html') {
       const iframe = document.getElementById('art-preview');
       const tabPreview = document.getElementById('tab-preview');
       tabPreview.style.display = 'block';
-      // Use a data URL on partial updates to avoid iframe reload flicker
       if (partialUpdate) {
         try { iframe.contentDocument.open(); iframe.contentDocument.write(code); iframe.contentDocument.close(); } catch (_) { iframe.srcdoc = code; }
-      } else {
-        iframe.srcdoc = code;
-      }
+      } else { iframe.srcdoc = code; }
     }
   }
 
@@ -816,10 +960,9 @@
     msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px';
   });
 
-  // Ghost doc: large pastes (>1500 chars) become a clickable tag that opens in the artifact pane
   msgInput.addEventListener('paste', (e) => {
     const pasted = (e.clipboardData || window.clipboardData).getData('text');
-    if (pasted.length <= 1500) return; // small paste — leave as normal
+    if (pasted.length <= 1500) return;
     e.preventDefault();
     const name = 'Pasted-' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     pastedDocsCache[name] = { content: pasted, lang: 'plaintext' };
@@ -827,6 +970,7 @@
     renderAttachments();
     showToast('Large paste captured as document');
   });
+
   msgInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
 
   (function() {
