@@ -102,8 +102,6 @@
 
     .key-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; }
     .key-logo-img { height: 26px; width: auto; display: block; }
-    .key-logo strong { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
-    .key-logo span { font-size: 12px; color: var(--muted); }
     .key-title { font-size: 22px; font-weight: 600; letter-spacing: -0.03em; color: var(--text); margin-bottom: 8px; }
     .key-sub { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
 
@@ -141,7 +139,6 @@
     .counter-text.low { color: var(--amber); }
     .counter-text.critical { color: var(--red); }
 
-    /* ── DARK TOGGLE (chat header) ── */
     .theme-toggle {
       width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
       background: var(--surface); border: 1px solid var(--border); border-radius: 7px;
@@ -159,6 +156,22 @@
     #messages { flex: 1; overflow-y: auto; padding: 28px 0; display: flex; flex-direction: column; scrollbar-width: thin; scrollbar-color: var(--border2) transparent; }
     #messages::-webkit-scrollbar { width: 4px; }
     #messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+    /* ── DRAG OVERLAY ── */
+    #drop-overlay {
+      display: none; position: absolute; inset: 0; z-index: 50;
+      background: rgba(90,15,133,0.06);
+      border: 2px dashed var(--accent);
+      border-radius: 12px;
+      pointer-events: none;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 10px;
+    }
+    html.dark #drop-overlay { background: rgba(155,77,202,0.1); }
+    #drop-overlay.active { display: flex; pointer-events: none; }
+    .drop-overlay-icon { font-size: 32px; opacity: 0.6; }
+    .drop-overlay-label { font-size: 14px; font-weight: 600; color: var(--accent); }
+    .drop-overlay-hint { font-size: 12px; color: var(--muted); }
 
     .msg-row { display: flex; flex-direction: column; padding: 0 max(20px, calc(50% - 420px)); margin-bottom: 2px; }
     .msg-row.user { align-items: flex-end; }
@@ -181,7 +194,7 @@
     .copy-btn { position: absolute; top: 8px; right: 8px; font-size: 11px; font-weight: 500; color: var(--muted); background: var(--bg); border: 1px solid var(--border); padding: 4px 9px; border-radius: 5px; cursor: pointer; transition: all 0.15s; font-family: var(--sans); }
     .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* ── IMAGE THUMBNAILS in bubbles ── */
+    /* ── IMAGE THUMBNAILS in chat bubbles ── */
     .bubble-images { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
     .bubble-img-thumb {
       width: 120px; height: 90px; object-fit: cover;
@@ -210,13 +223,7 @@
     .typing-bubble { display: flex; align-items: center; gap: 5px; padding: 14px 0; }
     .t-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--muted2); animation: td 1.2s infinite ease-in-out; }
 
-    /* Typewriter cursor */
-    .tw-cursor {
-      display: inline-block;
-      color: var(--accent);
-      animation: tw-blink 0.55s step-end infinite;
-      margin-left: 1px;
-    }
+    .tw-cursor { display: inline-block; color: var(--accent); animation: tw-blink 0.55s step-end infinite; margin-left: 1px; }
     @keyframes tw-blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .t-dot:nth-child(2) { animation-delay: 0.2s; }
     .t-dot:nth-child(3) { animation-delay: 0.4s; }
@@ -238,7 +245,7 @@
     #attach-btn { background: transparent; border: none; border-right: 1px solid var(--border); color: var(--muted); font-size: 18px; padding: 0 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.15s; }
     #attach-btn:hover { color: var(--accent); }
 
-    #file-preview { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 max(20px, calc(50% - 420px)) 6px; }
+    #file-preview { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding: 0 max(20px, calc(50% - 420px)) 6px; }
 
     /* Doc tag */
     .file-tag { font-size: 11px; font-weight: 500; background: var(--accent-bg); border: 1px solid rgba(90,15,133,0.15); color: var(--accent); padding: 4px 10px; border-radius: 100px; display: flex; align-items: center; gap: 6px; }
@@ -247,21 +254,23 @@
     .file-tag-remove:hover { color: var(--red); }
 
     /* Image preview thumbnail in toolbar */
-    .img-preview-wrap {
-      position: relative; display: inline-flex; align-items: flex-start;
-    }
-    .img-preview-thumb {
-      width: 48px; height: 48px; object-fit: cover;
-      border-radius: 8px; border: 1px solid var(--border);
-      display: block;
-    }
+    .img-preview-wrap { position: relative; display: inline-flex; align-items: flex-start; }
+    .img-preview-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); display: block; }
     .img-preview-remove {
       position: absolute; top: -6px; right: -6px;
       width: 16px; height: 16px; border-radius: 50%;
       background: var(--red); color: #fff;
-      font-size: 10px; font-weight: bold; line-height: 16px; text-align: center;
+      font-size: 10px; font-weight: bold;
       cursor: pointer; border: none; font-family: var(--sans);
       display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Image size warning tag */
+    .img-size-warn {
+      font-size: 11px; font-weight: 500;
+      background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.3);
+      color: var(--amber); padding: 4px 10px; border-radius: 100px;
+      display: flex; align-items: center; gap: 5px;
     }
 
     #msg-input { flex: 1; background: transparent; border: none; outline: none; font-family: var(--sans); font-size: 14px; color: var(--text); padding: 12px 16px; resize: none; line-height: 1.5; max-height: 120px; overflow-y: auto; }
@@ -277,7 +286,7 @@
     .input-hint { font-size: 11px; color: var(--muted2); display: flex; gap: 16px; font-family: var(--mono); }
 
     .workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
-    .pane-chat { flex: 1; display: flex; flex-direction: column; min-width: 0; z-index: 2; background: var(--bg); }
+    .pane-chat { flex: 1; display: flex; flex-direction: column; min-width: 0; z-index: 2; background: var(--bg); position: relative; }
     .pane-artifact { width: 0; border-left: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
     .pane-artifact.open { width: 50%; }
     .pane-artifact.resizing { transition: none; pointer-events: none; }
@@ -357,9 +366,7 @@
   <div class="chat-header">
     <div class="chat-header-left">
       <a href="/" class="chat-logo">
-        <div class="chat-logo-mark-wrap">
-          <img src="/logo.png" alt="BareAI" class="chat-logo-img" />
-        </div>
+        <img src="/logo.png" alt="BareAI" class="chat-logo-img" />
       </a>
       <div class="header-sep"></div>
       <span class="chat-label">Playground</span>
@@ -381,13 +388,20 @@
 
   <div class="workspace">
     <div class="pane-chat">
+      <!-- Drop overlay — sits inside pane-chat so it doesn't cover the artifact pane -->
+      <div id="drop-overlay">
+        <div class="drop-overlay-icon">📎</div>
+        <div class="drop-overlay-label">Drop files here</div>
+        <div class="drop-overlay-hint">Images, documents, code files</div>
+      </div>
+
       <div id="messages">
         <div class="empty-state" id="empty-state">
           <div class="empty-logo">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9b4dca" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
           <div class="empty-title">Ready to start</div>
-          <div class="empty-hint">Send a message to begin your session.</div>
+          <div class="empty-hint">Send a message, drag files in, or paste an image.</div>
           <div class="empty-examples">
             <div class="ex-chip" onclick="useExample('Explain quantum computing like I am five')">Explain quantum computing</div>
             <div class="ex-chip" onclick="useExample('Write a Python script to parse a CSV file')">Python CSV Parser</div>
@@ -408,8 +422,7 @@
           <button id="attach-btn" title="Attach a file or image">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </button>
-          <!-- Accept text docs AND images -->
-          <input type="file" id="file-input" multiple style="display: none;"
+          <input type="file" id="file-input" multiple style="display:none;"
             accept=".txt,.md,.csv,.json,.js,.py,.html,.css,.xml,.yaml,.yml,image/png,image/jpeg,image/gif,image/webp" />
           <textarea id="msg-input" placeholder="Send a message…" rows="1"></textarea>
           <button id="stop-btn">Stop</button>
@@ -418,7 +431,7 @@
         <div class="input-hint">
           <span>↵ send</span>
           <span>⇧↵ newline</span>
-          <span>📎 images &amp; docs</span>
+          <span>drag or paste images</span>
         </div>
       </div>
     </div>
@@ -431,7 +444,7 @@
           <button class="art-tab active" id="tab-code" onclick="switchArtTab('code')">Code</button>
           <button class="art-tab" id="tab-preview" onclick="switchArtTab('preview')">Preview</button>
         </div>
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex;gap:8px;">
           <button class="header-btn" onclick="downloadArtifact()">Download</button>
           <button class="header-btn" onclick="closeArtifact()">Close</button>
         </div>
@@ -444,7 +457,7 @@
   </div>
 </div>
 
-<!-- Lightbox for full-size image view -->
+<!-- Lightbox -->
 <div id="img-lightbox" onclick="closeLightbox()">
   <img id="lightbox-img" src="" alt="Full size" />
 </div>
@@ -466,7 +479,7 @@
 </div>
 
 <script>
-  // ── THEME (runs before paint) ─────────────────────────
+  // ── THEME ─────────────────────────────────────────────
   (function() {
     const saved = localStorage.getItem('bareai-theme');
     if (saved !== 'light') document.documentElement.classList.add('dark');
@@ -495,13 +508,23 @@
   const WORKER_URL     = "https://oops-proxy.deandre6156.workers.dev";
   const STORAGE_PREFIX = "bare_pg_";
 
+  // Max base64 payload we'll warn on — worker allows 2 MB total,
+  // base64 inflates ~33%, so ~1.5 MB raw is a safe per-image soft limit.
+  const IMAGE_WARN_BYTES  = 1.5 * 1024 * 1024;  // warn in toolbar
+  const ACCEPTED_IMG_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
+  const ACCEPTED_DOC_EXTS  = new Set(['.txt','.md','.csv','.json','.js','.py','.html','.css','.xml','.yaml','.yml']);
+
   let activeKey = null, remaining = null, limit = null;
   let history = [], isLoading = false, abortCtrl = null;
-  let attachedDocs = [];    // { name, content }  — text documents
-  let attachedImages = [];  // { name, dataUrl, mimeType }  — images
-  let currentArtifact = { code: '', lang: '' }, pastedDocsCache = {};
+  let attachedDocs   = [];  // { name, content }
+  let attachedImages = [];  // { name, dataUrl, mimeType, sizeBytes }
+  let currentArtifact = { code: '', lang: '' };
+  let pastedDocsCache = {};
 
-  // ── MARKDOWN SETUP ────────────────────────────────────
+  // Lightbox image store — avoids injecting giant data URLs into onclick attributes
+  let lightboxImages = [];  // populated per-message, index referenced in DOM
+
+  // ── MARKDOWN ──────────────────────────────────────────
   const renderer = {
     code(code, lang) {
       lang = lang || 'text';
@@ -527,13 +550,13 @@
     const savedKey = sessionStorage.getItem(STORAGE_PREFIX + "key");
     if (savedKey) {
       try {
-        const res = await fetch(WORKER_URL, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: savedKey, messages: [{ role: 'user', content: '__ping__' }] }) });
+        const res  = await fetch(WORKER_URL, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: savedKey, messages: [{ role: 'user', content: '__ping__' }] }) });
         const data = await res.json();
         if (res.status === 401 || res.status === 403) { signOut(); document.getElementById('key-error').textContent = data.message || 'Saved key is no longer valid.'; return; }
         activeKey = savedKey; remaining = data._meta?.remaining ?? null; limit = data._meta?.limit ?? null;
         if (res.status === 429) remaining = 0;
         saveSession(); showChat();
-      } catch (err) { signOut(); document.getElementById('key-error').textContent = 'Could not connect to server. Please try again.'; }
+      } catch { signOut(); document.getElementById('key-error').textContent = 'Could not connect to server. Please try again.'; }
     }
   })();
 
@@ -544,13 +567,13 @@
     if (!raw) { input.classList.add('error'); errEl.textContent = 'Please enter your access key.'; return; }
     btn.textContent = 'Verifying…'; btn.disabled = true;
     try {
-      const res = await fetch(WORKER_URL, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: raw, messages: [{ role: 'user', content: '__ping__' }] }) });
+      const res  = await fetch(WORKER_URL, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: raw, messages: [{ role: 'user', content: '__ping__' }] }) });
       const data = await res.json();
       if (res.status === 401 || res.status === 403) { input.classList.add('error'); errEl.textContent = data.message || 'Invalid or expired key.'; btn.textContent = 'Continue to Playground'; btn.disabled = false; return; }
       activeKey = raw; remaining = data._meta?.remaining ?? null; limit = data._meta?.limit ?? null;
       if (res.status === 429) remaining = 0;
       saveSession(); showChat();
-    } catch (err) { errEl.textContent = 'Network error. Please try again.'; btn.textContent = 'Continue to Playground'; btn.disabled = false; }
+    } catch { errEl.textContent = 'Network error. Please try again.'; btn.textContent = 'Continue to Playground'; btn.disabled = false; }
   }
 
   function saveSession() { sessionStorage.setItem(STORAGE_PREFIX + "key", activeKey); }
@@ -558,8 +581,10 @@
   function showChat() {
     document.getElementById('screen-key').classList.remove('active');
     document.getElementById('screen-chat').classList.add('active');
-    updateCounter(); if (remaining === 0) showLimitBanner();
-    renderEmptyState(); document.getElementById('msg-input').focus();
+    updateCounter();
+    if (remaining === 0) showLimitBanner();
+    renderEmptyState();
+    document.getElementById('msg-input').focus();
   }
 
   function signOut() {
@@ -575,9 +600,9 @@
 
   function updateCounter() {
     if (remaining === null || limit === null) return;
-    const used       = limit - remaining;
-    const track      = document.getElementById('counter-track');
-    const text       = document.getElementById('counter-text');
+    const used = limit - remaining;
+    const track = document.getElementById('counter-track');
+    const text  = document.getElementById('counter-text');
     const isLow      = remaining <= Math.ceil(limit * 0.3);
     const isCritical = remaining <= Math.ceil(limit * 0.1);
     const PIPS     = 10;
@@ -586,7 +611,7 @@
       const cls = i < usedPips ? (isCritical ? 'used critical' : isLow ? 'used low' : 'used') : '';
       return `<div class="counter-pip ${cls}"></div>`;
     }).join('');
-    const fmt = (n) => n >= 1000 ? Math.round(n / 1000) + 'k' : String(n);
+    const fmt = n => n >= 1000 ? Math.round(n / 1000) + 'k' : String(n);
     text.textContent = fmt(remaining) + ' / ' + fmt(limit);
     text.className   = 'counter-text' + (isCritical ? ' critical' : isLow ? ' low' : '');
   }
@@ -597,114 +622,175 @@
     document.getElementById('send-btn').disabled = true;
   }
 
-  // ── IMAGE HELPERS ─────────────────────────────────────
+  // ── FILE PROCESSING ───────────────────────────────────
 
-  /**
-   * Read a File as a base64 data URL.
-   */
   function readFileAsDataURL(file) {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error('Failed to read file'));
-      reader.readAsDataURL(file);
+      const r = new FileReader();
+      r.onload  = () => resolve(r.result);
+      r.onerror = () => reject(new Error('Failed to read file'));
+      r.readAsDataURL(file);
     });
   }
 
   /**
-   * Build the OpenAI-format content array for a user message that may
-   * contain text and/or images.
-   *
-   * If there are no images, returns a plain string (backwards-compatible).
-   * If there are images, returns an array of content blocks.
+   * Central file processor — used by file input, drag-drop, and clipboard paste.
+   * Validates type, reads, and adds to the appropriate attachment list.
+   */
+  async function processFiles(files) {
+    for (const file of files) {
+      if (ACCEPTED_IMG_TYPES.has(file.type)) {
+        try {
+          const dataUrl = await readFileAsDataURL(file);
+          attachedImages.push({ name: file.name, dataUrl, mimeType: file.type, sizeBytes: file.size });
+        } catch {
+          appendError(`Could not read image: ${file.name}`);
+        }
+      } else {
+        // Validate extension for text files
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        if (!ACCEPTED_DOC_EXTS.has(ext) && file.type && !file.type.startsWith('text/')) {
+          appendError(`Unsupported file type: ${file.name}. Supported: images (PNG/JPEG/GIF/WebP) and text documents.`);
+          continue;
+        }
+        try {
+          attachedDocs.push({ name: file.name, content: await file.text() });
+        } catch {
+          appendError(`Could not read file: ${file.name}`);
+        }
+      }
+    }
+    renderAttachments();
+  }
+
+  /**
+   * Build the OpenAI-format content array for a user message.
+   * Returns a plain string when no images are present (backwards-compatible).
    */
   function buildUserContent(textContent, images) {
     if (images.length === 0) return textContent || '';
-
-    const blocks = [];
-
-    // Add all image blocks first
-    for (const img of images) {
-      // dataUrl is "data:<mime>;base64,<data>" — Groq expects the full data URL
-      blocks.push({
-        type: 'image_url',
-        image_url: { url: img.dataUrl }
-      });
-    }
-
-    // Add text block (required even if empty, so the model knows what to do)
-    blocks.push({
-      type: 'text',
-      text: textContent || 'What is in this image?'
-    });
-
+    const blocks = images.map(img => ({ type: 'image_url', image_url: { url: img.dataUrl } }));
+    blocks.push({ type: 'text', text: textContent || 'What is in this image?' });
     return blocks;
   }
 
   /**
-   * Render the file/image preview bar below the input.
+   * Render the attachment preview bar.
+   * Image size warnings are shown inline if any image exceeds IMAGE_WARN_BYTES.
    */
   function renderAttachments() {
     const preview = document.getElementById('file-preview');
-    const docTags = attachedDocs.map((doc, i) =>
+
+    const docHtml = attachedDocs.map((doc, i) =>
       `<div class="file-tag">
         <span>📄 ${escHtml(doc.name)}</span>
         <span class="file-tag-remove" onclick="removeDoc(${i})">×</span>
       </div>`
     ).join('');
 
-    const imgTags = attachedImages.map((img, i) =>
+    const imgHtml = attachedImages.map((img, i) =>
       `<div class="img-preview-wrap">
         <img class="img-preview-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" />
         <button class="img-preview-remove" onclick="removeImage(${i})">×</button>
       </div>`
     ).join('');
 
-    preview.innerHTML = docTags + imgTags;
+    const totalImageBytes = attachedImages.reduce((s, img) => s + img.sizeBytes, 0);
+    const warnHtml = totalImageBytes > IMAGE_WARN_BYTES
+      ? `<div class="img-size-warn">⚠ Large image — may be slow or rejected</div>`
+      : '';
+
+    preview.innerHTML = docHtml + imgHtml + warnHtml;
   }
 
-  window.removeDoc   = (i) => { attachedDocs.splice(i, 1);   renderAttachments(); };
-  window.removeImage = (i) => { attachedImages.splice(i, 1); renderAttachments(); };
+  window.removeDoc   = i => { attachedDocs.splice(i, 1);   renderAttachments(); };
+  window.removeImage = i => { attachedImages.splice(i, 1); renderAttachments(); };
 
-  // Lightbox
-  window.openLightbox = (src) => {
-    document.getElementById('lightbox-img').src = src;
+  // ── LIGHTBOX ──────────────────────────────────────────
+  // Images in chat bubbles are stored in lightboxImages[] and referenced by index,
+  // avoiding truncated data URLs in onclick attribute strings.
+  window.openLightboxIdx = idx => {
+    document.getElementById('lightbox-img').src = lightboxImages[idx];
     document.getElementById('img-lightbox').classList.add('open');
   };
   window.closeLightbox = () => {
     document.getElementById('img-lightbox').classList.remove('open');
   };
 
+  // ── DRAG AND DROP ─────────────────────────────────────
+  const paneChat   = document.querySelector('.pane-chat');
+  const dropOverlay = document.getElementById('drop-overlay');
+  let dragCounter = 0; // counter avoids flicker when dragging over child elements
+
+  paneChat.addEventListener('dragenter', e => {
+    e.preventDefault();
+    dragCounter++;
+    if (dragCounter === 1) dropOverlay.classList.add('active');
+  });
+
+  paneChat.addEventListener('dragleave', () => {
+    dragCounter--;
+    if (dragCounter === 0) dropOverlay.classList.remove('active');
+  });
+
+  paneChat.addEventListener('dragover', e => { e.preventDefault(); }); // required to allow drop
+
+  paneChat.addEventListener('drop', async e => {
+    e.preventDefault();
+    dragCounter = 0;
+    dropOverlay.classList.remove('active');
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) await processFiles(files);
+  });
+
+  // ── CLIPBOARD IMAGE PASTE ─────────────────────────────
+  // Listens on window so it fires regardless of which element has focus.
+  window.addEventListener('paste', async e => {
+    const items = Array.from(e.clipboardData?.items || []);
+
+    // Check for image items first
+    const imageItems = items.filter(it => it.kind === 'file' && ACCEPTED_IMG_TYPES.has(it.type));
+    if (imageItems.length > 0) {
+      e.preventDefault(); // don't also paste as text
+      const files = imageItems.map(it => it.getAsFile()).filter(Boolean);
+      await processFiles(files);
+      return;
+    }
+
+    // Fall through to the existing large-text-paste handler (handled on msgInput below)
+  });
+
+  // ── FILE INPUT ────────────────────────────────────────
+  const fileInput = document.getElementById('file-input');
+  document.getElementById('attach-btn').addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async e => {
+    await processFiles(Array.from(e.target.files));
+    fileInput.value = '';
+  });
+
   // ── SEND MESSAGE ──────────────────────────────────────
   async function sendMessage() {
     if (isLoading || !activeKey) return;
     if (remaining !== null && remaining <= 0) { showLimitBanner(); return; }
 
-    const msgInput = document.getElementById('msg-input');
-    const rawText  = msgInput.value.trim();
+    const msgInput  = document.getElementById('msg-input');
+    const rawText   = msgInput.value.trim();
 
     if (!rawText && attachedDocs.length === 0 && attachedImages.length === 0) return;
 
-    // Build text content (inject doc blocks as before)
+    // Inject doc content into text
     let textContent = rawText;
     if (attachedDocs.length > 0) {
       const docBlock = attachedDocs.map(d => `<document name="${d.name}">\n${d.content}\n</document>`).join('\n\n');
       textContent = docBlock + (rawText ? '\n\n' + rawText : '');
     }
 
-    // Snapshot and clear pending attachments
     const pendingImages = [...attachedImages];
     attachedDocs = []; attachedImages = [];
     renderAttachments();
 
-    // Build the OpenAI content payload
     const userContent = buildUserContent(textContent, pendingImages);
-
-    // Display label in the chat bubble
-    const displayText = rawText
-      || (pendingImages.length > 0 ? '' : `[${attachedDocs.length} document(s) attached]`);
-
-    appendUserMsg(displayText, pendingImages);
+    appendUserMsg(rawText, pendingImages);
     history.push({ role: 'user', content: userContent });
 
     msgInput.value = '';
@@ -726,38 +812,25 @@
       });
       typingEl.remove();
 
-      if (res.status === 429) {
-        remaining = 0; updateCounter(); showLimitBanner();
-        history.pop(); isLoading = false; setSendState(true); return;
-      }
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        appendError(errData.message || `Error ${res.status}`);
-        history.pop(); isLoading = false; setSendState(true); return;
-      }
+      if (res.status === 429) { remaining = 0; updateCounter(); showLimitBanner(); history.pop(); isLoading = false; setSendState(true); return; }
+      if (!res.ok) { const err = await res.json().catch(() => ({})); appendError(err.message || `Error ${res.status}`); history.pop(); isLoading = false; setSendState(true); return; }
 
       const data = await res.json();
       const text = data.choices?.[0]?.message?.content || '';
 
       const meta = data._meta;
-      if (meta) {
-        remaining = meta.remaining ?? remaining;
-        limit     = meta.limit     ?? limit;
-        updateCounter();
-        if (remaining <= 0) showLimitBanner();
-      }
+      if (meta) { remaining = meta.remaining ?? remaining; limit = meta.limit ?? limit; updateCounter(); if (remaining <= 0) showLimitBanner(); }
 
       const assistantRow = appendAssistantMsg('');
       const bubble = assistantRow.querySelector('.bubble');
       await typewriterRender(text, bubble);
 
       const genMs = Date.now() - _t0;
-      const tokensThisMsg = (_remainingBefore !== null && meta?.remaining !== null)
-        ? _remainingBefore - meta.remaining : null;
+      const tokensUsed = (_remainingBefore !== null && meta?.remaining !== null) ? _remainingBefore - meta.remaining : null;
       const metaEl = document.createElement('div');
       metaEl.className = 'msg-meta';
       const parts = [(genMs / 1000).toFixed(1) + 's'];
-      if (tokensThisMsg !== null && tokensThisMsg > 0) parts.push(tokensThisMsg.toLocaleString() + ' tokens');
+      if (tokensUsed !== null && tokensUsed > 0) parts.push(tokensUsed.toLocaleString() + ' tokens');
       metaEl.textContent = parts.join('  ·  ');
       assistantRow.appendChild(metaEl);
       history.push({ role: 'assistant', content: text });
@@ -769,31 +842,25 @@
     isLoading = false; abortCtrl = null; setSendState(true);
   }
 
-  // ── TYPEWRITER ENGINE ─────────────────────────────────
+  // ── TYPEWRITER ────────────────────────────────────────
   let typewriterStop = false;
-
-  function stopGeneration() {
-    if (abortCtrl) abortCtrl.abort();
-    typewriterStop = true;
-  }
+  function stopGeneration() { if (abortCtrl) abortCtrl.abort(); typewriterStop = true; }
 
   async function typewriterRender(fullText, bubble) {
     typewriterStop = false;
     const len = fullText.length;
     const isCodeHeavy = (fullText.match(/```/g) || []).length >= 2;
-    const targetMs = len < 150 ? 1500 : len < 600 ? 2500 : len < 1500 ? 3500 : 4500;
-    const stride   = isCodeHeavy ? Math.max(6, Math.ceil(len / 120)) : Math.max(1, Math.ceil(len / 200));
-    const totalTicks = Math.ceil(len / stride);
-    const baseDelay  = Math.max(1, Math.round(targetMs / totalTicks));
-    const CURSOR = '<span class="tw-cursor">▍</span>';
+    const targetMs   = len < 150 ? 1500 : len < 600 ? 2500 : len < 1500 ? 3500 : 4500;
+    const stride     = isCodeHeavy ? Math.max(6, Math.ceil(len / 120)) : Math.max(1, Math.ceil(len / 200));
+    const baseDelay  = Math.max(1, Math.round(targetMs / Math.ceil(len / stride)));
+    const CURSOR     = '<span class="tw-cursor">▍</span>';
 
     function renderWithCursor(text) {
-      const html = marked.parse(text);
+      const html  = marked.parse(text);
       const match = html.match(/(.*?)(<\/(p|li|h[1-6]|td|pre)>\s*)$/s);
-      if (match) return match[1] + CURSOR + match[2];
-      return html + CURSOR;
+      return match ? match[1] + CURSOR + match[2] : html + CURSOR;
     }
-    function delayAt(progress) { return Math.max(1, Math.round(baseDelay * (1 - progress * 0.8))); }
+    function delayAt(p) { return Math.max(1, Math.round(baseDelay * (1 - p * 0.8))); }
 
     let displayed = '';
     for (let i = 0; i < len; i++) {
@@ -806,7 +873,6 @@
         await new Promise(r => setTimeout(r, delayAt(i / len)));
       }
     }
-
     bubble.innerHTML = marked.parse(fullText);
     bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
     scrollToBottom();
@@ -824,7 +890,9 @@
   function scrollToBottom(force = false) { if (force || isAtBottom()) messagesEl.scrollTop = messagesEl.scrollHeight; }
 
   /**
-   * Append a user bubble. If images are attached, render thumbnails above the text.
+   * Append a user bubble with optional image thumbnails.
+   * Images are stored in lightboxImages[] and referenced by index to avoid
+   * injecting large base64 strings into onclick attribute values.
    */
   function appendUserMsg(text, images = []) {
     const row = document.createElement('div');
@@ -832,9 +900,11 @@
 
     let imgHtml = '';
     if (images.length > 0) {
+      const baseIdx = lightboxImages.length;
+      images.forEach(img => lightboxImages.push(img.dataUrl));
       imgHtml = `<div class="bubble-images">${
-        images.map(img =>
-          `<img class="bubble-img-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" onclick="openLightbox('${img.dataUrl}')" />`
+        images.map((img, i) =>
+          `<img class="bubble-img-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" onclick="openLightboxIdx(${baseIdx + i})" />`
         ).join('')
       }</div>`;
     }
@@ -850,45 +920,17 @@
   function appendTyping() { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="typing-bubble"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>`; messagesEl.appendChild(row); scrollToBottom(); return row; }
   function appendError(msg) { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="err-bubble">${escHtml(msg)}</div>`; messagesEl.appendChild(row); scrollToBottom(); }
 
-  function clearChat() { history = []; messagesEl.innerHTML = ''; renderEmptyState(); }
+  function clearChat() { history = []; lightboxImages = []; messagesEl.innerHTML = ''; renderEmptyState(); }
 
   function renderEmptyState() {
     if (document.getElementById('empty-state')) return;
     const empty = document.createElement('div'); empty.className = 'empty-state'; empty.id = 'empty-state';
-    empty.innerHTML = `<div class="empty-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="empty-title">Ready to start</div><div class="empty-hint">Send a message to begin your session.</div><div class="empty-examples"><div class="ex-chip" onclick="useExample('Explain quantum computing like I am five')">Explain quantum computing</div><div class="ex-chip" onclick="useExample('Write a Python script to parse a CSV file')">Python CSV Parser</div><div class="ex-chip" onclick="useExample('Debug this JS: const x = [1,2]; x[3] = 5;')">Debug JavaScript</div></div>`;
+    empty.innerHTML = `<div class="empty-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="empty-title">Ready to start</div><div class="empty-hint">Send a message, drag files in, or paste an image.</div><div class="empty-examples"><div class="ex-chip" onclick="useExample('Explain quantum computing like I am five')">Explain quantum computing</div><div class="ex-chip" onclick="useExample('Write a Python script to parse a CSV file')">Python CSV Parser</div><div class="ex-chip" onclick="useExample('Debug this JS: const x = [1,2]; x[3] = 5;')">Debug JavaScript</div></div>`;
     messagesEl.appendChild(empty); document.getElementById('msg-input').focus();
   }
 
-  // ── FILE INPUT HANDLER ───────────────────────────────
-  const fileInput = document.getElementById('file-input');
-  document.getElementById('attach-btn').addEventListener('click', () => fileInput.click());
-
-  fileInput.addEventListener('change', async (e) => {
-    for (const file of Array.from(e.target.files)) {
-      if (file.type.startsWith('image/')) {
-        // Handle image: read as base64 data URL
-        try {
-          const dataUrl = await readFileAsDataURL(file);
-          attachedImages.push({ name: file.name, dataUrl, mimeType: file.type });
-        } catch (err) {
-          appendError(`Could not read image: ${file.name}`);
-        }
-      } else {
-        // Handle text document (existing behaviour)
-        try {
-          attachedDocs.push({ name: file.name, content: await file.text() });
-        } catch (err) {
-          appendError(`Could not read file: ${file.name}`);
-        }
-      }
-    }
-    renderAttachments();
-    fileInput.value = '';
-  });
-
-  window.openPastedDocument = (name) => { const doc = pastedDocsCache[name]; if (doc) loadArtifact(doc.content, doc.lang); };
-
-  window.openArtifact = (btn, lang) => { const wrapper = btn.closest('.code-wrapper'); loadArtifact(wrapper.querySelector('.raw-code').value, lang); };
+  window.openPastedDocument = name => { const doc = pastedDocsCache[name]; if (doc) loadArtifact(doc.content, doc.lang); };
+  window.openArtifact = (btn, lang) => { loadArtifact(btn.closest('.code-wrapper').querySelector('.raw-code').value, lang); };
   window.loadArtifact = (code, lang) => {
     currentArtifact = { code, lang };
     const pane = document.getElementById('artifact-pane');
@@ -922,12 +964,10 @@
       document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${validLang}">${hljs.highlight(code, { language: validLang }).value}</code></pre>`;
     }
     if (lang === 'html') {
-      const iframe = document.getElementById('art-preview');
-      const tabPreview = document.getElementById('tab-preview');
+      const iframe = document.getElementById('art-preview'), tabPreview = document.getElementById('tab-preview');
       tabPreview.style.display = 'block';
-      if (partialUpdate) {
-        try { iframe.contentDocument.open(); iframe.contentDocument.write(code); iframe.contentDocument.close(); } catch (_) { iframe.srcdoc = code; }
-      } else { iframe.srcdoc = code; }
+      if (partialUpdate) { try { iframe.contentDocument.open(); iframe.contentDocument.write(code); iframe.contentDocument.close(); } catch { iframe.srcdoc = code; } }
+      else { iframe.srcdoc = code; }
     }
   }
 
@@ -937,14 +977,14 @@
   document.addEventListener('mousemove', e => { if (!isResizing) return; artifactPane.style.width = Math.min(Math.max(window.innerWidth - e.clientX, 300), window.innerWidth - 300) + 'px'; });
   document.addEventListener('mouseup', () => { if (isResizing) { isResizing = false; artifactPane.classList.remove('resizing'); resizer.classList.remove('active'); document.body.style.cursor = ''; } });
 
-  window.switchArtTab = (tab) => { document.querySelectorAll('.art-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.art-content').forEach(c => c.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); document.getElementById(`view-${tab}`).classList.add('active'); };
+  window.switchArtTab = tab => { document.querySelectorAll('.art-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.art-content').forEach(c => c.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); document.getElementById(`view-${tab}`).classList.add('active'); };
+  window.copyCode = btn => { const code = btn.closest('.code-wrapper').querySelector('.raw-code').value; navigator.clipboard.writeText(code); showToast('Copied to clipboard'); const orig = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => btn.textContent = orig, 2000); };
 
-  window.copyCode = (btn) => { const code = btn.closest('.code-wrapper').querySelector('.raw-code').value; navigator.clipboard.writeText(code); showToast('Copied to clipboard'); const orig = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => btn.textContent = orig, 2000); };
-
-  function showToast(msg) { const toast = document.querySelector('.toast'); toast.querySelector('span').textContent = msg; toast.classList.add('visible'); setTimeout(() => toast.classList.remove('visible'), 2500); }
+  function showToast(msg) { const t = document.querySelector('.toast'); t.querySelector('span').textContent = msg; t.classList.add('visible'); setTimeout(() => t.classList.remove('visible'), 2500); }
   function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  window.useExample = (text) => { const i = document.getElementById('msg-input'); i.value = text; i.focus(); i.dispatchEvent(new Event('input', { bubbles: true })); };
+  window.useExample = text => { const i = document.getElementById('msg-input'); i.value = text; i.focus(); i.dispatchEvent(new Event('input', { bubbles: true })); };
 
+  // ── EVENT WIRING ──────────────────────────────────────
   document.getElementById('key-submit').addEventListener('click', submitKey);
   document.getElementById('key-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitKey(); });
   document.getElementById('send-btn').addEventListener('click', sendMessage);
@@ -955,12 +995,11 @@
   document.getElementById('chat-theme-toggle').addEventListener('click', toggleTheme);
 
   const msgInput = document.getElementById('msg-input');
-  msgInput.addEventListener('input', () => {
-    msgInput.style.height = 'auto';
-    msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px';
-  });
+  msgInput.addEventListener('input', () => { msgInput.style.height = 'auto'; msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px'; });
+  msgInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
 
-  msgInput.addEventListener('paste', (e) => {
+  // Large text paste → ghost document tag
+  msgInput.addEventListener('paste', e => {
     const pasted = (e.clipboardData || window.clipboardData).getData('text');
     if (pasted.length <= 1500) return;
     e.preventDefault();
@@ -971,12 +1010,11 @@
     showToast('Large paste captured as document');
   });
 
-  msgInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-
+  // ── MAINTENANCE INTERCEPT ─────────────────────────────
   (function() {
-    const originalFetch = window.fetch;
+    const orig = window.fetch;
     window.fetch = async function(...args) {
-      try { const r = await originalFetch(...args); if (r.status === 503) { const o = document.getElementById('maintenance-overlay'); if (o) { o.style.display = 'flex'; document.body.style.overflow = 'hidden'; } } return r; } catch (e) { throw e; }
+      try { const r = await orig(...args); if (r.status === 503) { const o = document.getElementById('maintenance-overlay'); if (o) { o.style.display = 'flex'; document.body.style.overflow = 'hidden'; } } return r; } catch (e) { throw e; }
     };
   })();
 </script>
