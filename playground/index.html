@@ -72,39 +72,20 @@
       background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
       background-size: 56px 56px; opacity: 0.6; pointer-events: none;
     }
-
-    .back-link {
-      position: absolute; top: 28px; left: 32px;
-      font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none;
-      z-index: 10; transition: color 0.15s; display: flex; align-items: center; gap: 6px;
-    }
+    .back-link { position: absolute; top: 28px; left: 32px; font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; z-index: 10; transition: color 0.15s; display: flex; align-items: center; gap: 6px; }
     .back-link:hover { color: var(--accent); }
-
-    .key-theme-btn {
-      position: absolute; top: 24px; right: 32px;
-      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-      cursor: pointer; color: var(--muted); z-index: 10; transition: color 0.15s;
-    }
+    .key-theme-btn { position: absolute; top: 24px; right: 32px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; color: var(--muted); z-index: 10; transition: color 0.15s; }
     .key-theme-btn:hover { color: var(--text); }
-    .key-theme-btn .icon-sun  { display: none; }
+    .key-theme-btn .icon-sun { display: none; }
     .key-theme-btn .icon-moon { display: block; }
-    html.dark .key-theme-btn .icon-sun  { display: block; }
+    html.dark .key-theme-btn .icon-sun { display: block; }
     html.dark .key-theme-btn .icon-moon { display: none; }
-
-    .key-box {
-      width: 100%; max-width: 420px; position: relative; z-index: 1;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 16px; padding: 40px;
-      box-shadow: 0 8px 48px rgba(0,0,0,0.06);
-    }
+    .key-box { width: 100%; max-width: 420px; position: relative; z-index: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 40px; box-shadow: 0 8px 48px rgba(0,0,0,0.06); }
     html.dark .key-box { box-shadow: 0 8px 48px rgba(0,0,0,0.3); }
-
     .key-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; }
     .key-logo-img { height: 26px; width: auto; display: block; }
     .key-title { font-size: 22px; font-weight: 600; letter-spacing: -0.03em; color: var(--text); margin-bottom: 8px; }
     .key-sub { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
-
     .key-field-wrap { display: flex; border: 1.5px solid var(--border2); border-radius: 8px; overflow: hidden; margin-bottom: 8px; transition: border-color 0.15s; }
     .key-field-wrap:focus-within { border-color: var(--accent); }
     .key-prefix { font-size: 12px; font-family: var(--mono); color: var(--muted); background: var(--surface); border-right: 1.5px solid var(--border2); padding: 11px 14px; display: flex; align-items: center; white-space: nowrap; }
@@ -128,7 +109,6 @@
     .header-sep { width: 1px; height: 16px; background: var(--border2); }
     .chat-label { font-size: 12px; color: var(--muted); }
     .chat-header-right { display: flex; align-items: center; gap: 10px; }
-
     .msg-counter { display: flex; align-items: center; gap: 8px; }
     .counter-track { display: flex; gap: 3px; }
     .counter-pip { width: 5px; height: 5px; border-radius: 2px; background: var(--border2); transition: background 0.2s; }
@@ -138,18 +118,12 @@
     .counter-text { font-size: 11px; font-family: var(--mono); color: var(--muted2); }
     .counter-text.low { color: var(--amber); }
     .counter-text.critical { color: var(--red); }
-
-    .theme-toggle {
-      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-      background: var(--surface); border: 1px solid var(--border); border-radius: 7px;
-      cursor: pointer; color: var(--muted); transition: color 0.15s;
-    }
+    .theme-toggle { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; cursor: pointer; color: var(--muted); transition: color 0.15s; }
     .theme-toggle:hover { color: var(--text); }
-    .theme-toggle .icon-sun  { display: none; }
+    .theme-toggle .icon-sun { display: none; }
     .theme-toggle .icon-moon { display: block; }
-    html.dark .theme-toggle .icon-sun  { display: block; }
+    html.dark .theme-toggle .icon-sun { display: block; }
     html.dark .theme-toggle .icon-moon { display: none; }
-
     .header-btn { font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--muted); background: var(--surface); border: 1px solid var(--border); padding: 5px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; transition: color 0.15s, background 0.15s; }
     .header-btn:hover { color: var(--text); background: var(--surface2); }
 
@@ -160,15 +134,11 @@
     /* ── DRAG OVERLAY ── */
     #drop-overlay {
       display: none; position: absolute; inset: 0; z-index: 50;
-      background: rgba(90,15,133,0.06);
-      border: 2px dashed var(--accent);
-      border-radius: 12px;
-      pointer-events: none;
-      align-items: center; justify-content: center;
-      flex-direction: column; gap: 10px;
+      background: rgba(90,15,133,0.06); border: 2px dashed var(--accent); border-radius: 12px;
+      pointer-events: none; align-items: center; justify-content: center; flex-direction: column; gap: 10px;
     }
     html.dark #drop-overlay { background: rgba(155,77,202,0.1); }
-    #drop-overlay.active { display: flex; pointer-events: none; }
+    #drop-overlay.active { display: flex; }
     .drop-overlay-icon { font-size: 32px; opacity: 0.6; }
     .drop-overlay-label { font-size: 14px; font-weight: 600; color: var(--accent); }
     .drop-overlay-hint { font-size: 12px; color: var(--muted); }
@@ -176,39 +146,27 @@
     .msg-row { display: flex; flex-direction: column; padding: 0 max(20px, calc(50% - 420px)); margin-bottom: 2px; }
     .msg-row.user { align-items: flex-end; }
     .msg-row.assistant { align-items: flex-start; }
-
     .bubble { max-width: 72%; padding: 11px 15px; font-size: 14px; line-height: 1.65; }
     .msg-row.user .bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 12px 12px 4px 12px; }
     .msg-row.assistant .bubble { background: transparent; color: var(--text); padding-left: 0; }
-
     .bubble p { margin-bottom: 0.8em; }
     .bubble p:last-child { margin-bottom: 0; }
     .bubble ul, .bubble ol { margin: 0.5em 0 0.5em 1.5em; }
     .bubble li { margin-bottom: 0.3em; }
-
     .bubble pre { position: relative; background: var(--code-bg) !important; border: 1px solid var(--border); border-radius: 8px; margin: 10px 0; overflow: hidden; }
     .bubble pre code { font-family: var(--mono); font-size: 12px; display: block; padding: 14px 16px; overflow-x: auto; background: transparent !important; }
     .bubble :not(pre) > code { font-family: var(--mono); font-size: 12px; background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(90,15,133,0.12); padding: 2px 5px; border-radius: 4px; }
     html.dark .bubble :not(pre) > code { border-color: rgba(155,77,202,0.2); }
-
     .copy-btn { position: absolute; top: 8px; right: 8px; font-size: 11px; font-weight: 500; color: var(--muted); background: var(--bg); border: 1px solid var(--border); padding: 4px 9px; border-radius: 5px; cursor: pointer; transition: all 0.15s; font-family: var(--sans); }
     .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
 
     /* ── IMAGE THUMBNAILS in chat bubbles ── */
     .bubble-images { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-    .bubble-img-thumb {
-      width: 120px; height: 90px; object-fit: cover;
-      border-radius: 8px; border: 1px solid var(--border);
-      cursor: pointer; transition: opacity 0.15s;
-    }
+    .bubble-img-thumb { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
     .bubble-img-thumb:hover { opacity: 0.85; }
 
-    /* ── IMAGE LIGHTBOX ── */
-    #img-lightbox {
-      display: none; position: fixed; inset: 0; z-index: 9998;
-      background: rgba(0,0,0,0.85); align-items: center; justify-content: center;
-      cursor: zoom-out;
-    }
+    /* ── LIGHTBOX ── */
+    #img-lightbox { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; cursor: zoom-out; }
     #img-lightbox.open { display: flex; }
     #img-lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
 
@@ -222,7 +180,6 @@
 
     .typing-bubble { display: flex; align-items: center; gap: 5px; padding: 14px 0; }
     .t-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--muted2); animation: td 1.2s infinite ease-in-out; }
-
     .tw-cursor { display: inline-block; color: var(--accent); animation: tw-blink 0.55s step-end infinite; margin-left: 1px; }
     @keyframes tw-blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .t-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -241,48 +198,24 @@
     .input-row:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(90,15,133,0.08); }
     html.dark .input-row:focus-within { box-shadow: 0 0 0 3px rgba(155,77,202,0.12); }
     .input-row.disabled { opacity: 0.4; pointer-events: none; }
-
     #attach-btn { background: transparent; border: none; border-right: 1px solid var(--border); color: var(--muted); font-size: 18px; padding: 0 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.15s; }
     #attach-btn:hover { color: var(--accent); }
-
     #file-preview { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding: 0 max(20px, calc(50% - 420px)) 6px; }
-
-    /* Doc tag */
     .file-tag { font-size: 11px; font-weight: 500; background: var(--accent-bg); border: 1px solid rgba(90,15,133,0.15); color: var(--accent); padding: 4px 10px; border-radius: 100px; display: flex; align-items: center; gap: 6px; }
     html.dark .file-tag { border-color: rgba(155,77,202,0.25); }
     .file-tag-remove { cursor: pointer; color: var(--muted); font-weight: bold; transition: color 0.15s; }
     .file-tag-remove:hover { color: var(--red); }
-
-    /* Image preview thumbnail in toolbar */
     .img-preview-wrap { position: relative; display: inline-flex; align-items: flex-start; }
     .img-preview-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); display: block; }
-    .img-preview-remove {
-      position: absolute; top: -6px; right: -6px;
-      width: 16px; height: 16px; border-radius: 50%;
-      background: var(--red); color: #fff;
-      font-size: 10px; font-weight: bold;
-      cursor: pointer; border: none; font-family: var(--sans);
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    /* Image size warning tag */
-    .img-size-warn {
-      font-size: 11px; font-weight: 500;
-      background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.3);
-      color: var(--amber); padding: 4px 10px; border-radius: 100px;
-      display: flex; align-items: center; gap: 5px;
-    }
-
+    .img-preview-remove { position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; border-radius: 50%; background: var(--red); color: #fff; font-size: 10px; font-weight: bold; cursor: pointer; border: none; font-family: var(--sans); display: flex; align-items: center; justify-content: center; }
+    .img-size-warn { font-size: 11px; font-weight: 500; background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.3); color: var(--amber); padding: 4px 10px; border-radius: 100px; display: flex; align-items: center; gap: 5px; }
     #msg-input { flex: 1; background: transparent; border: none; outline: none; font-family: var(--sans); font-size: 14px; color: var(--text); padding: 12px 16px; resize: none; line-height: 1.5; max-height: 120px; overflow-y: auto; }
     #msg-input::placeholder { color: var(--muted2); }
-
     #send-btn { font-family: var(--sans); font-size: 13px; font-weight: 600; background: var(--accent); color: #fff; border: none; padding: 0 20px; cursor: pointer; flex-shrink: 0; transition: background 0.15s; align-self: stretch; }
     #send-btn:hover:not(:disabled) { background: var(--accent-lt); }
     #send-btn:disabled { opacity: 0.35; cursor: default; }
-
     #stop-btn { font-family: var(--sans); font-size: 12px; font-weight: 600; background: transparent; color: var(--red); border: none; border-left: 1px solid var(--border); padding: 0 16px; cursor: pointer; flex-shrink: 0; display: none; transition: background 0.15s; }
     #stop-btn:hover { background: rgba(220,38,38,0.06); }
-
     .input-hint { font-size: 11px; color: var(--muted2); display: flex; gap: 16px; font-family: var(--mono); }
 
     .workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
@@ -290,9 +223,10 @@
     .pane-artifact { width: 0; border-left: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
     .pane-artifact.open { width: 50%; }
     .pane-artifact.resizing { transition: none; pointer-events: none; }
-
-    .resizer { width: 10px; margin: 0 -5px; z-index: 100; cursor: col-resize; flex-shrink: 0; display: none; position: relative; }
+    /* Resizer — wider touch target on mobile */
+    .resizer { width: 10px; margin: 0 -5px; z-index: 100; cursor: col-resize; flex-shrink: 0; display: none; position: relative; touch-action: none; }
     .resizer:hover::after, .resizer.active::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--accent); border-radius: 1px; }
+    @media (max-width: 768px) { .resizer { width: 20px; margin: 0 -10px; } }
 
     .code-wrapper { margin: 12px 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
     .code-header { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 8px 14px; border-bottom: 1px solid var(--border); font-size: 11px; font-family: var(--mono); color: var(--muted); position: sticky; top: 0; z-index: 2; }
@@ -300,13 +234,11 @@
     .code-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 11px; font-weight: 500; padding: 0; transition: color 0.15s; font-family: var(--sans); }
     .code-btn:hover { color: var(--accent); }
     .bubble pre { margin: 0; border: none; border-radius: 0; }
-
     .art-header { height: 52px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--bg); flex-shrink: 0; }
     .art-tabs { display: flex; gap: 2px; background: var(--surface2); padding: 3px; border-radius: 7px; }
     .art-tab { padding: 4px 14px; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; border-radius: 5px; border: none; background: none; font-family: var(--sans); transition: all 0.15s; }
     .art-tab.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     html.dark .art-tab.active { box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-
     .art-body { flex: 1; position: relative; overflow: hidden; background: var(--surface); }
     .art-content { position: absolute; inset: 0; display: none; overflow: auto; }
     .art-content.active { display: block; }
@@ -322,9 +254,11 @@
     }
 
     .toast-container { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); z-index: 9999; pointer-events: none; }
-    .toast { display: flex; align-items: center; gap: 10px; background: var(--text); border-radius: 100px; padding: 10px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); opacity: 0; transform: translateY(12px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); font-size: 13px; font-weight: 500; color: var(--bg); }
+    .toast { display: flex; align-items: center; gap: 10px; background: var(--text); border-radius: 100px; padding: 10px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); opacity: 0; transform: translateY(12px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); font-size: 13px; font-weight: 500; color: var(--bg); white-space: nowrap; }
     .toast.visible { opacity: 1; transform: translateY(0); }
-    .toast svg { color: #22c55e; }
+    .toast svg { flex-shrink: 0; }
+    .toast svg.ok { color: #22c55e; }
+    .toast svg.warn { color: var(--amber); }
 
     #maintenance-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
     html.dark #maintenance-overlay { background: rgba(13,13,16,0.92); }
@@ -346,9 +280,7 @@
     <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
   </button>
   <div class="key-box">
-    <div class="key-logo">
-      <img src="/logo.png" alt="BareAI" class="key-logo-img" />
-    </div>
+    <div class="key-logo"><img src="/logo.png" alt="BareAI" class="key-logo-img" /></div>
     <div class="key-title">Enter your access key</div>
     <p class="key-sub">The playground requires an access key. Paste your key below to continue, or request one via Discord.</p>
     <div class="key-field-wrap">
@@ -365,9 +297,7 @@
 <div class="screen" id="screen-chat">
   <div class="chat-header">
     <div class="chat-header-left">
-      <a href="/" class="chat-logo">
-        <img src="/logo.png" alt="BareAI" class="chat-logo-img" />
-      </a>
+      <a href="/" class="chat-logo"><img src="/logo.png" alt="BareAI" class="chat-logo-img" /></a>
       <div class="header-sep"></div>
       <span class="chat-label">Playground</span>
     </div>
@@ -388,7 +318,6 @@
 
   <div class="workspace">
     <div class="pane-chat">
-      <!-- Drop overlay — sits inside pane-chat so it doesn't cover the artifact pane -->
       <div id="drop-overlay">
         <div class="drop-overlay-icon">📎</div>
         <div class="drop-overlay-label">Drop files here</div>
@@ -457,14 +386,14 @@
   </div>
 </div>
 
-<!-- Lightbox -->
 <div id="img-lightbox" onclick="closeLightbox()">
   <img id="lightbox-img" src="" alt="Full size" />
 </div>
 
 <div class="toast-container">
-  <div class="toast">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+  <div class="toast" id="toast">
+    <svg class="ok" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    <svg class="warn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     <span>Copied to clipboard</span>
   </div>
 </div>
@@ -483,46 +412,29 @@
   (function() {
     const saved = localStorage.getItem('bareai-theme');
     if (saved !== 'light') document.documentElement.classList.add('dark');
-    function syncHljs(dark) {
-      document.getElementById('hljs-light').disabled = dark;
-      document.getElementById('hljs-dark').disabled = !dark;
-    }
+    function syncHljs(dark) { document.getElementById('hljs-light').disabled = dark; document.getElementById('hljs-dark').disabled = !dark; }
     syncHljs(document.documentElement.classList.contains('dark'));
     window.__syncHljs = syncHljs;
   })();
-
-  function toggleTheme() {
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('bareai-theme', isDark ? 'dark' : 'light');
-    window.__syncHljs(isDark);
-  }
-
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    if (!localStorage.getItem('bareai-theme')) {
-      document.documentElement.classList.toggle('dark', e.matches);
-      window.__syncHljs(e.matches);
-    }
-  });
+  function toggleTheme() { const d = document.documentElement.classList.toggle('dark'); localStorage.setItem('bareai-theme', d ? 'dark' : 'light'); window.__syncHljs(d); }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => { if (!localStorage.getItem('bareai-theme')) { document.documentElement.classList.toggle('dark', e.matches); window.__syncHljs(e.matches); } });
 
   // ── APP STATE ─────────────────────────────────────────
   const WORKER_URL     = "https://oops-proxy.deandre6156.workers.dev";
   const STORAGE_PREFIX = "bare_pg_";
 
-  // Max base64 payload we'll warn on — worker allows 2 MB total,
-  // base64 inflates ~33%, so ~1.5 MB raw is a safe per-image soft limit.
-  const IMAGE_WARN_BYTES  = 1.5 * 1024 * 1024;  // warn in toolbar
+  const IMAGE_WARN_BYTES   = 1.5 * 1024 * 1024;
+  const LIGHTBOX_MAX       = 100; // cap to avoid unbounded memory growth
   const ACCEPTED_IMG_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
   const ACCEPTED_DOC_EXTS  = new Set(['.txt','.md','.csv','.json','.js','.py','.html','.css','.xml','.yaml','.yml']);
 
   let activeKey = null, remaining = null, limit = null;
   let history = [], isLoading = false, abortCtrl = null;
-  let attachedDocs   = [];  // { name, content }
-  let attachedImages = [];  // { name, dataUrl, mimeType, sizeBytes }
+  let attachedDocs   = [];
+  let attachedImages = [];
   let currentArtifact = { code: '', lang: '' };
   let pastedDocsCache = {};
-
-  // Lightbox image store — avoids injecting giant data URLs into onclick attributes
-  let lightboxImages = [];  // populated per-message, index referenced in DOM
+  let lightboxImages  = []; // capped ring buffer for chat bubble lightbox
 
   // ── MARKDOWN ──────────────────────────────────────────
   const renderer = {
@@ -530,17 +442,7 @@
       lang = lang || 'text';
       const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
       const highlighted = hljs.highlight(code, { language: validLang }).value;
-      return `<div class="code-wrapper">
-        <div class="code-header">
-          <span>${validLang}</span>
-          <div class="code-controls">
-            <button class="code-btn" onclick="copyCode(this)">Copy</button>
-            <button class="code-btn" onclick="openArtifact(this, '${validLang}')">Open Canvas</button>
-          </div>
-        </div>
-        <pre><code class="hljs ${validLang}">${highlighted}</code></pre>
-        <textarea class="raw-code" style="display:none">${escHtml(code)}</textarea>
-      </div>`;
+      return `<div class="code-wrapper"><div class="code-header"><span>${validLang}</span><div class="code-controls"><button class="code-btn" onclick="copyCode(this)">Copy</button><button class="code-btn" onclick="openArtifact(this, '${validLang}')">Open Canvas</button></div></div><pre><code class="hljs ${validLang}">${highlighted}</code></pre><textarea class="raw-code" style="display:none">${escHtml(code)}</textarea></div>`;
     }
   };
   marked.use({ renderer });
@@ -581,10 +483,8 @@
   function showChat() {
     document.getElementById('screen-key').classList.remove('active');
     document.getElementById('screen-chat').classList.add('active');
-    updateCounter();
-    if (remaining === 0) showLimitBanner();
-    renderEmptyState();
-    document.getElementById('msg-input').focus();
+    updateCounter(); if (remaining === 0) showLimitBanner();
+    renderEmptyState(); document.getElementById('msg-input').focus();
   }
 
   function signOut() {
@@ -600,20 +500,13 @@
 
   function updateCounter() {
     if (remaining === null || limit === null) return;
-    const used = limit - remaining;
-    const track = document.getElementById('counter-track');
-    const text  = document.getElementById('counter-text');
-    const isLow      = remaining <= Math.ceil(limit * 0.3);
-    const isCritical = remaining <= Math.ceil(limit * 0.1);
-    const PIPS     = 10;
-    const usedPips = Math.round((used / limit) * PIPS);
-    track.innerHTML = Array.from({ length: PIPS }, (_, i) => {
-      const cls = i < usedPips ? (isCritical ? 'used critical' : isLow ? 'used low' : 'used') : '';
-      return `<div class="counter-pip ${cls}"></div>`;
-    }).join('');
+    const used = limit - remaining, track = document.getElementById('counter-track'), text = document.getElementById('counter-text');
+    const isLow = remaining <= Math.ceil(limit * 0.3), isCritical = remaining <= Math.ceil(limit * 0.1);
+    const PIPS = 10, usedPips = Math.round((used / limit) * PIPS);
+    track.innerHTML = Array.from({ length: PIPS }, (_, i) => `<div class="counter-pip ${i < usedPips ? (isCritical ? 'used critical' : isLow ? 'used low' : 'used') : ''}"></div>`).join('');
     const fmt = n => n >= 1000 ? Math.round(n / 1000) + 'k' : String(n);
     text.textContent = fmt(remaining) + ' / ' + fmt(limit);
-    text.className   = 'counter-text' + (isCritical ? ' critical' : isLow ? ' low' : '');
+    text.className = 'counter-text' + (isCritical ? ' critical' : isLow ? ' low' : '');
   }
 
   function showLimitBanner() {
@@ -627,40 +520,36 @@
   function readFileAsDataURL(file) {
     return new Promise((resolve, reject) => {
       const r = new FileReader();
-      r.onload  = () => resolve(r.result);
+      r.onload = () => resolve(r.result);
       r.onerror = () => reject(new Error('Failed to read file'));
       r.readAsDataURL(file);
     });
   }
 
-  /**
-   * Central file processor — used by file input, drag-drop, and clipboard paste.
-   * Validates type, reads, and adds to the appropriate attachment list.
-   */
   async function processFiles(files) {
+    let hadError = false;
     for (const file of files) {
       if (ACCEPTED_IMG_TYPES.has(file.type)) {
         try {
           const dataUrl = await readFileAsDataURL(file);
           attachedImages.push({ name: file.name, dataUrl, mimeType: file.type, sizeBytes: file.size });
         } catch {
-          appendError(`Could not read image: ${file.name}`);
+          showToast(`Could not read image: ${file.name}`, 'warn'); hadError = true;
         }
       } else {
-        // Validate extension for text files
         const ext = '.' + file.name.split('.').pop().toLowerCase();
         if (!ACCEPTED_DOC_EXTS.has(ext) && file.type && !file.type.startsWith('text/')) {
-          appendError(`Unsupported file type: ${file.name}. Supported: images (PNG/JPEG/GIF/WebP) and text documents.`);
-          continue;
+          showToast(`Unsupported file type: ${file.name}`, 'warn'); hadError = true; continue;
         }
         try {
           attachedDocs.push({ name: file.name, content: await file.text() });
         } catch {
-          appendError(`Could not read file: ${file.name}`);
+          showToast(`Could not read file: ${file.name}`, 'warn'); hadError = true;
         }
       }
     }
     renderAttachments();
+    if (!hadError && files.length > 0) showToast(files.length === 1 ? `${files[0].name} attached` : `${files.length} files attached`);
   }
 
   /**
@@ -675,31 +564,41 @@
   }
 
   /**
-   * Render the attachment preview bar.
-   * Image size warnings are shown inline if any image exceeds IMAGE_WARN_BYTES.
+   * Strip image_url blocks from all messages except the most recent one that
+   * contains them. This prevents base64 image data from being re-sent on every
+   * follow-up message, which would blow the payload size limit fast.
    */
+  function buildHistoryForSend(history) {
+    // Find the last message index that has image blocks
+    let lastImageIdx = -1;
+    for (let i = history.length - 1; i >= 0; i--) {
+      if (Array.isArray(history[i].content) && history[i].content.some(b => b.type === 'image_url')) {
+        lastImageIdx = i; break;
+      }
+    }
+
+    return history.map((msg, idx) => {
+      if (idx === lastImageIdx || !Array.isArray(msg.content)) return msg;
+      // Strip image blocks from older messages, keep text blocks
+      const textOnly = msg.content.filter(b => b.type !== 'image_url');
+      // Flatten to a plain string if only one text block remains
+      if (textOnly.length === 1 && textOnly[0].type === 'text') {
+        return { ...msg, content: textOnly[0].text };
+      }
+      return { ...msg, content: textOnly.length > 0 ? textOnly : '[image]' };
+    });
+  }
+
   function renderAttachments() {
     const preview = document.getElementById('file-preview');
-
     const docHtml = attachedDocs.map((doc, i) =>
-      `<div class="file-tag">
-        <span>📄 ${escHtml(doc.name)}</span>
-        <span class="file-tag-remove" onclick="removeDoc(${i})">×</span>
-      </div>`
+      `<div class="file-tag"><span>📄 ${escHtml(doc.name)}</span><span class="file-tag-remove" onclick="removeDoc(${i})">×</span></div>`
     ).join('');
-
     const imgHtml = attachedImages.map((img, i) =>
-      `<div class="img-preview-wrap">
-        <img class="img-preview-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" />
-        <button class="img-preview-remove" onclick="removeImage(${i})">×</button>
-      </div>`
+      `<div class="img-preview-wrap"><img class="img-preview-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" /><button class="img-preview-remove" onclick="removeImage(${i})">×</button></div>`
     ).join('');
-
-    const totalImageBytes = attachedImages.reduce((s, img) => s + img.sizeBytes, 0);
-    const warnHtml = totalImageBytes > IMAGE_WARN_BYTES
-      ? `<div class="img-size-warn">⚠ Large image — may be slow or rejected</div>`
-      : '';
-
+    const totalBytes = attachedImages.reduce((s, img) => s + img.sizeBytes, 0);
+    const warnHtml = totalBytes > IMAGE_WARN_BYTES ? `<div class="img-size-warn">⚠ Large image — may be slow or rejected</div>` : '';
     preview.innerHTML = docHtml + imgHtml + warnHtml;
   }
 
@@ -707,78 +606,50 @@
   window.removeImage = i => { attachedImages.splice(i, 1); renderAttachments(); };
 
   // ── LIGHTBOX ──────────────────────────────────────────
-  // Images in chat bubbles are stored in lightboxImages[] and referenced by index,
-  // avoiding truncated data URLs in onclick attribute strings.
   window.openLightboxIdx = idx => {
     document.getElementById('lightbox-img').src = lightboxImages[idx];
     document.getElementById('img-lightbox').classList.add('open');
   };
-  window.closeLightbox = () => {
-    document.getElementById('img-lightbox').classList.remove('open');
-  };
+  window.closeLightbox = () => document.getElementById('img-lightbox').classList.remove('open');
 
   // ── DRAG AND DROP ─────────────────────────────────────
-  const paneChat   = document.querySelector('.pane-chat');
+  const paneChat    = document.querySelector('.pane-chat');
   const dropOverlay = document.getElementById('drop-overlay');
-  let dragCounter = 0; // counter avoids flicker when dragging over child elements
-
-  paneChat.addEventListener('dragenter', e => {
-    e.preventDefault();
-    dragCounter++;
-    if (dragCounter === 1) dropOverlay.classList.add('active');
-  });
-
-  paneChat.addEventListener('dragleave', () => {
-    dragCounter--;
-    if (dragCounter === 0) dropOverlay.classList.remove('active');
-  });
-
-  paneChat.addEventListener('dragover', e => { e.preventDefault(); }); // required to allow drop
-
+  let dragCounter   = 0;
+  paneChat.addEventListener('dragenter', e => { e.preventDefault(); if (++dragCounter === 1) dropOverlay.classList.add('active'); });
+  paneChat.addEventListener('dragleave', () => { if (--dragCounter === 0) dropOverlay.classList.remove('active'); });
+  paneChat.addEventListener('dragover',  e => e.preventDefault());
   paneChat.addEventListener('drop', async e => {
-    e.preventDefault();
-    dragCounter = 0;
-    dropOverlay.classList.remove('active');
+    e.preventDefault(); dragCounter = 0; dropOverlay.classList.remove('active');
     const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) await processFiles(files);
+    if (files.length) await processFiles(files);
   });
 
   // ── CLIPBOARD IMAGE PASTE ─────────────────────────────
-  // Listens on window so it fires regardless of which element has focus.
   window.addEventListener('paste', async e => {
     const items = Array.from(e.clipboardData?.items || []);
-
-    // Check for image items first
     const imageItems = items.filter(it => it.kind === 'file' && ACCEPTED_IMG_TYPES.has(it.type));
     if (imageItems.length > 0) {
-      e.preventDefault(); // don't also paste as text
-      const files = imageItems.map(it => it.getAsFile()).filter(Boolean);
-      await processFiles(files);
-      return;
+      e.preventDefault();
+      await processFiles(imageItems.map(it => it.getAsFile()).filter(Boolean));
     }
-
-    // Fall through to the existing large-text-paste handler (handled on msgInput below)
+    // non-image paste falls through to msgInput's paste handler below
   });
 
   // ── FILE INPUT ────────────────────────────────────────
   const fileInput = document.getElementById('file-input');
   document.getElementById('attach-btn').addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', async e => {
-    await processFiles(Array.from(e.target.files));
-    fileInput.value = '';
-  });
+  fileInput.addEventListener('change', async e => { await processFiles(Array.from(e.target.files)); fileInput.value = ''; });
 
   // ── SEND MESSAGE ──────────────────────────────────────
   async function sendMessage() {
     if (isLoading || !activeKey) return;
     if (remaining !== null && remaining <= 0) { showLimitBanner(); return; }
 
-    const msgInput  = document.getElementById('msg-input');
-    const rawText   = msgInput.value.trim();
-
+    const msgInput = document.getElementById('msg-input');
+    const rawText  = msgInput.value.trim();
     if (!rawText && attachedDocs.length === 0 && attachedImages.length === 0) return;
 
-    // Inject doc content into text
     let textContent = rawText;
     if (attachedDocs.length > 0) {
       const docBlock = attachedDocs.map(d => `<document name="${d.name}">\n${d.content}\n</document>`).join('\n\n');
@@ -793,21 +664,20 @@
     appendUserMsg(rawText, pendingImages);
     history.push({ role: 'user', content: userContent });
 
-    msgInput.value = '';
-    msgInput.style.height = 'auto';
+    msgInput.value = ''; msgInput.style.height = 'auto';
     document.getElementById('empty-state')?.remove();
 
     isLoading = true; setSendState(false);
     const typingEl = appendTyping();
-    const _t0 = Date.now();
-    const _remainingBefore = remaining;
+    const _t0 = Date.now(), _remainingBefore = remaining;
     abortCtrl = new AbortController();
 
     try {
       const res = await fetch(WORKER_URL, {
         method: 'POST', mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: activeKey, messages: history }),
+        // Strip old image data before sending to keep payloads lean
+        body: JSON.stringify({ key: activeKey, messages: buildHistoryForSend(history) }),
         signal: abortCtrl.signal
       });
       typingEl.remove();
@@ -817,19 +687,16 @@
 
       const data = await res.json();
       const text = data.choices?.[0]?.message?.content || '';
-
       const meta = data._meta;
       if (meta) { remaining = meta.remaining ?? remaining; limit = meta.limit ?? limit; updateCounter(); if (remaining <= 0) showLimitBanner(); }
 
       const assistantRow = appendAssistantMsg('');
-      const bubble = assistantRow.querySelector('.bubble');
-      await typewriterRender(text, bubble);
+      await typewriterRender(text, assistantRow.querySelector('.bubble'));
 
-      const genMs = Date.now() - _t0;
-      const tokensUsed = (_remainingBefore !== null && meta?.remaining !== null) ? _remainingBefore - meta.remaining : null;
       const metaEl = document.createElement('div');
       metaEl.className = 'msg-meta';
-      const parts = [(genMs / 1000).toFixed(1) + 's'];
+      const parts = [((Date.now() - _t0) / 1000).toFixed(1) + 's'];
+      const tokensUsed = (_remainingBefore !== null && meta?.remaining !== null) ? _remainingBefore - meta.remaining : null;
       if (tokensUsed !== null && tokensUsed > 0) parts.push(tokensUsed.toLocaleString() + ' tokens');
       metaEl.textContent = parts.join('  ·  ');
       assistantRow.appendChild(metaEl);
@@ -850,77 +717,65 @@
     typewriterStop = false;
     const len = fullText.length;
     const isCodeHeavy = (fullText.match(/```/g) || []).length >= 2;
-    const targetMs   = len < 150 ? 1500 : len < 600 ? 2500 : len < 1500 ? 3500 : 4500;
-    const stride     = isCodeHeavy ? Math.max(6, Math.ceil(len / 120)) : Math.max(1, Math.ceil(len / 200));
-    const baseDelay  = Math.max(1, Math.round(targetMs / Math.ceil(len / stride)));
-    const CURSOR     = '<span class="tw-cursor">▍</span>';
-
-    function renderWithCursor(text) {
-      const html  = marked.parse(text);
-      const match = html.match(/(.*?)(<\/(p|li|h[1-6]|td|pre)>\s*)$/s);
-      return match ? match[1] + CURSOR + match[2] : html + CURSOR;
-    }
+    const targetMs = len < 150 ? 1500 : len < 600 ? 2500 : len < 1500 ? 3500 : 4500;
+    const stride   = isCodeHeavy ? Math.max(6, Math.ceil(len / 120)) : Math.max(1, Math.ceil(len / 200));
+    const baseDelay = Math.max(1, Math.round(targetMs / Math.ceil(len / stride)));
+    const CURSOR = '<span class="tw-cursor">▍</span>';
+    function renderWithCursor(text) { const html = marked.parse(text); const match = html.match(/(.*?)(<\/(p|li|h[1-6]|td|pre)>\s*)$/s); return match ? match[1] + CURSOR + match[2] : html + CURSOR; }
     function delayAt(p) { return Math.max(1, Math.round(baseDelay * (1 - p * 0.8))); }
-
     let displayed = '';
     for (let i = 0; i < len; i++) {
       if (typewriterStop) break;
       displayed += fullText[i];
       if (i % stride === 0 || i === len - 1) {
-        bubble.innerHTML = renderWithCursor(displayed);
-        scrollToBottom();
+        bubble.innerHTML = renderWithCursor(displayed); scrollToBottom();
         if (i > 0 && i % Math.max(stride, Math.floor(len * 0.15)) === 0) autoUpdateCanvas(displayed, true);
         await new Promise(r => setTimeout(r, delayAt(i / len)));
       }
     }
     bubble.innerHTML = marked.parse(fullText);
     bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-    scrollToBottom();
-    autoUpdateCanvas(fullText);
+    scrollToBottom(); autoUpdateCanvas(fullText);
   }
 
   function setSendState(enabled) {
-    const sendBtn = document.getElementById('send-btn'), stopBtn = document.getElementById('stop-btn');
-    sendBtn.disabled = !enabled; sendBtn.style.display = enabled ? '' : 'none';
-    stopBtn.style.display = enabled ? 'none' : 'flex'; stopBtn.style.alignItems = 'center';
+    const s = document.getElementById('send-btn'), p = document.getElementById('stop-btn');
+    s.disabled = !enabled; s.style.display = enabled ? '' : 'none';
+    p.style.display = enabled ? 'none' : 'flex'; p.style.alignItems = 'center';
   }
 
   const messagesEl = document.getElementById('messages');
   function isAtBottom() { return messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 80; }
   function scrollToBottom(force = false) { if (force || isAtBottom()) messagesEl.scrollTop = messagesEl.scrollHeight; }
 
-  /**
-   * Append a user bubble with optional image thumbnails.
-   * Images are stored in lightboxImages[] and referenced by index to avoid
-   * injecting large base64 strings into onclick attribute values.
-   */
   function appendUserMsg(text, images = []) {
     const row = document.createElement('div');
     row.className = 'msg-row user';
-
     let imgHtml = '';
     if (images.length > 0) {
+      // Cap lightboxImages to avoid memory leaks in long sessions
+      if (lightboxImages.length >= LIGHTBOX_MAX) lightboxImages.splice(0, images.length);
       const baseIdx = lightboxImages.length;
       images.forEach(img => lightboxImages.push(img.dataUrl));
-      imgHtml = `<div class="bubble-images">${
-        images.map((img, i) =>
-          `<img class="bubble-img-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" onclick="openLightboxIdx(${baseIdx + i})" />`
-        ).join('')
-      }</div>`;
+      imgHtml = `<div class="bubble-images">${images.map((img, i) => `<img class="bubble-img-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" onclick="openLightboxIdx(${baseIdx + i})" />`).join('')}</div>`;
     }
-
-    const textHtml = text ? `<div style="white-space:pre-wrap">${escHtml(text)}</div>` : '';
-    row.innerHTML = `<div class="bubble">${imgHtml}${textHtml}</div>`;
-    messagesEl.appendChild(row);
-    scrollToBottom(true);
-    return row;
+    row.innerHTML = `<div class="bubble">${imgHtml}${text ? `<div style="white-space:pre-wrap">${escHtml(text)}</div>` : ''}</div>`;
+    messagesEl.appendChild(row); scrollToBottom(true); return row;
   }
 
   function appendAssistantMsg(text) { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="bubble">${text}</div>`; messagesEl.appendChild(row); scrollToBottom(); return row; }
   function appendTyping() { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="typing-bubble"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>`; messagesEl.appendChild(row); scrollToBottom(); return row; }
   function appendError(msg) { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="err-bubble">${escHtml(msg)}</div>`; messagesEl.appendChild(row); scrollToBottom(); }
 
-  function clearChat() { history = []; lightboxImages = []; messagesEl.innerHTML = ''; renderEmptyState(); }
+  function clearChat() {
+    history = [];
+    lightboxImages = [];
+    // Also clear any staged attachments so they don't persist into a fresh session
+    attachedDocs = []; attachedImages = [];
+    renderAttachments();
+    messagesEl.innerHTML = '';
+    renderEmptyState();
+  }
 
   function renderEmptyState() {
     if (document.getElementById('empty-state')) return;
@@ -930,15 +785,15 @@
   }
 
   window.openPastedDocument = name => { const doc = pastedDocsCache[name]; if (doc) loadArtifact(doc.content, doc.lang); };
-  window.openArtifact = (btn, lang) => { loadArtifact(btn.closest('.code-wrapper').querySelector('.raw-code').value, lang); };
+  window.openArtifact = (btn, lang) => loadArtifact(btn.closest('.code-wrapper').querySelector('.raw-code').value, lang);
   window.loadArtifact = (code, lang) => {
     currentArtifact = { code, lang };
     const pane = document.getElementById('artifact-pane');
     if (!pane.classList.contains('open')) { pane.classList.add('open'); document.getElementById('resizer').style.display = 'block'; }
-    const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
-    document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${validLang}">${hljs.highlight(code, { language: validLang }).value}</code></pre>`;
-    const iframe = document.getElementById('art-preview'), tabPreview = document.getElementById('tab-preview'), isHtml = lang === 'html';
-    if (isHtml) { tabPreview.style.display = 'block'; iframe.srcdoc = code; switchArtTab('preview'); } else { tabPreview.style.display = 'none'; iframe.srcdoc = ''; switchArtTab('code'); }
+    const vl = hljs.getLanguage(lang) ? lang : 'plaintext';
+    document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${vl}">${hljs.highlight(code, { language: vl }).value}</code></pre>`;
+    const iframe = document.getElementById('art-preview'), tabPrev = document.getElementById('tab-preview');
+    if (lang === 'html') { tabPrev.style.display = 'block'; iframe.srcdoc = code; switchArtTab('preview'); } else { tabPrev.style.display = 'none'; iframe.srcdoc = ''; switchArtTab('code'); }
   };
   window.downloadArtifact = () => {
     if (!currentArtifact.code) return;
@@ -955,32 +810,48 @@
     let match, lastMatch = null;
     while ((match = fenceRe.exec(text)) !== null) lastMatch = match;
     if (!lastMatch) return;
-    const lang = (lastMatch[1] || currentArtifact.lang || 'plaintext').trim();
-    const code = lastMatch[2];
+    const lang = (lastMatch[1] || currentArtifact.lang || 'plaintext').trim(), code = lastMatch[2];
     if (currentArtifact.lang && lang !== currentArtifact.lang && !partialUpdate) return;
     currentArtifact = { code, lang };
-    if (!partialUpdate) {
-      const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
-      document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${validLang}">${hljs.highlight(code, { language: validLang }).value}</code></pre>`;
-    }
+    if (!partialUpdate) { const vl = hljs.getLanguage(lang) ? lang : 'plaintext'; document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${vl}">${hljs.highlight(code, { language: vl }).value}</code></pre>`; }
     if (lang === 'html') {
-      const iframe = document.getElementById('art-preview'), tabPreview = document.getElementById('tab-preview');
-      tabPreview.style.display = 'block';
+      const iframe = document.getElementById('art-preview'), tabPrev = document.getElementById('tab-preview');
+      tabPrev.style.display = 'block';
       if (partialUpdate) { try { iframe.contentDocument.open(); iframe.contentDocument.write(code); iframe.contentDocument.close(); } catch { iframe.srcdoc = code; } }
       else { iframe.srcdoc = code; }
     }
   }
 
+  // ── RESIZER — mouse + touch ───────────────────────────
   const resizer = document.getElementById('resizer'), artifactPane = document.getElementById('artifact-pane');
   let isResizing = false;
-  resizer.addEventListener('mousedown', () => { isResizing = true; artifactPane.classList.add('resizing'); resizer.classList.add('active'); document.body.style.cursor = 'col-resize'; });
-  document.addEventListener('mousemove', e => { if (!isResizing) return; artifactPane.style.width = Math.min(Math.max(window.innerWidth - e.clientX, 300), window.innerWidth - 300) + 'px'; });
-  document.addEventListener('mouseup', () => { if (isResizing) { isResizing = false; artifactPane.classList.remove('resizing'); resizer.classList.remove('active'); document.body.style.cursor = ''; } });
+
+  function startResize() { isResizing = true; artifactPane.classList.add('resizing'); resizer.classList.add('active'); document.body.style.cursor = 'col-resize'; }
+  function stopResize()  { if (!isResizing) return; isResizing = false; artifactPane.classList.remove('resizing'); resizer.classList.remove('active'); document.body.style.cursor = ''; }
+  function doResize(clientX) { if (!isResizing) return; artifactPane.style.width = Math.min(Math.max(window.innerWidth - clientX, 300), window.innerWidth - 300) + 'px'; }
+
+  resizer.addEventListener('mousedown',  () => startResize());
+  document.addEventListener('mousemove', e => doResize(e.clientX));
+  document.addEventListener('mouseup',   () => stopResize());
+
+  resizer.addEventListener('touchstart',  e => { e.preventDefault(); startResize(); }, { passive: false });
+  document.addEventListener('touchmove',  e => { if (isResizing) { e.preventDefault(); doResize(e.touches[0].clientX); } }, { passive: false });
+  document.addEventListener('touchend',   () => stopResize());
 
   window.switchArtTab = tab => { document.querySelectorAll('.art-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.art-content').forEach(c => c.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); document.getElementById(`view-${tab}`).classList.add('active'); };
   window.copyCode = btn => { const code = btn.closest('.code-wrapper').querySelector('.raw-code').value; navigator.clipboard.writeText(code); showToast('Copied to clipboard'); const orig = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => btn.textContent = orig, 2000); };
 
-  function showToast(msg) { const t = document.querySelector('.toast'); t.querySelector('span').textContent = msg; t.classList.add('visible'); setTimeout(() => t.classList.remove('visible'), 2500); }
+  let toastTimer = null;
+  function showToast(msg, type = 'ok') {
+    const toast = document.getElementById('toast');
+    toast.querySelector('span').textContent = msg;
+    toast.querySelector('svg.ok').style.display  = type === 'ok'   ? '' : 'none';
+    toast.querySelector('svg.warn').style.display = type === 'warn' ? '' : 'none';
+    toast.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('visible'), 2800);
+  }
+
   function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   window.useExample = text => { const i = document.getElementById('msg-input'); i.value = text; i.focus(); i.dispatchEvent(new Event('input', { bubbles: true })); };
 
@@ -997,8 +868,6 @@
   const msgInput = document.getElementById('msg-input');
   msgInput.addEventListener('input', () => { msgInput.style.height = 'auto'; msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px'; });
   msgInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-
-  // Large text paste → ghost document tag
   msgInput.addEventListener('paste', e => {
     const pasted = (e.clipboardData || window.clipboardData).getData('text');
     if (pasted.length <= 1500) return;
@@ -1006,8 +875,7 @@
     const name = 'Pasted-' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     pastedDocsCache[name] = { content: pasted, lang: 'plaintext' };
     attachedDocs.push({ name, content: pasted });
-    renderAttachments();
-    showToast('Large paste captured as document');
+    renderAttachments(); showToast('Large paste captured as document');
   });
 
   // ── MAINTENANCE INTERCEPT ─────────────────────────────
