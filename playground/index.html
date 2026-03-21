@@ -134,7 +134,7 @@
     .msg-row.assistant { align-items: flex-start; }
     .bubble { max-width: 72%; padding: 11px 15px; font-size: 14px; line-height: 1.65; }
     .msg-row.user .bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 12px 12px 4px 12px; }
-    .msg-row.assistant .bubble { background: transparent; color: var(--text); padding-left: 0; }
+    .msg-row.assistant .bubble { background: transparent; color: var(--text); padding-left: 0; max-width: 100%; width: 100%; }
     .bubble p { margin-bottom: 0.8em; }
     .bubble p:last-child { margin-bottom: 0; }
     .bubble ul, .bubble ol { margin: 0.5em 0 0.5em 1.5em; }
@@ -147,26 +147,29 @@
     .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
 
     /* ── ARTIFACT CARD (large code blocks) ── */
+    /* Wrapper ensures the card breaks out of any <p> markdown wrapping */
+    .artifact-card-wrap { display: block; margin: 10px 0; }
+    .artifact-card-wrap p { display: contents; } /* flatten any stray <p> wrapper */
     .artifact-card {
       display: flex; align-items: center; justify-content: space-between;
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px 14px; margin: 8px 0;
+      border-radius: 10px; padding: 12px 14px;
       cursor: pointer; transition: border-color 0.15s, background 0.15s;
-      max-width: 320px;
+      width: 100%; max-width: 380px; box-sizing: border-box;
     }
     .artifact-card:hover { border-color: var(--accent); background: var(--bg); }
-    .artifact-card-left { display: flex; align-items: center; gap: 10px; }
+    .artifact-card-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .artifact-card-icon {
       width: 32px; height: 32px; background: var(--accent-bg);
       border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .artifact-card-icon svg { color: var(--accent); }
-    .artifact-card-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .artifact-card-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .artifact-card-lang { font-size: 11px; font-family: var(--mono); color: var(--accent); margin-top: 2px; }
     .artifact-card-open {
       font-size: 11px; font-weight: 500; color: var(--muted); background: var(--bg);
       border: 1px solid var(--border); padding: 4px 10px; border-radius: 5px;
-      transition: all 0.15s; flex-shrink: 0;
+      transition: all 0.15s; flex-shrink: 0; margin-left: 10px;
     }
     .artifact-card:hover .artifact-card-open { color: var(--accent); border-color: var(--accent); }
 
@@ -233,7 +236,8 @@
     .pane-artifact { width: 0; border-left: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
     .pane-artifact.open { width: 50%; }
     .pane-artifact.resizing { transition: none; pointer-events: none; }
-    .resizer { width: 10px; margin: 0 -5px; z-index: 100; cursor: col-resize; flex-shrink: 0; display: none; position: relative; touch-action: none; }
+    .resizer { width: 10px; margin: 0 -5px; z-index: 100; cursor: col-resize; flex-shrink: 0; display: block; position: relative; touch-action: none; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+    .resizer.visible { pointer-events: auto; opacity: 1; }
     .resizer:hover::after, .resizer.active::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--accent); border-radius: 1px; }
     @media (max-width: 768px) { .resizer { width: 20px; margin: 0 -10px; } }
 
@@ -255,7 +259,6 @@
     .art-body { flex: 1; position: relative; overflow: hidden; background: var(--surface); }
     .art-content { position: absolute; inset: 0; display: none; overflow: auto; }
     .art-content.active { display: block; }
-    /* iframe is sandboxed — allows scripts and same-origin but blocks navigation */
     #art-preview { width: 100%; height: 100%; border: none; background: #fff; }
     #art-code { padding: 20px; }
     #art-code pre { background: transparent !important; border: none; padding: 0; margin: 0; }
@@ -400,7 +403,6 @@
       <div class="art-body">
         <div class="art-content active" id="view-code"><div id="art-code"></div></div>
         <div class="art-content" id="view-preview">
-          <!-- sandbox: allow scripts + same-origin, block all navigation -->
           <iframe id="art-preview"
             sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups-to-escape-sandbox"
             referrerpolicy="no-referrer"></iframe>
@@ -432,6 +434,22 @@
 </div>
 
 <script>
+  // ── HELPERS (defined first — used by renderer below) ──
+  function escHtml(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function langToFilename(lang) {
+    const map = {
+      javascript: 'script.js', js: 'script.js', typescript: 'script.ts', ts: 'script.ts',
+      python: 'script.py', py: 'script.py', html: 'index.html', css: 'styles.css',
+      json: 'data.json', markdown: 'readme.md', md: 'readme.md',
+      rust: 'main.rs', go: 'main.go', java: 'Main.java', cpp: 'main.cpp',
+      c: 'main.c', bash: 'script.sh', sh: 'script.sh', sql: 'query.sql',
+      yaml: 'config.yml', yml: 'config.yml', toml: 'config.toml',
+      php: 'index.php', ruby: 'script.rb', swift: 'main.swift', kotlin: 'main.kt',
+    };
+    return map[lang?.toLowerCase()] || (lang ? `file.${lang}` : 'snippet.txt');
+  }
+
   // ── THEME ─────────────────────────────────────────────
   (function() {
     const saved = localStorage.getItem('bareai-theme');
@@ -446,10 +464,7 @@
   // ── APP STATE ─────────────────────────────────────────
   const WORKER_URL     = "https://oops-proxy.deandre6156.workers.dev";
   const STORAGE_PREFIX = "bare_pg_";
-
-  // Code blocks with >= this many lines render as an artifact card instead of inline
   const ARTIFACT_CARD_THRESHOLD = 15;
-
   const IMAGE_WARN_BYTES   = 1.5 * 1024 * 1024;
   const LIGHTBOX_MAX       = 100;
   const ACCEPTED_IMG_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
@@ -463,60 +478,49 @@
   let pastedDocsCache = {};
   let lightboxImages  = [];
 
-  // Store for artifact card code — keyed by card id, avoids inline data
+  // Artifact card store — keyed by card id
   const artifactStore = new Map();
   let artifactCardCounter = 0;
 
-  // ── HELPERS ───────────────────────────────────────────
-
-  /**
-   * Infer a human-readable filename from a language identifier.
-   */
-  function langToFilename(lang) {
-    const map = {
-      javascript: 'script.js', js: 'script.js', typescript: 'script.ts', ts: 'script.ts',
-      python: 'script.py', py: 'script.py', html: 'index.html', css: 'styles.css',
-      json: 'data.json', markdown: 'readme.md', md: 'readme.md',
-      rust: 'main.rs', go: 'main.go', java: 'Main.java', cpp: 'main.cpp',
-      c: 'main.c', bash: 'script.sh', sh: 'script.sh', sql: 'query.sql',
-      yaml: 'config.yml', yml: 'config.yml', toml: 'config.toml',
-      php: 'index.php', ruby: 'script.rb', swift: 'main.swift', kotlin: 'main.kt',
-    };
-    return map[lang?.toLowerCase()] || (lang ? `file.${lang}` : 'snippet.txt');
-  }
-
   // ── MARKDOWN RENDERER ─────────────────────────────────
-  const renderer = {
-    code(code, lang) {
-      lang = lang || 'text';
-      const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
-      const lineCount = code.split('\n').length;
+  // FIX: marked v4 renderer.code receives (code, infostring, escaped)
+  // The second param is the full infostring (e.g. "javascript"), not split yet.
+  const renderer = new marked.Renderer();
+  renderer.code = function(code, infostring) {
+    const lang = (infostring || '').split(/\s+/)[0] || 'text';
+    const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+    const lineCount = code.split('\n').length;
 
-      // Large blocks → artifact card
-      if (lineCount >= ARTIFACT_CARD_THRESHOLD) {
-        const cardId   = 'ac_' + (++artifactCardCounter);
-        const filename = langToFilename(validLang);
-        artifactStore.set(cardId, { code, lang: validLang, name: filename });
-        return `<div class="artifact-card" onclick="openArtifactCard('${cardId}')">
-          <div class="artifact-card-left">
-            <div class="artifact-card-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            </div>
-            <div>
-              <div class="artifact-card-name">${escHtml(filename)}</div>
-              <div class="artifact-card-lang">${validLang}</div>
-            </div>
+    // Large blocks → artifact card
+    if (lineCount >= ARTIFACT_CARD_THRESHOLD) {
+      const cardId   = 'ac_' + (++artifactCardCounter);
+      const filename = langToFilename(validLang);
+      // Store a COPY of the code string
+      artifactStore.set(cardId, { code: code, lang: validLang, name: filename });
+      return `<div class="artifact-card-wrap"><div class="artifact-card" onclick="openArtifactCard('${escHtml(cardId)}')">
+        <div class="artifact-card-left">
+          <div class="artifact-card-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           </div>
-          <div class="artifact-card-open">Open</div>
-        </div>`;
-      }
-
-      // Small blocks → inline code block (existing behaviour)
-      const highlighted = hljs.highlight(code, { language: validLang }).value;
-      return `<div class="code-wrapper"><div class="code-header"><span>${validLang}</span><div class="code-controls"><button class="code-btn" onclick="copyCode(this)">Copy</button><button class="code-btn" onclick="openArtifact(this, '${validLang}')">Open Canvas</button></div></div><pre><code class="hljs ${validLang}">${highlighted}</code></pre><textarea class="raw-code" style="display:none">${escHtml(code)}</textarea></div>`;
+          <div>
+            <div class="artifact-card-name">${escHtml(filename)}</div>
+            <div class="artifact-card-lang">${escHtml(validLang)}</div>
+          </div>
+        </div>
+        <div class="artifact-card-open">Open</div>
+      </div></div>`;
     }
+
+    // Small blocks → inline with copy + open canvas
+    const highlighted = hljs.highlight(code, { language: validLang }).value;
+    // FIX: store raw code in a data attribute instead of a hidden textarea
+    // to avoid HTML-entity decode mismatches
+    const safeCardId = 'ic_' + (++artifactCardCounter);
+    artifactStore.set(safeCardId, { code: code, lang: validLang, name: langToFilename(validLang) });
+    return `<div class="code-wrapper" data-card-id="${safeCardId}"><div class="code-header"><span>${escHtml(validLang)}</span><div class="code-controls"><button class="code-btn" onclick="copyCode(this)">Copy</button><button class="code-btn" onclick="openArtifact(this)">Open Canvas</button></div></div><pre><code class="hljs ${validLang}">${highlighted}</code></pre></div>`;
   };
-  marked.use({ renderer });
+
+  marked.setOptions({ renderer });
 
   // ── INIT ──────────────────────────────────────────────
   (async () => {
@@ -644,37 +648,38 @@
 
   // ── ARTIFACT CANVAS ───────────────────────────────────
 
-  /**
-   * Open canvas from an artifact card click.
-   * On first open in a response, canvas auto-opens.
-   */
   window.openArtifactCard = cardId => {
     const artifact = artifactStore.get(cardId);
     if (artifact) loadArtifact(artifact.code, artifact.lang, artifact.name);
   };
 
-  window.openArtifact = (btn, lang) => {
-    const code = btn.closest('.code-wrapper').querySelector('.raw-code').value;
-    loadArtifact(code, lang, langToFilename(lang));
+  // FIX: openArtifact now reads from artifactStore via data-card-id instead of broken textarea
+  window.openArtifact = btn => {
+    const wrapper = btn.closest('.code-wrapper');
+    const cardId  = wrapper?.dataset.cardId;
+    const artifact = cardId ? artifactStore.get(cardId) : null;
+    if (artifact) loadArtifact(artifact.code, artifact.lang, artifact.name);
   };
 
   window.loadArtifact = (code, lang, name) => {
     name = name || langToFilename(lang);
     currentArtifact = { code, lang, name };
 
-    // Update canvas header
     document.getElementById('art-title-name').textContent = name;
     document.getElementById('art-title-lang').textContent = lang;
 
     const pane = document.getElementById('artifact-pane');
-    if (!pane.classList.contains('open')) { pane.classList.add('open'); document.getElementById('resizer').style.display = 'block'; }
+    if (!pane.classList.contains('open')) {
+      pane.classList.add('open');
+      document.getElementById('resizer').classList.add('visible');
+    }
 
     const vl = hljs.getLanguage(lang) ? lang : 'plaintext';
     document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${vl}">${hljs.highlight(code, { language: vl }).value}</code></pre>`;
 
     const iframe = document.getElementById('art-preview'), tabPrev = document.getElementById('tab-preview');
     if (lang === 'html') {
-      tabPrev.style.display = 'block';
+      tabPrev.style.display = '';
       loadSandboxedHtml(iframe, code);
       switchArtTab('preview');
     } else {
@@ -684,25 +689,17 @@
     }
   };
 
-  /**
-   * Load HTML into the sandboxed iframe with a navigation-intercepting script injected.
-   * Any <a href="..."> clicks that would navigate are blocked. In-page anchors (#id) scroll normally.
-   */
   function loadSandboxedHtml(iframe, html) {
     const interceptScript = `<script>
       document.addEventListener('click', function(e) {
         var a = e.target.closest('a');
         if (!a) return;
         var href = a.getAttribute('href');
-        if (!href || href === '#' || href.startsWith('#')) return; // allow in-page anchors
-        e.preventDefault();
-        e.stopPropagation();
+        if (!href || href === '#' || href.startsWith('#')) return;
+        e.preventDefault(); e.stopPropagation();
       }, true);
-      document.addEventListener('submit', function(e) {
-        e.preventDefault(); // block form navigation
-      }, true);
+      document.addEventListener('submit', function(e) { e.preventDefault(); }, true);
     <\/script>`;
-    // Inject before </body> or at end
     const injected = html.includes('</body>')
       ? html.replace('</body>', interceptScript + '</body>')
       : html + interceptScript;
@@ -717,42 +714,48 @@
 
   window.downloadArtifact = () => {
     if (!currentArtifact.code) return;
-    const extMap = { javascript: 'js', python: 'py', markdown: 'md', html: 'html', css: 'css', json: 'json', rust: 'rs', typescript: 'ts' };
-    const ext = extMap[currentArtifact.lang] || currentArtifact.lang || 'txt';
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([currentArtifact.code], { type: 'text/plain' })), download: currentArtifact.name || `artifact.${ext}` });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([currentArtifact.code], { type: 'text/plain' })),
+      download: currentArtifact.name || 'artifact.txt'
+    });
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   };
 
-  window.closeArtifact = () => { const p = document.getElementById('artifact-pane'); p.classList.remove('open'); p.style.width = ''; document.getElementById('resizer').style.display = 'none'; };
+  window.closeArtifact = () => {
+    const p = document.getElementById('artifact-pane');
+    p.classList.remove('open'); p.style.width = '';
+    document.getElementById('resizer').classList.remove('visible');
+  };
 
-  /**
-   * autoUpdateCanvas: during typewriter, keep canvas in sync.
-   * Also handles auto-opening the canvas when the first large code block appears.
-   */
+  // FIX: autoUpdateCanvas — use stricter regex so partial fences mid-stream don't
+  // produce empty/garbage code, and guard against running during partial updates
+  // when no complete fence exists yet.
   function autoUpdateCanvas(text, partialUpdate = false) {
+    // Find the last complete fenced code block
     const fenceRe = /```([\w+-]*)\n([\s\S]*?)```/g;
     let match, lastMatch = null;
     while ((match = fenceRe.exec(text)) !== null) lastMatch = match;
+
     if (!lastMatch) return;
 
-    const lang = (lastMatch[1] || currentArtifact.lang || 'plaintext').trim();
+    const lang = (lastMatch[1] || '').trim() || (currentArtifact.lang || 'plaintext');
     const code = lastMatch[2];
-    const lineCount = code.split('\n').length;
+    if (!code || !code.trim()) return; // guard empty captures
 
-    // Only auto-manage canvas for large blocks (artifact-card threshold)
+    const lineCount = code.split('\n').length;
     if (lineCount < ARTIFACT_CARD_THRESHOLD) return;
 
     const pane = document.getElementById('artifact-pane');
     const name = langToFilename(lang);
 
-    // Auto-open canvas on first large block detected in this response
     if (!pane.classList.contains('open')) {
       loadArtifact(code, lang, name);
       return;
     }
 
-    // Canvas already open — update it if lang matches (don't hijack with unrelated snippet)
-    if (currentArtifact.lang && lang !== currentArtifact.lang && !partialUpdate) return;
+    // Only update if lang matches what's already open
+    if (currentArtifact.lang && lang !== currentArtifact.lang) return;
+
     currentArtifact = { code, lang, name };
     document.getElementById('art-title-name').textContent = name;
     document.getElementById('art-title-lang').textContent = lang;
@@ -761,11 +764,16 @@
       const vl = hljs.getLanguage(lang) ? lang : 'plaintext';
       document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${vl}">${hljs.highlight(code, { language: vl }).value}</code></pre>`;
     }
+
     if (lang === 'html') {
       const iframe = document.getElementById('art-preview'), tabPrev = document.getElementById('tab-preview');
-      tabPrev.style.display = 'block';
-      if (partialUpdate) { try { iframe.contentDocument.open(); iframe.contentDocument.write(code); iframe.contentDocument.close(); } catch { loadSandboxedHtml(iframe, code); } }
-      else { loadSandboxedHtml(iframe, code); }
+      tabPrev.style.display = '';
+      if (partialUpdate) {
+        try { iframe.contentDocument.open(); iframe.contentDocument.write(code); iframe.contentDocument.close(); }
+        catch { loadSandboxedHtml(iframe, code); }
+      } else {
+        loadSandboxedHtml(iframe, code);
+      }
     }
   }
 
@@ -856,13 +864,15 @@
       displayed += fullText[i];
       if (i % stride === 0 || i === len - 1) {
         bubble.innerHTML = renderWithCursor(displayed); scrollToBottom();
-        if (i > 0 && i % Math.max(stride, Math.floor(len * 0.15)) === 0) autoUpdateCanvas(displayed, true);
+        // Canvas update deferred to end — no mid-stream auto-open to avoid jarring pop
         await new Promise(r => setTimeout(r, delayAt(i / len)));
       }
     }
+    // Final render — full markdown parse, then update canvas with complete text
     bubble.innerHTML = marked.parse(fullText);
     bubble.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-    scrollToBottom(); autoUpdateCanvas(fullText);
+    scrollToBottom();
+    autoUpdateCanvas(fullText, false);
   }
 
   function setSendState(enabled) {
@@ -910,7 +920,18 @@
   }
 
   window.openPastedDocument = name => { const doc = pastedDocsCache[name]; if (doc) loadArtifact(doc.content, doc.lang, langToFilename(doc.lang)); };
-  window.copyCode = btn => { const code = btn.closest('.code-wrapper').querySelector('.raw-code').value; navigator.clipboard.writeText(code); showToast('Copied to clipboard'); const orig = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => btn.textContent = orig, 2000); };
+
+  // FIX: copyCode reads from artifactStore via data-card-id, not hidden textarea
+  window.copyCode = btn => {
+    const wrapper = btn.closest('.code-wrapper');
+    const cardId  = wrapper?.dataset.cardId;
+    const artifact = cardId ? artifactStore.get(cardId) : null;
+    const code = artifact ? artifact.code : '';
+    if (!code) return;
+    navigator.clipboard.writeText(code);
+    showToast('Copied to clipboard');
+    const orig = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => btn.textContent = orig, 2000);
+  };
 
   // ── RESIZER — mouse + touch ───────────────────────────
   const resizer = document.getElementById('resizer'), artifactPane = document.getElementById('artifact-pane');
@@ -938,7 +959,6 @@
     toastTimer = setTimeout(() => toast.classList.remove('visible'), 2800);
   }
 
-  function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   window.useExample = text => { const i = document.getElementById('msg-input'); i.value = text; i.focus(); i.dispatchEvent(new Event('input', { bubbles: true })); };
 
   // ── EVENT WIRING ──────────────────────────────────────
