@@ -63,23 +63,14 @@
     .screen.active { display: flex; }
 
     /* ── KEY SCREEN ── */
-    #screen-key {
-      align-items: center; justify-content: center;
-      padding: 40px 20px; background: var(--surface); position: relative;
-    }
-    #screen-key::before {
-      content: ''; position: fixed; inset: 0;
-      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 56px 56px; opacity: 0.6; pointer-events: none;
-    }
+    #screen-key { align-items: center; justify-content: center; padding: 40px 20px; background: var(--surface); position: relative; }
+    #screen-key::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 56px 56px; opacity: 0.6; pointer-events: none; }
     .back-link { position: absolute; top: 28px; left: 32px; font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; z-index: 10; transition: color 0.15s; display: flex; align-items: center; gap: 6px; }
     .back-link:hover { color: var(--accent); }
     .key-theme-btn { position: absolute; top: 24px; right: 32px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; color: var(--muted); z-index: 10; transition: color 0.15s; }
     .key-theme-btn:hover { color: var(--text); }
-    .key-theme-btn .icon-sun { display: none; }
-    .key-theme-btn .icon-moon { display: block; }
-    html.dark .key-theme-btn .icon-sun { display: block; }
-    html.dark .key-theme-btn .icon-moon { display: none; }
+    .key-theme-btn .icon-sun { display: none; } .key-theme-btn .icon-moon { display: block; }
+    html.dark .key-theme-btn .icon-sun { display: block; } html.dark .key-theme-btn .icon-moon { display: none; }
     .key-box { width: 100%; max-width: 420px; position: relative; z-index: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 40px; box-shadow: 0 8px 48px rgba(0,0,0,0.06); }
     html.dark .key-box { box-shadow: 0 8px 48px rgba(0,0,0,0.3); }
     .key-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; }
@@ -120,10 +111,8 @@
     .counter-text.critical { color: var(--red); }
     .theme-toggle { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; cursor: pointer; color: var(--muted); transition: color 0.15s; }
     .theme-toggle:hover { color: var(--text); }
-    .theme-toggle .icon-sun { display: none; }
-    .theme-toggle .icon-moon { display: block; }
-    html.dark .theme-toggle .icon-sun { display: block; }
-    html.dark .theme-toggle .icon-moon { display: none; }
+    .theme-toggle .icon-sun { display: none; } .theme-toggle .icon-moon { display: block; }
+    html.dark .theme-toggle .icon-sun { display: block; } html.dark .theme-toggle .icon-moon { display: none; }
     .header-btn { font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--muted); background: var(--surface); border: 1px solid var(--border); padding: 5px 12px; border-radius: 6px; cursor: pointer; text-decoration: none; transition: color 0.15s, background 0.15s; }
     .header-btn:hover { color: var(--text); background: var(--surface2); }
 
@@ -132,11 +121,7 @@
     #messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
     /* ── DRAG OVERLAY ── */
-    #drop-overlay {
-      display: none; position: absolute; inset: 0; z-index: 50;
-      background: rgba(90,15,133,0.06); border: 2px dashed var(--accent); border-radius: 12px;
-      pointer-events: none; align-items: center; justify-content: center; flex-direction: column; gap: 10px;
-    }
+    #drop-overlay { display: none; position: absolute; inset: 0; z-index: 50; background: rgba(90,15,133,0.06); border: 2px dashed var(--accent); border-radius: 12px; pointer-events: none; align-items: center; justify-content: center; flex-direction: column; gap: 10px; }
     html.dark #drop-overlay { background: rgba(155,77,202,0.1); }
     #drop-overlay.active { display: flex; }
     .drop-overlay-icon { font-size: 32px; opacity: 0.6; }
@@ -160,7 +145,31 @@
     .copy-btn { position: absolute; top: 8px; right: 8px; font-size: 11px; font-weight: 500; color: var(--muted); background: var(--bg); border: 1px solid var(--border); padding: 4px 9px; border-radius: 5px; cursor: pointer; transition: all 0.15s; font-family: var(--sans); }
     .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* ── IMAGE THUMBNAILS in chat bubbles ── */
+    /* ── ARTIFACT CARD (large code blocks) ── */
+    .artifact-card {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; margin: 8px 0;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      max-width: 320px;
+    }
+    .artifact-card:hover { border-color: var(--accent); background: var(--bg); }
+    .artifact-card-left { display: flex; align-items: center; gap: 10px; }
+    .artifact-card-icon {
+      width: 32px; height: 32px; background: var(--accent-bg);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .artifact-card-icon svg { color: var(--accent); }
+    .artifact-card-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .artifact-card-lang { font-size: 11px; font-family: var(--mono); color: var(--accent); margin-top: 2px; }
+    .artifact-card-open {
+      font-size: 11px; font-weight: 500; color: var(--muted); background: var(--bg);
+      border: 1px solid var(--border); padding: 4px 10px; border-radius: 5px;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .artifact-card:hover .artifact-card-open { color: var(--accent); border-color: var(--accent); }
+
+    /* ── IMAGE THUMBNAILS ── */
     .bubble-images { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
     .bubble-img-thumb { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
     .bubble-img-thumb:hover { opacity: 0.85; }
@@ -223,7 +232,6 @@
     .pane-artifact { width: 0; border-left: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
     .pane-artifact.open { width: 50%; }
     .pane-artifact.resizing { transition: none; pointer-events: none; }
-    /* Resizer — wider touch target on mobile */
     .resizer { width: 10px; margin: 0 -5px; z-index: 100; cursor: col-resize; flex-shrink: 0; display: none; position: relative; touch-action: none; }
     .resizer:hover::after, .resizer.active::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--accent); border-radius: 1px; }
     @media (max-width: 768px) { .resizer { width: 20px; margin: 0 -10px; } }
@@ -234,7 +242,11 @@
     .code-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 11px; font-weight: 500; padding: 0; transition: color 0.15s; font-family: var(--sans); }
     .code-btn:hover { color: var(--accent); }
     .bubble pre { margin: 0; border: none; border-radius: 0; }
+
     .art-header { height: 52px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--bg); flex-shrink: 0; }
+    .art-title { display: flex; align-items: center; gap: 10px; }
+    .art-title-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .art-title-lang { font-size: 11px; font-family: var(--mono); color: var(--accent); }
     .art-tabs { display: flex; gap: 2px; background: var(--surface2); padding: 3px; border-radius: 7px; }
     .art-tab { padding: 4px 14px; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; border-radius: 5px; border: none; background: none; font-family: var(--sans); transition: all 0.15s; }
     .art-tab.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
@@ -242,6 +254,7 @@
     .art-body { flex: 1; position: relative; overflow: hidden; background: var(--surface); }
     .art-content { position: absolute; inset: 0; display: none; overflow: auto; }
     .art-content.active { display: block; }
+    /* iframe is sandboxed — allows scripts and same-origin but blocks navigation */
     #art-preview { width: 100%; height: 100%; border: none; background: #fff; }
     #art-code { padding: 20px; }
     #art-code pre { background: transparent !important; border: none; padding: 0; margin: 0; }
@@ -369,18 +382,28 @@
 
     <div class="pane-artifact" id="artifact-pane">
       <div class="art-header">
-        <div class="art-tabs">
-          <button class="art-tab active" id="tab-code" onclick="switchArtTab('code')">Code</button>
-          <button class="art-tab" id="tab-preview" onclick="switchArtTab('preview')">Preview</button>
+        <div class="art-title">
+          <div id="art-title-name" class="art-title-name"></div>
+          <div id="art-title-lang" class="art-title-lang"></div>
         </div>
-        <div style="display:flex;gap:8px;">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <div class="art-tabs">
+            <button class="art-tab active" id="tab-code" onclick="switchArtTab('code')">Code</button>
+            <button class="art-tab" id="tab-preview" onclick="switchArtTab('preview')">Preview</button>
+          </div>
+          <button class="header-btn" onclick="copyArtifact()">Copy</button>
           <button class="header-btn" onclick="downloadArtifact()">Download</button>
           <button class="header-btn" onclick="closeArtifact()">Close</button>
         </div>
       </div>
       <div class="art-body">
         <div class="art-content active" id="view-code"><div id="art-code"></div></div>
-        <div class="art-content" id="view-preview"><iframe id="art-preview"></iframe></div>
+        <div class="art-content" id="view-preview">
+          <!-- sandbox: allow scripts + same-origin, block all navigation -->
+          <iframe id="art-preview"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups-to-escape-sandbox"
+            referrerpolicy="no-referrer"></iframe>
+        </div>
       </div>
     </div>
   </div>
@@ -423,8 +446,11 @@
   const WORKER_URL     = "https://oops-proxy.deandre6156.workers.dev";
   const STORAGE_PREFIX = "bare_pg_";
 
+  // Code blocks with >= this many lines render as an artifact card instead of inline
+  const ARTIFACT_CARD_THRESHOLD = 15;
+
   const IMAGE_WARN_BYTES   = 1.5 * 1024 * 1024;
-  const LIGHTBOX_MAX       = 100; // cap to avoid unbounded memory growth
+  const LIGHTBOX_MAX       = 100;
   const ACCEPTED_IMG_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
   const ACCEPTED_DOC_EXTS  = new Set(['.txt','.md','.csv','.json','.js','.py','.html','.css','.xml','.yaml','.yml']);
 
@@ -432,15 +458,59 @@
   let history = [], isLoading = false, abortCtrl = null;
   let attachedDocs   = [];
   let attachedImages = [];
-  let currentArtifact = { code: '', lang: '' };
+  let currentArtifact = { code: '', lang: '', name: '' };
   let pastedDocsCache = {};
-  let lightboxImages  = []; // capped ring buffer for chat bubble lightbox
+  let lightboxImages  = [];
 
-  // ── MARKDOWN ──────────────────────────────────────────
+  // Store for artifact card code — keyed by card id, avoids inline data
+  const artifactStore = new Map();
+  let artifactCardCounter = 0;
+
+  // ── HELPERS ───────────────────────────────────────────
+
+  /**
+   * Infer a human-readable filename from a language identifier.
+   */
+  function langToFilename(lang) {
+    const map = {
+      javascript: 'script.js', js: 'script.js', typescript: 'script.ts', ts: 'script.ts',
+      python: 'script.py', py: 'script.py', html: 'index.html', css: 'styles.css',
+      json: 'data.json', markdown: 'readme.md', md: 'readme.md',
+      rust: 'main.rs', go: 'main.go', java: 'Main.java', cpp: 'main.cpp',
+      c: 'main.c', bash: 'script.sh', sh: 'script.sh', sql: 'query.sql',
+      yaml: 'config.yml', yml: 'config.yml', toml: 'config.toml',
+      php: 'index.php', ruby: 'script.rb', swift: 'main.swift', kotlin: 'main.kt',
+    };
+    return map[lang?.toLowerCase()] || (lang ? `file.${lang}` : 'snippet.txt');
+  }
+
+  // ── MARKDOWN RENDERER ─────────────────────────────────
   const renderer = {
     code(code, lang) {
       lang = lang || 'text';
       const validLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+      const lineCount = code.split('\n').length;
+
+      // Large blocks → artifact card
+      if (lineCount >= ARTIFACT_CARD_THRESHOLD) {
+        const cardId   = 'ac_' + (++artifactCardCounter);
+        const filename = langToFilename(validLang);
+        artifactStore.set(cardId, { code, lang: validLang, name: filename });
+        return `<div class="artifact-card" onclick="openArtifactCard('${cardId}')">
+          <div class="artifact-card-left">
+            <div class="artifact-card-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div>
+              <div class="artifact-card-name">${escHtml(filename)}</div>
+              <div class="artifact-card-lang">${validLang}</div>
+            </div>
+          </div>
+          <div class="artifact-card-open">Open</div>
+        </div>`;
+      }
+
+      // Small blocks → inline code block (existing behaviour)
       const highlighted = hljs.highlight(code, { language: validLang }).value;
       return `<div class="code-wrapper"><div class="code-header"><span>${validLang}</span><div class="code-controls"><button class="code-btn" onclick="copyCode(this)">Copy</button><button class="code-btn" onclick="openArtifact(this, '${validLang}')">Open Canvas</button></div></div><pre><code class="hljs ${validLang}">${highlighted}</code></pre><textarea class="raw-code" style="display:none">${escHtml(code)}</textarea></div>`;
     }
@@ -479,24 +549,8 @@
   }
 
   function saveSession() { sessionStorage.setItem(STORAGE_PREFIX + "key", activeKey); }
-
-  function showChat() {
-    document.getElementById('screen-key').classList.remove('active');
-    document.getElementById('screen-chat').classList.add('active');
-    updateCounter(); if (remaining === 0) showLimitBanner();
-    renderEmptyState(); document.getElementById('msg-input').focus();
-  }
-
-  function signOut() {
-    sessionStorage.removeItem(STORAGE_PREFIX + "key");
-    activeKey = null; history = []; remaining = null; limit = null;
-    document.getElementById('screen-chat').classList.remove('active');
-    document.getElementById('screen-key').classList.add('active');
-    document.getElementById('key-input').value = '';
-    document.getElementById('key-error').textContent = '';
-    document.getElementById('key-submit').textContent = 'Continue to Playground';
-    document.getElementById('key-submit').disabled = false;
-  }
+  function showChat() { document.getElementById('screen-key').classList.remove('active'); document.getElementById('screen-chat').classList.add('active'); updateCounter(); if (remaining === 0) showLimitBanner(); renderEmptyState(); document.getElementById('msg-input').focus(); }
+  function signOut() { sessionStorage.removeItem(STORAGE_PREFIX + "key"); activeKey = null; history = []; remaining = null; limit = null; document.getElementById('screen-chat').classList.remove('active'); document.getElementById('screen-key').classList.add('active'); document.getElementById('key-input').value = ''; document.getElementById('key-error').textContent = ''; document.getElementById('key-submit').textContent = 'Continue to Playground'; document.getElementById('key-submit').disabled = false; }
 
   function updateCounter() {
     if (remaining === null || limit === null) return;
@@ -509,53 +563,28 @@
     text.className = 'counter-text' + (isCritical ? ' critical' : isLow ? ' low' : '');
   }
 
-  function showLimitBanner() {
-    document.getElementById('limit-banner').classList.add('visible');
-    document.getElementById('input-row').classList.add('disabled');
-    document.getElementById('send-btn').disabled = true;
-  }
+  function showLimitBanner() { document.getElementById('limit-banner').classList.add('visible'); document.getElementById('input-row').classList.add('disabled'); document.getElementById('send-btn').disabled = true; }
 
   // ── FILE PROCESSING ───────────────────────────────────
-
-  function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = () => reject(new Error('Failed to read file'));
-      r.readAsDataURL(file);
-    });
-  }
+  function readFileAsDataURL(file) { return new Promise((resolve, reject) => { const r = new FileReader(); r.onload = () => resolve(r.result); r.onerror = () => reject(new Error('Failed to read file')); r.readAsDataURL(file); }); }
 
   async function processFiles(files) {
     let hadError = false;
     for (const file of files) {
       if (ACCEPTED_IMG_TYPES.has(file.type)) {
-        try {
-          const dataUrl = await readFileAsDataURL(file);
-          attachedImages.push({ name: file.name, dataUrl, mimeType: file.type, sizeBytes: file.size });
-        } catch {
-          showToast(`Could not read image: ${file.name}`, 'warn'); hadError = true;
-        }
+        try { const dataUrl = await readFileAsDataURL(file); attachedImages.push({ name: file.name, dataUrl, mimeType: file.type, sizeBytes: file.size }); }
+        catch { showToast(`Could not read image: ${file.name}`, 'warn'); hadError = true; }
       } else {
         const ext = '.' + file.name.split('.').pop().toLowerCase();
-        if (!ACCEPTED_DOC_EXTS.has(ext) && file.type && !file.type.startsWith('text/')) {
-          showToast(`Unsupported file type: ${file.name}`, 'warn'); hadError = true; continue;
-        }
-        try {
-          attachedDocs.push({ name: file.name, content: await file.text() });
-        } catch {
-          showToast(`Could not read file: ${file.name}`, 'warn'); hadError = true;
-        }
+        if (!ACCEPTED_DOC_EXTS.has(ext) && file.type && !file.type.startsWith('text/')) { showToast(`Unsupported file type: ${file.name}`, 'warn'); hadError = true; continue; }
+        try { attachedDocs.push({ name: file.name, content: await file.text() }); }
+        catch { showToast(`Could not read file: ${file.name}`, 'warn'); hadError = true; }
       }
     }
     renderAttachments();
     if (!hadError && files.length > 0) showToast(files.length === 1 ? `${files[0].name} attached` : `${files.length} files attached`);
   }
 
-  /**
-   * Build the OpenAI-format content array for a user message.
-   * Returns a plain string when no images are present (backwards-compatible).
-   */
   function buildUserContent(textContent, images) {
     if (images.length === 0) return textContent || '';
     const blocks = images.map(img => ({ type: 'image_url', image_url: { url: img.dataUrl } }));
@@ -563,40 +592,23 @@
     return blocks;
   }
 
-  /**
-   * Strip image_url blocks from all messages except the most recent one that
-   * contains them. This prevents base64 image data from being re-sent on every
-   * follow-up message, which would blow the payload size limit fast.
-   */
   function buildHistoryForSend(history) {
-    // Find the last message index that has image blocks
     let lastImageIdx = -1;
     for (let i = history.length - 1; i >= 0; i--) {
-      if (Array.isArray(history[i].content) && history[i].content.some(b => b.type === 'image_url')) {
-        lastImageIdx = i; break;
-      }
+      if (Array.isArray(history[i].content) && history[i].content.some(b => b.type === 'image_url')) { lastImageIdx = i; break; }
     }
-
     return history.map((msg, idx) => {
       if (idx === lastImageIdx || !Array.isArray(msg.content)) return msg;
-      // Strip image blocks from older messages, keep text blocks
       const textOnly = msg.content.filter(b => b.type !== 'image_url');
-      // Flatten to a plain string if only one text block remains
-      if (textOnly.length === 1 && textOnly[0].type === 'text') {
-        return { ...msg, content: textOnly[0].text };
-      }
+      if (textOnly.length === 1 && textOnly[0].type === 'text') return { ...msg, content: textOnly[0].text };
       return { ...msg, content: textOnly.length > 0 ? textOnly : '[image]' };
     });
   }
 
   function renderAttachments() {
     const preview = document.getElementById('file-preview');
-    const docHtml = attachedDocs.map((doc, i) =>
-      `<div class="file-tag"><span>📄 ${escHtml(doc.name)}</span><span class="file-tag-remove" onclick="removeDoc(${i})">×</span></div>`
-    ).join('');
-    const imgHtml = attachedImages.map((img, i) =>
-      `<div class="img-preview-wrap"><img class="img-preview-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" /><button class="img-preview-remove" onclick="removeImage(${i})">×</button></div>`
-    ).join('');
+    const docHtml = attachedDocs.map((doc, i) => `<div class="file-tag"><span>📄 ${escHtml(doc.name)}</span><span class="file-tag-remove" onclick="removeDoc(${i})">×</span></div>`).join('');
+    const imgHtml = attachedImages.map((img, i) => `<div class="img-preview-wrap"><img class="img-preview-thumb" src="${img.dataUrl}" alt="${escHtml(img.name)}" /><button class="img-preview-remove" onclick="removeImage(${i})">×</button></div>`).join('');
     const totalBytes = attachedImages.reduce((s, img) => s + img.sizeBytes, 0);
     const warnHtml = totalBytes > IMAGE_WARN_BYTES ? `<div class="img-size-warn">⚠ Large image — may be slow or rejected</div>` : '';
     preview.innerHTML = docHtml + imgHtml + warnHtml;
@@ -606,40 +618,155 @@
   window.removeImage = i => { attachedImages.splice(i, 1); renderAttachments(); };
 
   // ── LIGHTBOX ──────────────────────────────────────────
-  window.openLightboxIdx = idx => {
-    document.getElementById('lightbox-img').src = lightboxImages[idx];
-    document.getElementById('img-lightbox').classList.add('open');
-  };
-  window.closeLightbox = () => document.getElementById('img-lightbox').classList.remove('open');
+  window.openLightboxIdx = idx => { document.getElementById('lightbox-img').src = lightboxImages[idx]; document.getElementById('img-lightbox').classList.add('open'); };
+  window.closeLightbox   = () => document.getElementById('img-lightbox').classList.remove('open');
 
   // ── DRAG AND DROP ─────────────────────────────────────
-  const paneChat    = document.querySelector('.pane-chat');
-  const dropOverlay = document.getElementById('drop-overlay');
-  let dragCounter   = 0;
+  const paneChat = document.querySelector('.pane-chat'), dropOverlay = document.getElementById('drop-overlay');
+  let dragCounter = 0;
   paneChat.addEventListener('dragenter', e => { e.preventDefault(); if (++dragCounter === 1) dropOverlay.classList.add('active'); });
   paneChat.addEventListener('dragleave', () => { if (--dragCounter === 0) dropOverlay.classList.remove('active'); });
   paneChat.addEventListener('dragover',  e => e.preventDefault());
-  paneChat.addEventListener('drop', async e => {
-    e.preventDefault(); dragCounter = 0; dropOverlay.classList.remove('active');
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length) await processFiles(files);
-  });
+  paneChat.addEventListener('drop', async e => { e.preventDefault(); dragCounter = 0; dropOverlay.classList.remove('active'); const files = Array.from(e.dataTransfer.files); if (files.length) await processFiles(files); });
 
   // ── CLIPBOARD IMAGE PASTE ─────────────────────────────
   window.addEventListener('paste', async e => {
     const items = Array.from(e.clipboardData?.items || []);
     const imageItems = items.filter(it => it.kind === 'file' && ACCEPTED_IMG_TYPES.has(it.type));
-    if (imageItems.length > 0) {
-      e.preventDefault();
-      await processFiles(imageItems.map(it => it.getAsFile()).filter(Boolean));
-    }
-    // non-image paste falls through to msgInput's paste handler below
+    if (imageItems.length > 0) { e.preventDefault(); await processFiles(imageItems.map(it => it.getAsFile()).filter(Boolean)); }
   });
 
   // ── FILE INPUT ────────────────────────────────────────
   const fileInput = document.getElementById('file-input');
   document.getElementById('attach-btn').addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', async e => { await processFiles(Array.from(e.target.files)); fileInput.value = ''; });
+
+  // ── ARTIFACT CANVAS ───────────────────────────────────
+
+  /**
+   * Open canvas from an artifact card click.
+   * On first open in a response, canvas auto-opens.
+   */
+  window.openArtifactCard = cardId => {
+    const artifact = artifactStore.get(cardId);
+    if (artifact) loadArtifact(artifact.code, artifact.lang, artifact.name);
+  };
+
+  window.openArtifact = (btn, lang) => {
+    const code = btn.closest('.code-wrapper').querySelector('.raw-code').value;
+    loadArtifact(code, lang, langToFilename(lang));
+  };
+
+  window.loadArtifact = (code, lang, name) => {
+    name = name || langToFilename(lang);
+    currentArtifact = { code, lang, name };
+
+    // Update canvas header
+    document.getElementById('art-title-name').textContent = name;
+    document.getElementById('art-title-lang').textContent = lang;
+
+    const pane = document.getElementById('artifact-pane');
+    if (!pane.classList.contains('open')) { pane.classList.add('open'); document.getElementById('resizer').style.display = 'block'; }
+
+    const vl = hljs.getLanguage(lang) ? lang : 'plaintext';
+    document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${vl}">${hljs.highlight(code, { language: vl }).value}</code></pre>`;
+
+    const iframe = document.getElementById('art-preview'), tabPrev = document.getElementById('tab-preview');
+    if (lang === 'html') {
+      tabPrev.style.display = 'block';
+      loadSandboxedHtml(iframe, code);
+      switchArtTab('preview');
+    } else {
+      tabPrev.style.display = 'none';
+      iframe.srcdoc = '';
+      switchArtTab('code');
+    }
+  };
+
+  /**
+   * Load HTML into the sandboxed iframe with a navigation-intercepting script injected.
+   * Any <a href="..."> clicks that would navigate are blocked. In-page anchors (#id) scroll normally.
+   */
+  function loadSandboxedHtml(iframe, html) {
+    const interceptScript = `<script>
+      document.addEventListener('click', function(e) {
+        var a = e.target.closest('a');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        if (!href || href === '#' || href.startsWith('#')) return; // allow in-page anchors
+        e.preventDefault();
+        e.stopPropagation();
+      }, true);
+      document.addEventListener('submit', function(e) {
+        e.preventDefault(); // block form navigation
+      }, true);
+    <\/script>`;
+    // Inject before </body> or at end
+    const injected = html.includes('</body>')
+      ? html.replace('</body>', interceptScript + '</body>')
+      : html + interceptScript;
+    iframe.srcdoc = injected;
+  }
+
+  window.copyArtifact = () => {
+    if (!currentArtifact.code) return;
+    navigator.clipboard.writeText(currentArtifact.code);
+    showToast('Copied to clipboard');
+  };
+
+  window.downloadArtifact = () => {
+    if (!currentArtifact.code) return;
+    const extMap = { javascript: 'js', python: 'py', markdown: 'md', html: 'html', css: 'css', json: 'json', rust: 'rs', typescript: 'ts' };
+    const ext = extMap[currentArtifact.lang] || currentArtifact.lang || 'txt';
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([currentArtifact.code], { type: 'text/plain' })), download: currentArtifact.name || `artifact.${ext}` });
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  };
+
+  window.closeArtifact = () => { const p = document.getElementById('artifact-pane'); p.classList.remove('open'); p.style.width = ''; document.getElementById('resizer').style.display = 'none'; };
+
+  /**
+   * autoUpdateCanvas: during typewriter, keep canvas in sync.
+   * Also handles auto-opening the canvas when the first large code block appears.
+   */
+  function autoUpdateCanvas(text, partialUpdate = false) {
+    const fenceRe = /```([\w+-]*)\n([\s\S]*?)```/g;
+    let match, lastMatch = null;
+    while ((match = fenceRe.exec(text)) !== null) lastMatch = match;
+    if (!lastMatch) return;
+
+    const lang = (lastMatch[1] || currentArtifact.lang || 'plaintext').trim();
+    const code = lastMatch[2];
+    const lineCount = code.split('\n').length;
+
+    // Only auto-manage canvas for large blocks (artifact-card threshold)
+    if (lineCount < ARTIFACT_CARD_THRESHOLD) return;
+
+    const pane = document.getElementById('artifact-pane');
+    const name = langToFilename(lang);
+
+    // Auto-open canvas on first large block detected in this response
+    if (!pane.classList.contains('open')) {
+      loadArtifact(code, lang, name);
+      return;
+    }
+
+    // Canvas already open — update it if lang matches (don't hijack with unrelated snippet)
+    if (currentArtifact.lang && lang !== currentArtifact.lang && !partialUpdate) return;
+    currentArtifact = { code, lang, name };
+    document.getElementById('art-title-name').textContent = name;
+    document.getElementById('art-title-lang').textContent = lang;
+
+    if (!partialUpdate) {
+      const vl = hljs.getLanguage(lang) ? lang : 'plaintext';
+      document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${vl}">${hljs.highlight(code, { language: vl }).value}</code></pre>`;
+    }
+    if (lang === 'html') {
+      const iframe = document.getElementById('art-preview'), tabPrev = document.getElementById('tab-preview');
+      tabPrev.style.display = 'block';
+      if (partialUpdate) { try { iframe.contentDocument.open(); iframe.contentDocument.write(code); iframe.contentDocument.close(); } catch { loadSandboxedHtml(iframe, code); } }
+      else { loadSandboxedHtml(iframe, code); }
+    }
+  }
 
   // ── SEND MESSAGE ──────────────────────────────────────
   async function sendMessage() {
@@ -676,7 +803,6 @@
       const res = await fetch(WORKER_URL, {
         method: 'POST', mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
-        // Strip old image data before sending to keep payloads lean
         body: JSON.stringify({ key: activeKey, messages: buildHistoryForSend(history) }),
         signal: abortCtrl.signal
       });
@@ -753,7 +879,6 @@
     row.className = 'msg-row user';
     let imgHtml = '';
     if (images.length > 0) {
-      // Cap lightboxImages to avoid memory leaks in long sessions
       if (lightboxImages.length >= LIGHTBOX_MAX) lightboxImages.splice(0, images.length);
       const baseIdx = lightboxImages.length;
       images.forEach(img => lightboxImages.push(img.dataUrl));
@@ -768,10 +893,9 @@
   function appendError(msg) { const row = document.createElement('div'); row.className = 'msg-row assistant'; row.innerHTML = `<div class="err-bubble">${escHtml(msg)}</div>`; messagesEl.appendChild(row); scrollToBottom(); }
 
   function clearChat() {
-    history = [];
-    lightboxImages = [];
-    // Also clear any staged attachments so they don't persist into a fresh session
+    history = []; lightboxImages = [];
     attachedDocs = []; attachedImages = [];
+    artifactStore.clear(); artifactCardCounter = 0;
     renderAttachments();
     messagesEl.innerHTML = '';
     renderEmptyState();
@@ -784,62 +908,23 @@
     messagesEl.appendChild(empty); document.getElementById('msg-input').focus();
   }
 
-  window.openPastedDocument = name => { const doc = pastedDocsCache[name]; if (doc) loadArtifact(doc.content, doc.lang); };
-  window.openArtifact = (btn, lang) => loadArtifact(btn.closest('.code-wrapper').querySelector('.raw-code').value, lang);
-  window.loadArtifact = (code, lang) => {
-    currentArtifact = { code, lang };
-    const pane = document.getElementById('artifact-pane');
-    if (!pane.classList.contains('open')) { pane.classList.add('open'); document.getElementById('resizer').style.display = 'block'; }
-    const vl = hljs.getLanguage(lang) ? lang : 'plaintext';
-    document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${vl}">${hljs.highlight(code, { language: vl }).value}</code></pre>`;
-    const iframe = document.getElementById('art-preview'), tabPrev = document.getElementById('tab-preview');
-    if (lang === 'html') { tabPrev.style.display = 'block'; iframe.srcdoc = code; switchArtTab('preview'); } else { tabPrev.style.display = 'none'; iframe.srcdoc = ''; switchArtTab('code'); }
-  };
-  window.downloadArtifact = () => {
-    if (!currentArtifact.code) return;
-    const extMap = { javascript: 'js', python: 'py', markdown: 'md', html: 'html', css: 'css', json: 'json', rust: 'rs', typescript: 'ts' };
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([currentArtifact.code], { type: 'text/plain' })), download: `artifact_${Date.now()}.${extMap[currentArtifact.lang] || currentArtifact.lang || 'txt'}` });
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  };
-  window.closeArtifact = () => { const p = document.getElementById('artifact-pane'); p.classList.remove('open'); p.style.width = ''; document.getElementById('resizer').style.display = 'none'; };
-
-  function autoUpdateCanvas(text, partialUpdate = false) {
-    const pane = document.getElementById('artifact-pane');
-    if (!pane.classList.contains('open')) return;
-    const fenceRe = /```([\w+-]*)\n([\s\S]*?)```/g;
-    let match, lastMatch = null;
-    while ((match = fenceRe.exec(text)) !== null) lastMatch = match;
-    if (!lastMatch) return;
-    const lang = (lastMatch[1] || currentArtifact.lang || 'plaintext').trim(), code = lastMatch[2];
-    if (currentArtifact.lang && lang !== currentArtifact.lang && !partialUpdate) return;
-    currentArtifact = { code, lang };
-    if (!partialUpdate) { const vl = hljs.getLanguage(lang) ? lang : 'plaintext'; document.getElementById('art-code').innerHTML = `<pre><code class="hljs ${vl}">${hljs.highlight(code, { language: vl }).value}</code></pre>`; }
-    if (lang === 'html') {
-      const iframe = document.getElementById('art-preview'), tabPrev = document.getElementById('tab-preview');
-      tabPrev.style.display = 'block';
-      if (partialUpdate) { try { iframe.contentDocument.open(); iframe.contentDocument.write(code); iframe.contentDocument.close(); } catch { iframe.srcdoc = code; } }
-      else { iframe.srcdoc = code; }
-    }
-  }
+  window.openPastedDocument = name => { const doc = pastedDocsCache[name]; if (doc) loadArtifact(doc.content, doc.lang, langToFilename(doc.lang)); };
+  window.copyCode = btn => { const code = btn.closest('.code-wrapper').querySelector('.raw-code').value; navigator.clipboard.writeText(code); showToast('Copied to clipboard'); const orig = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => btn.textContent = orig, 2000); };
 
   // ── RESIZER — mouse + touch ───────────────────────────
   const resizer = document.getElementById('resizer'), artifactPane = document.getElementById('artifact-pane');
   let isResizing = false;
-
   function startResize() { isResizing = true; artifactPane.classList.add('resizing'); resizer.classList.add('active'); document.body.style.cursor = 'col-resize'; }
   function stopResize()  { if (!isResizing) return; isResizing = false; artifactPane.classList.remove('resizing'); resizer.classList.remove('active'); document.body.style.cursor = ''; }
   function doResize(clientX) { if (!isResizing) return; artifactPane.style.width = Math.min(Math.max(window.innerWidth - clientX, 300), window.innerWidth - 300) + 'px'; }
-
-  resizer.addEventListener('mousedown',  () => startResize());
+  resizer.addEventListener('mousedown', () => startResize());
   document.addEventListener('mousemove', e => doResize(e.clientX));
   document.addEventListener('mouseup',   () => stopResize());
-
   resizer.addEventListener('touchstart',  e => { e.preventDefault(); startResize(); }, { passive: false });
   document.addEventListener('touchmove',  e => { if (isResizing) { e.preventDefault(); doResize(e.touches[0].clientX); } }, { passive: false });
   document.addEventListener('touchend',   () => stopResize());
 
   window.switchArtTab = tab => { document.querySelectorAll('.art-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.art-content').forEach(c => c.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); document.getElementById(`view-${tab}`).classList.add('active'); };
-  window.copyCode = btn => { const code = btn.closest('.code-wrapper').querySelector('.raw-code').value; navigator.clipboard.writeText(code); showToast('Copied to clipboard'); const orig = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => btn.textContent = orig, 2000); };
 
   let toastTimer = null;
   function showToast(msg, type = 'ok') {
